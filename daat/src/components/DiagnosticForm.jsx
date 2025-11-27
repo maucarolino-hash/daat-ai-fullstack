@@ -107,6 +107,7 @@ const DiagnosticForm = ({ initialData }) => {
             // 3. A Resposta
             const data = await response.json();
             setResult(data);
+        } catch (error) {
             console.error("Erro ao conectar ao Daat Brain:", error);
             alert("Erro de conexão. O servidor Django está rodando?");
         } finally {
