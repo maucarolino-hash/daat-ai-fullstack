@@ -91,174 +91,185 @@ const DiagnosticForm = ({ initialData }) => {
         setLoading(true);
         setResult(null); // Limpa resultado anterior
 
-        // 3. A Resposta
-        const data = await response.json();
-        setResult(data);
+        // 1. Preparar os dados do Daat
+        const payload = { customerSegment, problem, valueProposition };
 
-    } catch (error) {
-        console.error("Erro ao conectar ao Daat Brain:", error);
-        alert("Erro de conexão. O servidor Django está rodando?");
-    } finally {
-        setLoading(false);
-    }
-};
+        try {
+            // 2. A Chamada (Fetch API)
+            const response = await fetch('https://daat-ai-fullstack.onrender.com/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            // 3. A Resposta
+            const data = await response.json();
+            setResult(data);
+            console.error("Erro ao conectar ao Daat Brain:", error);
+            alert("Erro de conexão. O servidor Django está rodando?");
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
 
-return (
-    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '500px', margin: '0 auto' }}>
-        <h2>Diagnóstico Lean Canvas</h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <TextAreaField
-                label="Segmento de Cliente"
-                value={customerSegment}
-                onChange={(e) => setCustomerSegment(e.target.value)}
-                placeholder="Quem são seus clientes?"
-                height="80px"
-            />
+    return (
+        <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '500px', margin: '0 auto' }}>
+            <h2>Diagnóstico Lean Canvas</h2>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <TextAreaField
+                    label="Segmento de Cliente"
+                    value={customerSegment}
+                    onChange={(e) => setCustomerSegment(e.target.value)}
+                    placeholder="Quem são seus clientes?"
+                    height="80px"
+                />
 
-            <TextAreaField
-                label="O Problema"
-                value={problem}
-                onChange={(e) => setProblem(e.target.value)}
-                placeholder="Qual problema você resolve?"
-                height="120px"
-            />
+                <TextAreaField
+                    label="O Problema"
+                    value={problem}
+                    onChange={(e) => setProblem(e.target.value)}
+                    placeholder="Qual problema você resolve?"
+                    height="120px"
+                />
 
-            <TextAreaField
-                label="Proposta de Valor"
-                value={valueProposition}
-                onChange={(e) => setValueProposition(e.target.value)}
-                placeholder="Ex: Uber para passeadores de cães"
-                height="100px"
-            />
+                <TextAreaField
+                    label="Proposta de Valor"
+                    value={valueProposition}
+                    onChange={(e) => setValueProposition(e.target.value)}
+                    placeholder="Ex: Uber para passeadores de cães"
+                    height="100px"
+                />
 
-            <button
-                type="submit"
-                disabled={loading}
-                style={{
-                    marginTop: '10px',
-                    width: '100%',
-                    padding: '14px',
-                    backgroundColor: 'var(--brand-primary)',
-                    color: '#ffffff',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    opacity: loading ? 0.7 : 1,
-                    transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-hover)')}
-                onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-primary)')}
-            >
-                {loading ? 'Analisando...' : 'Gerar Diagnóstico'}
-            </button>
-        </form>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                        marginTop: '10px',
+                        width: '100%',
+                        padding: '14px',
+                        backgroundColor: 'var(--brand-primary)',
+                        color: '#ffffff',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        opacity: loading ? 0.7 : 1,
+                        transition: 'background-color 0.2s'
+                    }}
+                    onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-hover)')}
+                    onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-primary)')}
+                >
+                    {loading ? 'Analisando...' : 'Gerar Diagnóstico'}
+                </button>
+            </form>
 
-        {/* ÁREA DE RESULTADOS (Espaço Reservado) */}
-        {/* O TERMINAL FIXO GRID */}
-        <div className="daat-terminal" ref={terminalRef} style={{
-            marginTop: '40px', // Espaçamento extra
-            borderColor: loading ? '#4a5568' : (result ? (result.score > 60 ? '#48bb78' : '#fc8181') : '#4a5568'),
-            backgroundColor: 'var(--bg-card)',
-            color: 'var(--text-primary)'
-        }}>
+            {/* ÁREA DE RESULTADOS (Espaço Reservado) */}
+            {/* O TERMINAL FIXO GRID */}
+            <div className="daat-terminal" ref={terminalRef} style={{
+                marginTop: '40px', // Espaçamento extra
+                borderColor: loading ? '#4a5568' : (result ? (result.score > 60 ? '#48bb78' : '#fc8181') : '#4a5568'),
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-primary)'
+            }}>
 
-            {/* ÁREA 1: HEADER (Fixo no topo da Grade) */}
-            {/* Se tiver resultado, mostra o cabeçalho fixo. Se não, mostra nada ou loader */}
-            {!loading && result && (
-                <div style={{
-                    padding: '20px 24px 10px 24px',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    backgroundColor: 'var(--bg-card)',
-                    zIndex: 10 // Garante que fica acima do scroll
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                            <div style={{
-                                width: '50px', height: '50px',
-                                borderRadius: '50%',
-                                backgroundColor: result.score > 60 ? '#38a169' : '#e53e3e',
-                                color: 'white',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '1.4rem', fontWeight: 'bold'
-                            }}>
-                                {result.score}
-                            </div>
-                            <div>
-                                <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>Análise Daat</h3>
-                                <span style={{ fontSize: '0.8rem', color: '#718096' }}>IA Venture Capitalist</span>
-                            </div>
-                        </div>
-
-                        {/* O NOVO BOTÃO DE DOWNLOAD */}
-                        {/* Botão PDF via React-PDF */}
-                        {result && (
-                            <PDFDownloadLink
-                                document={
-                                    <DaatReportPDF
-                                        data={{
-                                            ...result,
-                                            customerSegment: customerSegment,
-                                            problem: problem,
-                                            valueProposition: valueProposition
-                                        }}
-                                    />
-                                }
-                                fileName={`Daat_Relatorio_${result.score}.pdf`}
-                                style={{ textDecoration: 'none' }}
-                            >
-                                {({ blob, url, loading, error }) => (
-                                    <button
-                                        disabled={loading}
-                                        style={{
-                                            padding: '8px 16px',
-                                            backgroundColor: 'transparent',
-                                            border: '1px solid var(--border-light)',
-                                            borderRadius: '6px',
-                                            color: loading ? 'var(--text-muted)' : 'var(--text-secondary)',
-                                            cursor: loading ? 'wait' : 'pointer',
-                                            fontSize: '0.85rem',
-                                            display: 'flex', alignItems: 'center', gap: '8px',
-                                            transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        <span>{loading ? '⏳' : '⬇️'}</span> {loading ? 'Gerando...' : 'PDF'}
-                                    </button>
-                                )}
-                            </PDFDownloadLink>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* ÁREA 2: CONTEÚDO (Scrollável) */}
-            {/* O Grid vai jogar isso para a segunda linha (minmax 1fr) */}
-            <div className="daat-content-scroll">
-
-                {/* LOADING STATE */}
-                {loading && <SkeletonLoader />}
-
-                {/* EMPTY STATE */}
-                {!loading && !result && (
-                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e0' }}>
-                        A aguardar dados...
-                    </div>
-                )}
-
-                {/* RESULTADO (Texto) */}
+                {/* ÁREA 1: HEADER (Fixo no topo da Grade) */}
+                {/* Se tiver resultado, mostra o cabeçalho fixo. Se não, mostra nada ou loader */}
                 {!loading && result && (
-                    <div style={{ paddingBottom: '20px' }}> {/* Espaço extra no fim */}
-                        <ComponentFeedback feedback={result.feedback} />
+                    <div style={{
+                        padding: '20px 24px 10px 24px',
+                        borderBottom: '1px solid var(--border-subtle)',
+                        backgroundColor: 'var(--bg-card)',
+                        zIndex: 10 // Garante que fica acima do scroll
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                <div style={{
+                                    width: '50px', height: '50px',
+                                    borderRadius: '50%',
+                                    backgroundColor: result.score > 60 ? '#38a169' : '#e53e3e',
+                                    color: 'white',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: '1.4rem', fontWeight: 'bold'
+                                }}>
+                                    {result.score}
+                                </div>
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>Análise Daat</h3>
+                                    <span style={{ fontSize: '0.8rem', color: '#718096' }}>IA Venture Capitalist</span>
+                                </div>
+                            </div>
+
+                            {/* O NOVO BOTÃO DE DOWNLOAD */}
+                            {/* Botão PDF via React-PDF */}
+                            {result && (
+                                <PDFDownloadLink
+                                    document={
+                                        <DaatReportPDF
+                                            data={{
+                                                ...result,
+                                                customerSegment: customerSegment,
+                                                problem: problem,
+                                                valueProposition: valueProposition
+                                            }}
+                                        />
+                                    }
+                                    fileName={`Daat_Relatorio_${result.score}.pdf`}
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    {({ blob, url, loading, error }) => (
+                                        <button
+                                            disabled={loading}
+                                            style={{
+                                                padding: '8px 16px',
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid var(--border-light)',
+                                                borderRadius: '6px',
+                                                color: loading ? 'var(--text-muted)' : 'var(--text-secondary)',
+                                                cursor: loading ? 'wait' : 'pointer',
+                                                fontSize: '0.85rem',
+                                                display: 'flex', alignItems: 'center', gap: '8px',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <span>{loading ? '⏳' : '⬇️'}</span> {loading ? 'Gerando...' : 'PDF'}
+                                        </button>
+                                    )}
+                                </PDFDownloadLink>
+                            )}
+                        </div>
                     </div>
                 )}
-            </div>
 
-        </div>
-    </div >
-)
+                {/* ÁREA 2: CONTEÚDO (Scrollável) */}
+                {/* O Grid vai jogar isso para a segunda linha (minmax 1fr) */}
+                <div className="daat-content-scroll">
+
+                    {/* LOADING STATE */}
+                    {loading && <SkeletonLoader />}
+
+                    {/* EMPTY STATE */}
+                    {!loading && !result && (
+                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e0' }}>
+                            A aguardar dados...
+                        </div>
+                    )}
+
+                    {/* RESULTADO (Texto) */}
+                    {!loading && result && (
+                        <div style={{ paddingBottom: '20px' }}> {/* Espaço extra no fim */}
+                            <ComponentFeedback feedback={result.feedback} />
+                        </div>
+                    )}
+                </div>
+
+            </div>
+        </div >
+    )
 }
 
 export default DiagnosticForm
