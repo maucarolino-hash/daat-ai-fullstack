@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CORS_ALLOW_ALL_ORIGINS = True
+
 
 
 # Application definition
@@ -45,11 +45,16 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    # 1. O CORS TEM QUE SER O PRIMEIRO (ou logo após Security)
+    'corsheaders.middleware.CorsMiddleware', 
+    
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Se estiver usando WhiteNoise
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    
+    # 2. CommonMiddleware vem DEPOIS do CorsMiddleware
+    'django.middleware.common.CommonMiddleware', 
+    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -127,3 +132,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS CONFIGURATION
+CORS_ALLOW_ALL_ORIGINS = True 
+CORS_ALLOW_CREDENTIALS = True
+
+# Garante que headers extras sejam aceitos (importante para React)
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'content-type',
+    'authorization',
+]
