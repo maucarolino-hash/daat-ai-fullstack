@@ -6,10 +6,12 @@ function App() {
   // O ESTADO GLOBAL: Qual relatório estamos a ver agora?
   // null = Modo "Nova Análise" (Formulário vazio)
   const [activeReport, setActiveReport] = useState(null);
+  const [resetKey, setResetKey] = useState(0); // Chave para forçar reset do form
 
   // Função para limpar e começar do zero
   const handleNewAnalysis = () => {
     setActiveReport(null);
+    setResetKey(prev => prev + 1);
   };
 
   return (
@@ -37,7 +39,10 @@ function App() {
           </header>
 
           {/* O Formulário reage ao relatório ativo */}
-          <DiagnosticForm initialData={activeReport} />
+          <DiagnosticForm
+            initialData={activeReport}
+            key={activeReport ? activeReport.id : `new-${resetKey}`}
+          />
 
         </div>
       </main>
