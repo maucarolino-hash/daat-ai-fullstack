@@ -94,7 +94,8 @@ const DiagnosticForm = ({ initialData }) => {
 
         try {
             // 2. A Chamada (Fetch API)
-            const response = await fetch('http://127.0.0.1:8000/api/analyze', {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+            const response = await fetch(`${apiUrl}/api/analyze`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

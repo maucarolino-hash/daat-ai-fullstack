@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useCallback } from 'react';
 import DiagnosticForm from './components/DiagnosticForm';
 import HistorySidebar from './components/HistorySidebar';
 
@@ -9,10 +9,15 @@ function App() {
   const [resetKey, setResetKey] = useState(0); // Chave para forçar reset do form
 
   // Função para limpar e começar do zero
-  const handleNewAnalysis = () => {
+  const handleNewAnalysis = useCallback(() => {
     setActiveReport(null);
     setResetKey(prev => prev + 1);
-  };
+  }, []);
+
+  // Função para selecionar um relatório do histórico
+  const handleSelectReport = useCallback((report) => {
+    setActiveReport(report);
+  }, []);
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: 'var(--bg-main)' }}>
@@ -20,7 +25,7 @@ function App() {
       {/* SIDEBAR: Recebe a função para AVISAR que mudou */}
       <div style={{ width: '280px', flexShrink: 0, backgroundColor: 'var(--bg-sidebar)', borderRight: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column' }}>
         <HistorySidebar
-          onSelectReport={(report) => setActiveReport(report)}
+          onSelectReport={handleSelectReport}
           onNewAnalysis={handleNewAnalysis} // Botão "+"
         />
       </div>
