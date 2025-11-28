@@ -94,8 +94,8 @@ const DiagnosticForm = ({ initialData }) => {
 
         try {
             // 2. A Chamada (Fetch API)
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-            const response = await fetch(`${apiUrl}/api/analyze`, {
+            // 2. A Chamada (Fetch API)
+            const response = await fetch('https://daat-ai-fullstack.onrender.com/api/analyze', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -5,8 +5,7 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis }) => {
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-        fetch(`${apiUrl}/api/history`)
+        fetch('https://daat-ai-fullstack.onrender.com/api/history')
             .then(res => res.json())
             .then(data => setHistory(data.history || []))
             .catch(err => console.error(err));
