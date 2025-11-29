@@ -86,6 +86,19 @@ const DiagnosticForm = ({ initialData }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // --- NOVA VALIDAÇÃO DE SEGURANÇA ---
+        const minLength = 10; // Mínimo de caracteres aceitável
+        if (
+            customerSegment.length < minLength ||
+            problem.length < minLength ||
+            valueProposition.length < minLength
+        ) {
+            alert("⚠️ Dados Insuficientes.\n\nPor favor, escreva frases completas (mínimo 10 letras) para que a IA possa entender o seu negócio.");
+            return; // Pára tudo aqui. Não envia para o servidor.
+        }
+        // -----------------------------------
+
         setLoading(true);
         setResult(null); // Limpa resultado anterior
 
