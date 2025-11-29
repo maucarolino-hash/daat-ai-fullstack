@@ -88,6 +88,28 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
                     </ul>
                 )}
             </div>
+
+            {/* Botão de Logout (Rodapé da Sidebar) */}
+            <div style={{ padding: '20px', borderTop: '1px solid var(--border-subtle)' }}>
+                <button
+                    onClick={onLogout}
+                    style={{
+                        width: '100%',
+                        padding: '10px',
+                        backgroundColor: 'transparent',
+                        color: 'var(--text-muted)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { e.target.style.borderColor = 'var(--status-danger)'; e.target.style.color = 'var(--status-danger)'; }}
+                    onMouseLeave={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.color = 'var(--text-muted)'; }}
+                >
+                    Sair da Conta
+                </button>
+            </div>
         </div>
     );
 };
