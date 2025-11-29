@@ -40,10 +40,11 @@ const Login = ({ onLogin }) => {
                     setError("Login bem sucedido, mas nenhum token foi recebido.");
                 }
             } else {
-            } else {
                 // ERRO
                 console.error("Erro Auth:", data);
-                setError(JSON.stringify(data)); // Mostra o erro cru por enquanto para debug
+                // Tenta extrair mensagem de erro mais amigável
+                const errorMsg = data.detail || data.non_field_errors?.[0] || JSON.stringify(data);
+                setError(errorMsg);
             }
         } catch (err) {
             setError("Erro de conexão. O servidor está acordado?");

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 const LoginForm = ({ onLogin, onSwitchToRegister }) => {
     const [username, setUsername] = useState('');
@@ -12,8 +13,8 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
         setError('');
 
         try {
-            // Usa a URL do ambiente ou fallback local
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+            // Usa a URL do arquivo de configuração
+            const apiUrl = API_BASE_URL;
 
             const response = await fetch(`${apiUrl}/api/auth/login/`, {
                 method: 'POST',
