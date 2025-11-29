@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import SkeletonLoader from './SkeletonLoader'
 import ComponentFeedback from './ComponentFeedback'
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { pdf } from '@react-pdf/renderer';
 import DaatReportPDF from './DaatReportPDF';
-
-
+import { API_BASE_URL } from '../config';
 
 // Componente Reutilizável para Inputs de Texto Longo
 const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }) => (
@@ -52,7 +51,7 @@ const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }
     </div>
 );
 
-const DiagnosticForm = ({ initialData }) => {
+const DiagnosticForm = ({ initialData, token }) => {
     const terminalRef = useRef(null); // Referência para o terminal
     // Estados dos inputs
     const [customerSegment, setCustomerSegment] = useState("");
@@ -88,6 +87,19 @@ const DiagnosticForm = ({ initialData }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // --- NOVA VALIDAÇÃO DE SEGURANÇA ---
+        const minLength = 10; // Mínimo de caracteres aceitável
+        if (
+            customerSegment.length < minLength ||
+            problem.length < minLength ||
+            valueProposition.length < minLength
+        ) {
+            alert("⚠️ Dados Insuficientes.\n\nPor favor, escreva frases completas (mínimo 10 letras) para que a IA possa entender o seu negócio.");
+            return; // Pára tudo aqui. Não envia para o servidor.
+        }
+        // -----------------------------------
+
         setLoading(true);
         setResult(null); // Limpa resultado anterior
 
@@ -96,18 +108,24 @@ const DiagnosticForm = ({ initialData }) => {
 
         try {
             // 2. A Chamada (Fetch API)
-            const response = await fetch('http://127.0.0.1:8000/api/analyze', {
+            const response = await fetch(`${API_BASE_URL}/api/analyze`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // <--- Mude de Token para Bearer aqui também
                 },
                 body: JSON.stringify(payload),
             });
 
+            if (response.status === 401) {
+                alert("Sessão expirada. Por favor, faça login novamente.");
+                window.location.reload(); // Força o refresh para cair no Login
+                return;
+            }
+
             // 3. A Resposta
             const data = await response.json();
             setResult(data);
-
         } catch (error) {
             console.error("Erro ao conectar ao Daat Brain:", error);
             alert("Erro de conexão. O servidor Django está rodando?");
@@ -115,8 +133,6 @@ const DiagnosticForm = ({ initialData }) => {
             setLoading(false);
         }
     };
-
-
 
     return (
         <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '500px', margin: '0 auto' }}>
@@ -206,42 +222,58 @@ const DiagnosticForm = ({ initialData }) => {
                                 </div>
                             </div>
 
-                            {/* O NOVO BOTÃO DE DOWNLOAD */}
-                            {/* Botão PDF via React-PDF */}
+                            {/* O NOVO BOTÃO DE DOWNLOAD (Programático) */}
                             {result && (
-                                <PDFDownloadLink
-                                    document={
-                                        <DaatReportPDF
-                                            data={{
-                                                ...result,
-                                                customerSegment: customerSegment,
-                                                problem: problem,
-                                                valueProposition: valueProposition
-                                            }}
-                                        />
-                                    }
-                                    fileName={`Daat_Relatorio_${result.score}.pdf`}
-                                    style={{ textDecoration: 'none' }}
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            const blob = await pdf(
+                                                <DaatReportPDF
+                                                    data={{
+                                                        ...result,
+                                                        customerSegment: customerSegment,
+                                                        problem: problem,
+                                                        valueProposition: valueProposition
+                                                    }}
+                                                />
+                                            ).toBlob();
+
+                                            // Forçar o tipo MIME para garantir a extensão
+                                            const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+                                            const url = URL.createObjectURL(pdfBlob);
+
+                                            const link = document.createElement('a');
+                                            link.href = url;
+                                            const filename = `Daat_Relatorio_${result.score}.pdf`;
+                                            link.download = filename;
+
+                                            console.log("Baixando:", filename); // Debug
+
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                            URL.revokeObjectURL(url);
+                                        } catch (error) {
+                                            console.error("Erro ao gerar PDF:", error);
+                                            alert("Erro ao gerar o PDF.");
+                                        }
+                                    }}
+                                    style={{
+                                        padding: '8px 16px',
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid var(--border-light)',
+                                        borderRadius: '6px',
+                                        color: 'var(--text-secondary)',
+                                        cursor: 'pointer',
+                                        fontSize: '0.85rem',
+                                        display: 'flex', alignItems: 'center', gap: '8px',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--text-primary)')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-light)')}
                                 >
-                                    {({ blob, url, loading, error }) => (
-                                        <button
-                                            disabled={loading}
-                                            style={{
-                                                padding: '8px 16px',
-                                                backgroundColor: 'transparent',
-                                                border: '1px solid var(--border-light)',
-                                                borderRadius: '6px',
-                                                color: loading ? 'var(--text-muted)' : 'var(--text-secondary)',
-                                                cursor: loading ? 'wait' : 'pointer',
-                                                fontSize: '0.85rem',
-                                                display: 'flex', alignItems: 'center', gap: '8px',
-                                                transition: 'all 0.2s'
-                                            }}
-                                        >
-                                            <span>{loading ? '⏳' : '⬇️'}</span> {loading ? 'Gerando...' : 'PDF'}
-                                        </button>
-                                    )}
-                                </PDFDownloadLink>
+                                    <span>⬇️</span> PDF
+                                </button>
                             )}
                         </div>
                     </div>

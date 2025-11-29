@@ -1,15 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 // Recebemos as funções do Pai via PROPS
-const HistorySidebar = ({ onSelectReport, onNewAnalysis }) => {
+const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/history')
-            .then(res => res.json())
-            .then(data => setHistory(data.history || []))
-            .catch(err => console.error(err));
-    }, []);
+        if (!token) return;
+
+        fetch(`${API_BASE_URL}/api/history/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) {
+                    onLogout();
+                    throw new Error("Sessão expirada");
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data && Array.isArray(data)) {
+                    setHistory(data);
+                } else if (data && data.history) {
+                    setHistory(data.history);
+                } else {
+                    setHistory([]);
+                }
+            })
+            .catch(err => console.error("Erro no histórico:", err));
+    }, [token, onLogout]);
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -81,6 +103,28 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis }) => {
                         ))}
                     </ul>
                 )}
+            </div>
+
+            {/* Botão de Logout (Rodapé da Sidebar) */}
+            <div style={{ padding: '20px', borderTop: '1px solid var(--border-subtle)' }}>
+                <button
+                    onClick={onLogout}
+                    style={{
+                        width: '100%',
+                        padding: '10px',
+                        backgroundColor: 'transparent',
+                        color: 'var(--text-muted)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { e.target.style.borderColor = 'var(--status-danger)'; e.target.style.color = 'var(--status-danger)'; }}
+                    onMouseLeave={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.color = 'var(--text-muted)'; }}
+                >
+                    Sair da Conta
+                </button>
             </div>
         </div>
     );
