@@ -111,13 +111,14 @@ const DiagnosticForm = ({ initialData, token }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}` // <--- O PASSE VIP
+                    'Authorization': `Bearer ${token}` // <--- Mude de Token para Bearer aqui também
                 },
                 body: JSON.stringify(payload),
             });
 
             if (response.status === 401) {
                 alert("Sessão expirada. Por favor, faça login novamente.");
+                window.location.reload(); // Força o refresh para cair no Login
                 return;
             }
 

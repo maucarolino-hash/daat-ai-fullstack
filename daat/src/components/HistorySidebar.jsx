@@ -7,15 +7,30 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
     useEffect(() => {
         if (!token) return;
 
-        fetch('https://daat-ai-fullstack.onrender.com/api/history', {
+        fetch('https://daat-ai-fullstack.onrender.com/api/history/', {
             headers: {
-                'Authorization': `Token ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         })
-            .then(res => res.json())
-            .then(data => setHistory(data.history || []))
-            .catch(err => console.error(err));
-    }, [token]);
+            .then(res => {
+                if (res.status === 401 || res.status === 403) {
+                    onLogout();
+                    throw new Error("Sessão expirada");
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data && Array.isArray(data)) {
+                    setHistory(data);
+                } else if (data && data.history) {
+                    setHistory(data.history);
+                } else {
+                    setHistory([]);
+                }
+            })
+            .catch(err => console.error("Erro no histórico:", err));
+    }, [token, onLogout]);
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
