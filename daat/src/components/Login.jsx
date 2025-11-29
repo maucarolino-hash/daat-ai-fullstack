@@ -5,7 +5,8 @@ const Login = ({ onLogin }) => {
     const [isRegistering, setIsRegistering] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [email, setEmail] = useState(""); // Opcional para o MVP, mas bom ter
+    const [confirmPassword, setConfirmPassword] = useState(""); // Novo estado
+    const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -14,13 +15,20 @@ const Login = ({ onLogin }) => {
         setLoading(true);
         setError("");
 
+        // Validação básica de senhas no frontend
+        if (isRegistering && password !== confirmPassword) {
+            setError("As senhas não coincidem.");
+            setLoading(false);
+            return;
+        }
+
         // Endpoint muda se for Login ou Registro
         const endpoint = isRegistering ? `${API_BASE_URL}/api/auth/registration/` : `${API_BASE_URL}/api/auth/login/`;
 
         try {
             const payload = isRegistering
-                ? { username, email, password1: password } // dj-rest-auth pede password1 no registro
-                : { username, password }; // dj-rest-auth pede username/password no login (ou email dependendo da config)
+                ? { username, email, password1: password, password2: confirmPassword } // Envia password2
+                : { username, password };
 
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -47,6 +55,7 @@ const Login = ({ onLogin }) => {
                 setError(errorMsg);
             }
         } catch (err) {
+            console.error("Erro no fetch:", err);
             setError("Erro de conexão. O servidor está acordado?");
         } finally {
             setLoading(false);
@@ -87,12 +96,13 @@ const Login = ({ onLogin }) => {
 
                     {isRegistering && (
                         <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Email (Opcional)</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Email</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-input)', color: 'white', outline: 'none' }}
+                                required
                             />
                         </div>
                     )}
@@ -107,6 +117,19 @@ const Login = ({ onLogin }) => {
                             required
                         />
                     </div>
+
+                    {isRegistering && (
+                        <div style={{ marginBottom: '25px' }}>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Confirmar Senha</label>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-input)', color: 'white', outline: 'none' }}
+                                required
+                            />
+                        </div>
+                    )}
 
                     <button
                         type="submit"

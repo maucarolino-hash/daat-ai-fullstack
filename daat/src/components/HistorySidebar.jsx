@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../config';
 
 // Recebemos as funções do Pai via PROPS
-const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
+const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refreshTrigger }) => {
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
         if (!token) return;
 
-        fetch(`${API_BASE_URL}/api/history/`, {
+        fetch(`${API_BASE_URL}/api/history`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
                 }
             })
             .catch(err => console.error("Erro no histórico:", err));
-    }, [token, onLogout]);
+    }, [token, onLogout, refreshTrigger]);
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

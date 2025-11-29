@@ -51,7 +51,7 @@ const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }
     </div>
 );
 
-const DiagnosticForm = ({ initialData, token }) => {
+const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
     const terminalRef = useRef(null); // Referência para o terminal
     // Estados dos inputs
     const [customerSegment, setCustomerSegment] = useState("");
@@ -126,6 +126,11 @@ const DiagnosticForm = ({ initialData, token }) => {
             // 3. A Resposta
             const data = await response.json();
             setResult(data);
+
+            // Avisa o pai que acabou, para atualizar a sidebar
+            if (onAnalysisComplete) {
+                onAnalysisComplete();
+            }
         } catch (error) {
             console.error("Erro ao conectar ao Daat Brain:", error);
             alert("Erro de conexão. O servidor Django está rodando?");

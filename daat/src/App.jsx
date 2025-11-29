@@ -8,6 +8,8 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('daat_token'));
 
   const [activeReport, setActiveReport] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Gatilho para atualizar a sidebar
+  const [formKey, setFormKey] = useState(0); // Chave para forçar o reset do formulário
 
   // Função para salvar o token quando fizer login
   const handleLogin = (newToken) => {
@@ -36,8 +38,12 @@ function App() {
         <HistorySidebar
           token={token} // <--- Passamos o token para a sidebar buscar o histórico
           onSelectReport={(report) => setActiveReport(report)}
-          onNewAnalysis={() => setActiveReport(null)}
+          onNewAnalysis={() => {
+            setActiveReport(null);
+            setFormKey(prev => prev + 1); // Força a recriação do componente Form
+          }}
           onLogout={handleLogout} // Passamos a função de logout
+          refreshTrigger={refreshTrigger} // <--- Passamos o gatilho
         />
       </div>
 
@@ -58,8 +64,10 @@ function App() {
           </header>
 
           <DiagnosticForm
+            key={formKey} // <--- A MÁGICA: Se mudar a chave, o React destroi e recria o componente (limpo)
             initialData={activeReport}
             token={token} // <--- Passamos o token para o form poder salvar
+            onAnalysisComplete={() => setRefreshTrigger(prev => prev + 1)} // <--- Avisa quando terminar
           />
 
         </div>

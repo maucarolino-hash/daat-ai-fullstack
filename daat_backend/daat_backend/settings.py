@@ -160,6 +160,8 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # Configuração do REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # <--- Adicionado para suportar Bearer Token
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
