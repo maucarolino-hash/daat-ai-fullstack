@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 // Recebemos as funções do Pai via PROPS
 const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
@@ -7,7 +8,7 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
     useEffect(() => {
         if (!token) return;
 
-        fetch('https://daat-ai-fullstack.onrender.com/api/history/', {
+        fetch(`${API_BASE_URL}/api/history/`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

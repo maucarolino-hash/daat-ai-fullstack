@@ -3,6 +3,7 @@ import SkeletonLoader from './SkeletonLoader'
 import ComponentFeedback from './ComponentFeedback'
 import { pdf } from '@react-pdf/renderer';
 import DaatReportPDF from './DaatReportPDF';
+import { API_BASE_URL } from '../config';
 
 // Componente Reutilizável para Inputs de Texto Longo
 const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }) => (
@@ -107,7 +108,7 @@ const DiagnosticForm = ({ initialData, token }) => {
 
         try {
             // 2. A Chamada (Fetch API)
-            const response = await fetch('https://daat-ai-fullstack.onrender.com/api/analyze', {
+            const response = await fetch(`${API_BASE_URL}/api/analyze`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

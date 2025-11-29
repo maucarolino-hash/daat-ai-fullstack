@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 const Login = ({ onLogin }) => {
     const [isRegistering, setIsRegistering] = useState(false);
@@ -14,9 +15,7 @@ const Login = ({ onLogin }) => {
         setError("");
 
         // Endpoint muda se for Login ou Registro
-        // NOTA: Substitua pela SUA URL DO RENDER se não criar o arquivo config
-        const BASE_URL = "https://daat-ai-fullstack.onrender.com";
-        const endpoint = isRegistering ? `${BASE_URL}/api/auth/registration/` : `${BASE_URL}/api/auth/login/`;
+        const endpoint = isRegistering ? `${API_BASE_URL}/api/auth/registration/` : `${API_BASE_URL}/api/auth/login/`;
 
         try {
             const payload = isRegistering
@@ -33,9 +32,14 @@ const Login = ({ onLogin }) => {
 
             if (response.ok) {
                 // SUCESSO!
-                // O backend retorna um 'key' (Token)
-                const token = data.key;
-                onLogin(token); // Avisa o App que logou
+                // Se for JWT, o token pode vir como 'access' ou 'key'
+                const token = data.key || data.access || data.token;
+                if (token) {
+                    onLogin(token); // Avisa o App que logou
+                } else {
+                    setError("Login bem sucedido, mas nenhum token foi recebido.");
+                }
+            } else {
             } else {
                 // ERRO
                 console.error("Erro Auth:", data);
