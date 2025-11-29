@@ -38,7 +38,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'diagnostic',
     'corsheaders',
+    
+    # Security & Auth
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', # CORS First
@@ -49,6 +61,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'allauth.account.middleware.AccountMiddleware', # Required by allauth
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -143,3 +156,24 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     'content-type',
     'authorization',
 ]
+
+# Configuração do REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated', # Bloqueia tudo por padrão (segurança máxima)
+    ],
+}
+
+# Configuração do JWT / Auth
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'daat-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'daat-refresh-token',
+}
+
+# Para o MVP, simplificamos o registro (não pede confirmação de email agora)
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_REQUIRED = False
