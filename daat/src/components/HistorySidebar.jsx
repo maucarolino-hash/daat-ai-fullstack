@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
 // Recebemos as funções do Pai via PROPS
-const HistorySidebar = ({ onSelectReport, onNewAnalysis }) => {
+const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout }) => {
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
-        fetch('https://daat-ai-fullstack.onrender.com/api/history')
+        if (!token) return;
+
+        fetch('https://daat-ai-fullstack.onrender.com/api/history', {
+            headers: {
+                'Authorization': `Token ${token}`
+            }
+        })
             .then(res => res.json())
             .then(data => setHistory(data.history || []))
             .catch(err => console.error(err));
-    }, []);
+    }, [token]);
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

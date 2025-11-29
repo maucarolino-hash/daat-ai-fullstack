@@ -50,7 +50,7 @@ const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }
     </div>
 );
 
-const DiagnosticForm = ({ initialData }) => {
+const DiagnosticForm = ({ initialData, token }) => {
     const terminalRef = useRef(null); // Referência para o terminal
     // Estados dos inputs
     const [customerSegment, setCustomerSegment] = useState("");
@@ -107,14 +107,19 @@ const DiagnosticForm = ({ initialData }) => {
 
         try {
             // 2. A Chamada (Fetch API)
-            // 2. A Chamada (Fetch API)
             const response = await fetch('https://daat-ai-fullstack.onrender.com/api/analyze', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Token ${token}` // <--- O PASSE VIP
                 },
                 body: JSON.stringify(payload),
             });
+
+            if (response.status === 401) {
+                alert("Sessão expirada. Por favor, faça login novamente.");
+                return;
+            }
 
             // 3. A Resposta
             const data = await response.json();
