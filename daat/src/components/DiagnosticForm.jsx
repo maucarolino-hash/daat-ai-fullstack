@@ -85,6 +85,45 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
         }
     }, [initialData]);
 
+    const [statusMessage, setStatusMessage] = useState(""); // Feedback para o usuário
+
+    const pollTaskStatus = async (taskId) => {
+        setStatusMessage("A IA está pesquisando concorrentes no mercado...");
+
+        const intervalId = setInterval(async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/status/${taskId}/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.status === 'completed') {
+                    clearInterval(intervalId);
+                    setLoading(false);
+                    setResult(data.data);
+                    setStatusMessage("");
+
+                    if (onAnalysisComplete) {
+                        onAnalysisComplete();
+                    }
+                } else if (data.status === 'failed') {
+                    clearInterval(intervalId);
+                    setLoading(false);
+                    alert(`Erro na análise: ${data.error}`);
+                    setStatusMessage("");
+                } else {
+                    // Ainda processando...
+                    console.log("Processando...");
+                }
+            } catch (error) {
+                clearInterval(intervalId);
+                setLoading(false);
+                console.error("Erro no polling:", error);
+                alert("Erro ao verificar status da análise.");
+            }
+        }, 2000);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -102,39 +141,49 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
         setLoading(true);
         setResult(null); // Limpa resultado anterior
+        setStatusMessage("Enviando dados para o QG...");
 
         // 1. Preparar os dados do Daat
         const payload = { customerSegment, problem, valueProposition };
 
         try {
-            // 2. A Chamada (Fetch API)
+            // 2. A Chamada Inicial (POST)
             const response = await fetch(`${API_BASE_URL}/api/analyze`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // <--- Mude de Token para Bearer aqui também
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload),
             });
 
             if (response.status === 401) {
                 alert("Sessão expirada. Por favor, faça login novamente.");
-                window.location.reload(); // Força o refresh para cair no Login
+                window.location.reload();
                 return;
             }
 
-            // 3. A Resposta
             const data = await response.json();
-            setResult(data);
 
-            // Avisa o pai que acabou, para atualizar a sidebar
-            if (onAnalysisComplete) {
-                onAnalysisComplete();
+            // 3. Verifica se já acabou (Modo Eager ou muito rápido)
+            if (data.status === 'completed') {
+                setLoading(false);
+                setResult(data.data);
+                setStatusMessage("");
+                if (onAnalysisComplete) onAnalysisComplete();
             }
+            // 4. Se não, inicia o Polling com o ID da tarefa
+            else if (data.task_id) {
+                pollTaskStatus(data.task_id);
+            } else {
+                // Fallback para erro
+                setLoading(false);
+                alert("Erro: Não foi possível iniciar a análise.");
+            }
+
         } catch (error) {
             console.error("Erro ao conectar ao Daat Brain:", error);
             alert("Erro de conexão. O servidor Django está rodando?");
-        } finally {
             setLoading(false);
         }
     };
@@ -187,7 +236,7 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
                     onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-hover)')}
                     onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-primary)')}
                 >
-                    {loading ? 'Analisando...' : 'Gerar Diagnóstico'}
+                    {loading ? (statusMessage || 'Analisando...') : 'Gerar Diagnóstico'}
                 </button>
             </form>
 

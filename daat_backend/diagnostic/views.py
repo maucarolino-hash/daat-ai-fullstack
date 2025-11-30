@@ -1,8 +1,9 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .services import analyze_idea
 from .models import Diagnostic
+from .tasks import analyze_startup_task
+from celery.result import AsyncResult
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -11,23 +12,50 @@ def process_diagnostic(request):
     problem = request.data.get('problem', '')
     proposition = request.data.get('valueProposition', '')
     
-    result = analyze_idea(segment, problem, proposition)
-    
-    # Salvar no Banco de Dados vinculado ao usuário
-    Diagnostic.objects.create(
-        user=request.user,
-        customer_segment=segment,
-        problem=problem,
-        value_proposition=proposition,
-        score=result.get('score'),
-        feedback=result.get('feedback')
-    )
-    
-    return Response({
-        'status': 'analisado',
-        'score': result.get('score'),
-        'feedback': result.get('feedback')
-    })
+    # Dispara a tarefa para o "Espaço" (Redis)
+    # Passamos o ID do usuário para salvar o histórico lá na tarefa (se implementado)
+    # Por enquanto, a tarefa retorna o JSON, e o frontend vai buscar via polling.
+    # Para manter o histórico funcionando, o ideal é salvar no final da tarefa.
+    try:
+        task = analyze_startup_task.delay(segment, problem, proposition, request.user.id)
+        
+        # Suporte para Modo Eager (Desenvolvimento sem Redis)
+        # Se a tarefa já terminou (foi síncrona), retorna o resultado direto!
+        if task.ready():
+            return Response({
+                "task_id": task.id,
+                "status": "completed",
+                "data": task.result
+            })
+
+        return Response({
+            "task_id": task.id, 
+            "status": "processing"
+        })
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc()) # Imprime no terminal para debug
+        return Response({
+            "error": str(e),
+            "detail": "Erro ao iniciar a tarefa de análise."
+        }, status=500)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_status(request, task_id):
+    result = AsyncResult(task_id)
+
+    if result.ready():
+        # Se deu erro na tarefa
+        if result.failed():
+             return Response({"status": "failed", "error": str(result.result)})
+        
+        return Response({
+            "status": "completed", 
+            "data": result.result
+        })
+    else:
+        return Response({"status": "processing"})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
