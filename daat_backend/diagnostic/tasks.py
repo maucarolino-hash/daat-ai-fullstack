@@ -1,56 +1,38 @@
-import os
-import json
+from celery import shared_task
 from openai import OpenAI
 from tavily import TavilyClient
+import os
+import json
 from django.conf import settings
-from dotenv import load_dotenv
+from django.contrib.auth.models import User
+from .models import Diagnostic
 
-load_dotenv()
-
-def analyze_idea(segment, problem, proposition):
+@shared_task
+def analyze_startup_task(segment, problem, proposition, user_id):
+    # Clientes
     api_key = os.getenv('OPENAI_API_KEY')
     tavily_key = os.getenv('TAVILY_API_KEY')
     
-    # Fallback se não houver chave OpenAI
-    if not api_key:
-        return {
-            "score": 0,
-            "feedback": "⚠️ **Modo Offline**: A chave da API OpenAI não foi encontrada."
-        }
-
     client = OpenAI(api_key=api_key)
-    
-    # Inicializa Tavily se a chave existir
-    tavily = None
-    if tavily_key:
-        tavily = TavilyClient(api_key=tavily_key)
+    tavily = TavilyClient(api_key=tavily_key) if tavily_key else None
 
-    # 1. Construir a Query de Pesquisa
-    search_query = f"market size competitors trends for {segment} {proposition} startup brazil"
-    
-    # 2. Buscar dados na Web (Tavily)
+    # 1. Busca Web (Tavily)
     web_context_str = ""
     if tavily:
-        print(f"🔍 Pesquisando na web por: {search_query}...")
         try:
-            # max_results=3 para ser rápido e economizar tokens
-            search_result = tavily.search(query=search_query, search_depth="basic", max_results=3)
-            
-            # Extrair apenas o conteúdo útil dos resultados
+            query = f"market size competitors trends for {segment} {proposition} startup brazil"
+            search = tavily.search(query=query, search_depth="basic", max_results=3)
             web_context = []
-            for result in search_result.get('results', []):
+            for result in search.get('results', []):
                 web_context.append(f"- {result['title']}: {result['content']}")
-            
             web_context_str = "\n".join(web_context)
-            print("✅ Dados encontrados.")
-            
         except Exception as e:
-            print(f"⚠️ Erro na busca (usando conhecimento base): {e}")
-            web_context_str = "Não foi possível acessar dados em tempo real. Use seu conhecimento base."
+            print(f"Erro Tavily: {e}")
+            web_context_str = "Sem dados de web."
     else:
-        web_context_str = "Tavily API Key não configurada. Use seu conhecimento base."
+        web_context_str = "Modo Offline (Sem Tavily)."
 
-    # 3. Engenharia de Prompt Atualizada (Injetando o Contexto)
+    # 2. Prompt (O mesmo de antes - Robusto)
     system_prompt = f"""
     Você é um Investidor de Risco Sênior e Especialista em Produto.
     
@@ -78,24 +60,21 @@ def analyze_idea(segment, problem, proposition):
     Solução: {proposition}
     """
 
-    # 4. Chamada OpenAI
+    # 3. OpenAI
     try:
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo", # Ou gpt-4o-mini se quiser mais inteligência barata
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
             temperature=0.7,
-            response_format={"type": "json_object"} # Garante JSON válido
+            response_format={"type": "json_object"}
         )
         
-        analysis_content = response.choices[0].message.content
-        analysis_json = json.loads(analysis_content)
+        analysis_json = json.loads(response.choices[0].message.content)
         
-        # 5. Formatar para o Frontend (Manter compatibilidade)
-        # O frontend espera 'score' e 'feedback' (string markdown)
-        
+        # Formatar para o padrão que o Frontend espera (Markdown)
         feedback_markdown = f"""
 ### 📊 Análise de Mercado (Baseada em Dados Reais)
 {analysis_json.get('analise_mercado', 'N/A')}
@@ -111,6 +90,20 @@ def analyze_idea(segment, problem, proposition):
 ### 🎯 Veredito Final
 {analysis_json.get('veredito', 'N/A')}
         """
+        
+        # Salvar no Banco de Dados (Histórico)
+        try:
+            user = User.objects.get(id=user_id)
+            Diagnostic.objects.create(
+                user=user,
+                customer_segment=segment,
+                problem=problem,
+                value_proposition=proposition,
+                score=analysis_json.get('score', 0),
+                feedback=feedback_markdown.strip()
+            )
+        except Exception as db_err:
+            print(f"Erro ao salvar histórico: {db_err}")
 
         return {
             "score": analysis_json.get('score', 0),
@@ -118,8 +111,7 @@ def analyze_idea(segment, problem, proposition):
         }
 
     except Exception as e:
-        print(f"Erro Geral no Cérebro: {e}")
         return {
             "score": 0,
-            "feedback": f"Erro crítico no servidor. Detalhes: {str(e)}"
+            "feedback": f"Erro na IA: {str(e)}"
         }

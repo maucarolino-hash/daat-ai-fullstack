@@ -19,5 +19,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('diagnostic.urls')),
+    path('api/', include('diagnostic.urls')),
+    
+    # NOVAS ROTAS DE AUTENTICAÇÃO
+    path('api/auth/', include('dj_rest_auth.urls')),                # Login, Logout, User
+    path('api/auth/registration/', include('dj_rest_auth.registration.urls')), # Cadastro
 ]

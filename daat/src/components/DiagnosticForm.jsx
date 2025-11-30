@@ -3,6 +3,7 @@ import SkeletonLoader from './SkeletonLoader'
 import ComponentFeedback from './ComponentFeedback'
 import { pdf } from '@react-pdf/renderer';
 import DaatReportPDF from './DaatReportPDF';
+import { API_BASE_URL } from '../config';
 
 // Componente Reutilizável para Inputs de Texto Longo
 const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }) => (
@@ -50,7 +51,7 @@ const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }
     </div>
 );
 
-const DiagnosticForm = ({ initialData }) => {
+const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
     const terminalRef = useRef(null); // Referência para o terminal
     // Estados dos inputs
     const [customerSegment, setCustomerSegment] = useState("");
@@ -84,6 +85,45 @@ const DiagnosticForm = ({ initialData }) => {
         }
     }, [initialData]);
 
+    const [statusMessage, setStatusMessage] = useState(""); // Feedback para o usuário
+
+    const pollTaskStatus = async (taskId) => {
+        setStatusMessage("A IA está pesquisando concorrentes no mercado...");
+
+        const intervalId = setInterval(async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/status/${taskId}/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.status === 'completed') {
+                    clearInterval(intervalId);
+                    setLoading(false);
+                    setResult(data.data);
+                    setStatusMessage("");
+
+                    if (onAnalysisComplete) {
+                        onAnalysisComplete();
+                    }
+                } else if (data.status === 'failed') {
+                    clearInterval(intervalId);
+                    setLoading(false);
+                    alert(`Erro na análise: ${data.error}`);
+                    setStatusMessage("");
+                } else {
+                    // Ainda processando...
+                    console.log("Processando...");
+                }
+            } catch (error) {
+                clearInterval(intervalId);
+                setLoading(false);
+                console.error("Erro no polling:", error);
+                alert("Erro ao verificar status da análise.");
+            }
+        }, 2000);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -101,28 +141,49 @@ const DiagnosticForm = ({ initialData }) => {
 
         setLoading(true);
         setResult(null); // Limpa resultado anterior
+        setStatusMessage("Enviando dados para o QG...");
 
         // 1. Preparar os dados do Daat
         const payload = { customerSegment, problem, valueProposition };
 
         try {
-            // 2. A Chamada (Fetch API)
-            // 2. A Chamada (Fetch API)
-            const response = await fetch('https://daat-ai-fullstack.onrender.com/api/analyze', {
+            // 2. A Chamada Inicial (POST)
+            const response = await fetch(`${API_BASE_URL}/api/analyze`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload),
             });
 
-            // 3. A Resposta
+            if (response.status === 401) {
+                alert("Sessão expirada. Por favor, faça login novamente.");
+                window.location.reload();
+                return;
+            }
+
             const data = await response.json();
-            setResult(data);
+
+            // 3. Verifica se já acabou (Modo Eager ou muito rápido)
+            if (data.status === 'completed') {
+                setLoading(false);
+                setResult(data.data);
+                setStatusMessage("");
+                if (onAnalysisComplete) onAnalysisComplete();
+            }
+            // 4. Se não, inicia o Polling com o ID da tarefa
+            else if (data.task_id) {
+                pollTaskStatus(data.task_id);
+            } else {
+                // Fallback para erro
+                setLoading(false);
+                alert("Erro: Não foi possível iniciar a análise.");
+            }
+
         } catch (error) {
             console.error("Erro ao conectar ao Daat Brain:", error);
             alert("Erro de conexão. O servidor Django está rodando?");
-        } finally {
             setLoading(false);
         }
     };
@@ -175,7 +236,7 @@ const DiagnosticForm = ({ initialData }) => {
                     onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-hover)')}
                     onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-primary)')}
                 >
-                    {loading ? 'Analisando...' : 'Gerar Diagnóstico'}
+                    {loading ? (statusMessage || 'Analisando...') : 'Gerar Diagnóstico'}
                 </button>
             </form>
 
