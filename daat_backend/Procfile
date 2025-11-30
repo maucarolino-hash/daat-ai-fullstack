@@ -1,0 +1,1 @@
+web: gunicorn daat_backend.wsgi --log-file -
