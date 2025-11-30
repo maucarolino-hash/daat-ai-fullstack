@@ -152,17 +152,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS CONFIGURATION
 # In production, you might want to restrict this to your Vercel URL
-CORS_ALLOW_ALL_ORIGINS = True 
+CORS_ALLOW_ALL_ORIGINS = False 
 CORS_ALLOW_CREDENTIALS = True
 
 # Lista de origens permitidas (Vercel + Localhost)
-# CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://daat-ai-fullstack.vercel.app", # URL de Produção
+]
 
-# Fallback para garantir que o localhost sempre funcione em dev
-# if DEBUG:
-#    CORS_ALLOWED_ORIGINS += ['http://localhost:5173', 'http://127.0.0.1:5173']
+# Fallback para garantir que o localhost sempre funcione em dev se DEBUG estiver True
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += ['http://localhost:5173', 'http://127.0.0.1:5173']
 
-# CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS # Importante para POST requests!
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS # Importante para POST requests!
 
 from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
