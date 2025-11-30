@@ -1,53 +1,31 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import DiagnosticForm from './components/DiagnosticForm';
 import HistorySidebar from './components/HistorySidebar';
-import Login from './components/Login'; // <--- Importe o Login
+import Login from './components/Login';
+import ConnectionTest from './components/ConnectionTest';
 
-function App() {
-  // Estado do Token (Tenta ler do localStorage ao iniciar)
-  const [token, setToken] = useState(localStorage.getItem('daat_token'));
-
+// Componente Principal do Dashboard (Protegido)
+const Dashboard = ({ token, onLogout }) => {
   const [activeReport, setActiveReport] = useState(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // Gatilho para atualizar a sidebar
-  const [formKey, setFormKey] = useState(0); // Chave para forçar o reset do formulário
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [formKey, setFormKey] = useState(0);
 
-  // Função para salvar o token quando fizer login
-  const handleLogin = (newToken) => {
-    localStorage.setItem('daat_token', newToken);
-    setToken(newToken);
-  };
-
-  // Função de Logout
-  const handleLogout = () => {
-    localStorage.removeItem('daat_token');
-    setToken(null);
-    setActiveReport(null);
-  };
-
-  // SE NÃO TIVER TOKEN, MOSTRA TELA DE LOGIN
-  if (!token) {
-    return <Login onLogin={handleLogin} />;
-  }
-
-  // SE TIVER TOKEN, MOSTRA O DASHBOARD (O App original)
   return (
     <div className="app-container">
-
-      {/* SIDEBAR */}
       <div className="app-sidebar">
         <HistorySidebar
-          token={token} // <--- Passamos o token para a sidebar buscar o histórico
-          onSelectReport={(report) => setActiveReport(report)}
+          token={token}
+          onSelectReport={setActiveReport}
           onNewAnalysis={() => {
             setActiveReport(null);
-            setFormKey(prev => prev + 1); // Força a recriação do componente Form
+            setFormKey(prev => prev + 1);
           }}
-          onLogout={handleLogout} // Passamos a função de logout
-          refreshTrigger={refreshTrigger} // <--- Passamos o gatilho
+          onLogout={onLogout}
+          refreshTrigger={refreshTrigger}
         />
       </div>
 
-      {/* ÁREA PRINCIPAL */}
       <main className="app-main">
         <div className="content-wrapper">
           <header className="app-header">
@@ -56,23 +34,56 @@ function App() {
                 <h1>Daat <span>AI</span></h1>
                 <p>Intelligence Dashboard v1.0</p>
               </div>
-              {/* Botão de Logout Mobile (Opcional) */}
-              <button onClick={handleLogout} style={{ background: 'none', border: '1px solid #334155', color: '#94A3B8', padding: '5px 10px', borderRadius: '5px', fontSize: '0.8rem', cursor: 'pointer' }}>
+              <button onClick={onLogout} style={{ background: 'none', border: '1px solid #334155', color: '#94A3B8', padding: '5px 10px', borderRadius: '5px', fontSize: '0.8rem', cursor: 'pointer' }}>
                 Sair
               </button>
             </div>
           </header>
 
           <DiagnosticForm
-            key={formKey} // <--- A MÁGICA: Se mudar a chave, o React destroi e recria o componente (limpo)
+            key={formKey}
             initialData={activeReport}
-            token={token} // <--- Passamos o token para o form poder salvar
-            onAnalysisComplete={() => setRefreshTrigger(prev => prev + 1)} // <--- Avisa quando terminar
+            token={token}
+            onAnalysisComplete={() => setRefreshTrigger(prev => prev + 1)}
           />
-
         </div>
       </main>
     </div>
+  );
+};
+
+function App() {
+  const [token, setToken] = useState(localStorage.getItem('daat_token'));
+
+  const handleLogin = (newToken) => {
+    localStorage.setItem('daat_token', newToken);
+    setToken(newToken);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('daat_token');
+    setToken(null);
+  };
+
+  return (
+    <Router>
+      <Routes>
+        {/* Rota de Teste de Conexão (Pública) */}
+        <Route path="/test" element={<ConnectionTest />} />
+
+        {/* Rota Principal (Protegida) */}
+        <Route
+          path="/"
+          element={
+            token ? (
+              <Dashboard token={token} onLogout={handleLogout} />
+            ) : (
+              <Login onLogin={handleLogin} />
+            )
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
