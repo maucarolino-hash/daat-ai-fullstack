@@ -1,41 +1,33 @@
 :root {
-  /* --- PALETA BASEADA NO FIGMA DARK --- */
+  /* --- PALETA BASEADA NO FIGMA DARK (UPDATED TO DARK PURPLE) --- */
 
   /* Fundos */
-  --bg-main: #0B1120;
-  /* O fundo mais escuro (Main Background) */
-  --bg-sidebar: #0F172A;
-  /* Um pouco mais claro (Sidebar) */
-  --bg-card: #1E293B;
-  /* Cartões e Paineis */
-  --bg-input: #334155;
-  /* Campos de formulário */
+  --bg-main: #1A1B2E;
+  /* Dark Purple Main */
+  --bg-sidebar: #151625;
+  /* Slightly darker purple for sidebar */
+  --bg-card: #24263A;
+  /* Card background matching inputs */
+  --bg-input: #2E3048;
+  /* Input fields */
 
   /* Bordas */
-  --border-subtle: #1E293B;
-  /* Bordas quase invisíveis */
+  --border-subtle: #2E3048;
   --border-light: #334155;
-  /* Bordas de separação */
 
   /* Texto */
   --text-primary: #F1F5F9;
-  /* Branco gelo (Títulos) */
-  --text-secondary: #94A3B8;
-  /* Cinza azulado (Subtítulos) */
+  --text-secondary: #9CA3AF;
   --text-muted: #64748B;
-  /* Texto apagado */
 
   /* Cores de Ação (Brand Colors) */
-  --brand-primary: #6366F1;
-  /* Indigo Neon (Botões) */
-  --brand-hover: #4F46E5;
-  /* Indigo mais escuro */
+  --brand-primary: #6D54B5;
+  /* Primary Purple */
+  --brand-hover: #5b4699;
 
   /* Status */
   --status-success: #10B981;
-  /* Verde Esmeralda */
   --status-danger: #EF4444;
-  /* Vermelho Alerta */
 }
 
 /* Reset Global para Dark Mode */
@@ -45,8 +37,8 @@ body {
   background-color: var(--bg-main);
   color: var(--text-primary);
   font-family: 'Inter', sans-serif;
-  background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b1120 100%);
-  /* Gradiente sutil no fundo */
+  background-image: none;
+  /* Removed radial gradient for flat look */
 }
 
 /* Scrollbar Dark (Estilo Hacker) */
@@ -100,10 +92,10 @@ body {
   }
 }
 
-/* GLASSMORPHISM UTILS */
+/* GLASSMORPHISM UTILS - Adapted for Dark Purple */
 .glass-panel {
-  background: rgba(30, 41, 59, 0.7);
-  /* --bg-card com transparência */
+  background: rgba(36, 38, 58, 0.7);
+  /* --bg-card with opacity */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -132,7 +124,7 @@ body {
   /* Estilo Visual */
   border-radius: 16px;
   /* background-color: #f8fafc;  <-- REMOVIDO PARA GLASS */
-  border: 1px solid #e2e8f0;
+  border: 1px solid #2E3048;
   overflow: hidden;
   /* Garante que bordas arredondadas cortem o conteúdo */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -148,11 +140,10 @@ body {
   margin-top: 40px;
   /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
   color: var(--text-primary);
-  border: 1px solid var(--border-light);
   transition: border-color 0.3s ease;
 
   /* APLICANDO GLASSMORPHISM */
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(36, 38, 58, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -219,7 +210,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
 
   /* APLICANDO GLASSMORPHISM */
-  background: rgba(30, 41, 59, 0.4);
+  background: rgba(36, 38, 58, 0.4);
   margin-bottom: 8px;
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -231,7 +222,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   max-width: 100%;
   box-sizing: border-box;
   padding: 12px;
-  background-color: rgba(51, 65, 85, 0.4);
+  background-color: var(--bg-input);
   /* Input translúcido */
   border: 1px solid var(--border-light);
   border-radius: 8px;
@@ -247,9 +238,9 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .input-textarea:focus {
   border-color: var(--brand-primary);
-  background-color: rgba(51, 65, 85, 0.7);
+  background-color: #383a50;
   /* Fica mais sólido ao focar */
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 2px rgba(109, 84, 181, 0.2);
 }
 
 .input-text {
@@ -257,7 +248,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   padding: 12px;
   border-radius: 8px;
   border: 1px solid var(--border-light);
-  background-color: rgba(51, 65, 85, 0.4);
+  background-color: var(--bg-input);
   color: white;
   outline: none;
   box-sizing: border-box;
@@ -266,8 +257,8 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .input-text:focus {
   border-color: var(--brand-primary);
-  background-color: rgba(51, 65, 85, 0.7);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  background-color: #383a50;
+  box-shadow: 0 0 0 2px rgba(109, 84, 181, 0.2);
 }
 
 .btn-primary {
@@ -282,13 +273,13 @@ textarea::-webkit-scrollbar-thumb:hover {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 6px rgba(109, 84, 181, 0.25);
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--brand-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 8px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 6px 8px rgba(109, 84, 181, 0.35);
 }
 
 .btn-primary:disabled {
@@ -305,7 +296,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #1A1B2E;
+  background-color: var(--bg-main);
   /* Dark Purple/Slate Background */
   background-image: none;
   color: var(--text-primary);
@@ -315,6 +306,28 @@ textarea::-webkit-scrollbar-thumb:hover {
   width: 100%;
   max-width: 400px;
   padding: 40px;
+  box-sizing: border-box;
+  /* Ensure padding doesn't overflow width */
+}
+
+/* Mobile Adjustment for Login */
+@media (max-width: 480px) {
+  .login-content {
+    padding: 20px;
+    /* Reduced padding for mobile */
+    width: 90%;
+    /* Prevent touching edges */
+  }
+}
+
+.brand-title-login {
+  text-align: center;
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+  color: var(--brand-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
 }
 
 .login-title {
@@ -352,8 +365,8 @@ textarea::-webkit-scrollbar-thumb:hover {
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
-  border: 1px solid #2E3048;
-  background-color: #24263A;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-card);
   color: white;
   outline: none;
   box-sizing: border-box;
@@ -362,7 +375,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 
 .input-field:focus {
-  border-color: #6D54B5;
+  border-color: var(--brand-primary);
   box-shadow: 0 0 0 2px rgba(109, 84, 181, 0.2);
 }
 
@@ -432,7 +445,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 
 .custom-checkbox a {
-  color: #6D54B5;
+  color: var(--brand-primary);
   text-decoration: none;
   font-weight: 500;
   margin-left: 4px;
@@ -445,7 +458,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 .btn-submit {
   width: 100%;
   padding: 14px;
-  background-color: #6D54B5;
+  background-color: var(--brand-primary);
   color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
@@ -457,7 +470,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 
 .btn-submit:hover:not(:disabled) {
-  background-color: #5b4699;
+  background-color: var(--brand-hover);
 }
 
 .btn-submit:disabled {
@@ -583,15 +596,13 @@ textarea::-webkit-scrollbar-thumb:hover {
   height: 100vh;
   overflow: hidden;
   background-color: var(--bg-main);
-  background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b1120 100%);
+  background-image: none;
 }
 
 .app-sidebar {
   width: 280px;
   flex-shrink: 0;
-  background-color: rgba(15, 23, 42, 0.8);
-  /* Sidebar translúcida */
-  backdrop-filter: blur(10px);
+  background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
@@ -736,6 +747,26 @@ textarea::-webkit-scrollbar-thumb:hover {
     /* Altura flexível no celular */
     min-height: 300px;
   }
+
+  /* --- MOBILE FLOATING ACTION BUTTON (NOVA ANÁLISE) --- */
+  .btn-new-analysis {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: auto;
+    padding: 14px 24px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    font-size: 1rem;
+    background-color: var(--brand-primary);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-new-analysis:active {
+    transform: scale(0.95);
+  }
 }
 
 /* --- HISTORY SIDEBAR --- */
@@ -810,7 +841,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   padding: 16px;
   margin-bottom: 8px;
   border-radius: 8px;
-  background-color: rgba(30, 41, 59, 0.4);
+  background-color: rgba(36, 38, 58, 0.4);
   /* Item translúcido */
   border: 1px solid var(--border-subtle);
   cursor: pointer;
@@ -820,7 +851,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 .history-item:hover {
   border-color: var(--brand-primary);
   transform: translateY(-2px);
-  background-color: rgba(30, 41, 59, 0.6);
+  background-color: rgba(36, 38, 58, 0.6);
 }
 
 .history-item-header {
