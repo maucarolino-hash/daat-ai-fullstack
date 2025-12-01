@@ -915,129 +915,41 @@ textarea::-webkit-scrollbar-thumb:hover {
     color: #cbd5e0;
   }
 
-  .result-content {
-    padding-bottom: 20px;
-  }
+  opacity: 0;
+  /* Hidden by default */
+  transition: all 0.2s;
+  padding: 4px;
+  border-radius: 4px;
+}
 
-  /* --- LAYOUT PADRÃO (DESKTOP) --- */
-  .app-container {
-    display: flex;
-    height: 100vh;
-  }
+.history-item:hover .btn-delete-history {
+  opacity: 1;
+  /* Show on hover */
+}
 
-  .history-empty {
-    color: var(--text-muted);
-    text-align: center;
-    font-size: 0.9rem;
-    margin-top: 20px;
-  }
+.btn-delete-history:hover {
+  color: var(--status-danger);
+  background-color: rgba(239, 68, 68, 0.1);
+}
 
-  .history-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-  .history-item {
-    position: relative;
-    padding: 16px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    background-color: rgba(36, 38, 58, 0.4);
-    /* Item translúcido */
-    border: 1px solid var(--border-subtle);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+.btn-sidebar-logout {
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
 
-  .history-item:hover {
-    border-color: var(--brand-primary);
-    transform: translateY(-2px);
-    background-color: rgba(36, 38, 58, 0.6);
-  }
-
-  .history-item-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-
-  .history-date {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  .history-score {
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-
-  .history-score.good {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: var(--status-success);
-  }
-
-  .history-score.bad {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: var(--status-danger);
-  }
-
-  .history-title {
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 20px;
-    /* Space for delete button */
-  }
-
-  .btn-delete-history {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    opacity: 0;
-    /* Hidden by default */
-    transition: all 0.2s;
-    padding: 4px;
-    border-radius: 4px;
-  }
-
-  .history-item:hover .btn-delete-history {
-    opacity: 1;
-    /* Show on hover */
-  }
-
-  .btn-delete-history:hover {
-    color: var(--status-danger);
-    background-color: rgba(239, 68, 68, 0.1);
-  }
-
-  .sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .btn-sidebar-logout {
-    width: 100%;
-    padding: 10px;
-    background-color: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border-subtle);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-  }
-
-  .btn-sidebar-logout:hover {
-    border-color: var(--status-danger);
-    color: var(--status-danger);
-  }
+.btn-sidebar-logout:hover {
+  border-color: var(--status-danger);
+  color: var(--status-danger);
+}
