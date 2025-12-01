@@ -220,30 +220,6 @@ textarea::-webkit-scrollbar-thumb:hover {
 
   /* APLICANDO GLASSMORPHISM */
   background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-}
-
-.diagnostic-container h2 {
-  text-align: center;
-  margin-bottom: 24px;
-  color: var(--text-primary);
-}
-
-.diagnostic-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.input-group {
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.input-label {
-  display: block;
   margin-bottom: 8px;
   color: var(--text-secondary);
   font-size: 0.9rem;
