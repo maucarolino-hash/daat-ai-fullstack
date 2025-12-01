@@ -71,10 +71,16 @@ function App() {
         {/* Rota de Teste de Conexão (Pública) */}
         <Route path="/test" element={<ConnectionTest />} />
 
-        {/* Rota Principal (Agora Pública para Testes) */}
+        {/* Rota Principal (Protegida) */}
         <Route
           path="/"
-          element={<Dashboard token={token || "demo-token"} onLogout={handleLogout} />}
+          element={
+            token ? (
+              <Dashboard token={token} onLogout={handleLogout} />
+            ) : (
+              <Login onLogin={handleLogin} />
+            )
+          }
         />
       </Routes>
     </Router>
