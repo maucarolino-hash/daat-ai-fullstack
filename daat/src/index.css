@@ -305,32 +305,6 @@ textarea::-webkit-scrollbar-thumb:hover {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: var(--bg-main);
-  background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0b1120 100%);
-  color: var(--text-primary);
-}
-
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-
-  /* APLICANDO GLASSMORPHISM */
-  color: #EF4444;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  text-align: center;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.login-footer {
-  margin-top: 20px;
-  text-align: center;
   font-size: 0.9rem;
 }
 
