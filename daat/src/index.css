@@ -467,19 +467,53 @@ textarea::-webkit-scrollbar-thumb:hover {
   text-align: center;
 }
 
-.app-header h1 {
-  font-size: 2.5rem;
-  color: var(--text-primary);
-  margin-bottom: 10px;
+/* NOVO HEADER LAYOUT */
+.header-content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
-.app-header h1 span {
+.brand-container {
+  text-align: center;
+}
+
+.brand-container h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin: 0 0 5px 0;
+}
+
+.brand-container h1 span {
   color: var(--brand-primary);
 }
 
-.app-header p {
+.brand-container p {
   color: var(--text-secondary);
   font-size: 1.1rem;
+  margin: 0;
+}
+
+.btn-logout {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 
@@ -526,12 +560,24 @@ textarea::-webkit-scrollbar-thumb:hover {
     margin-bottom: 20px;
   }
 
-  .app-header h1 {
+  /* Header Mobile: Empilha tudo */
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn-logout {
+    position: static;
+    /* Remove posição absoluta no mobile */
+    transform: none;
+  }
+
+  .brand-container h1 {
     font-size: 1.8rem;
   }
 
   /* Título menor */
-  .app-header p {
+  .brand-container p {
     font-size: 0.9rem;
   }
 

@@ -29,12 +29,12 @@ const Dashboard = ({ token, onLogout }) => {
       <main className="app-main">
         <div className="content-wrapper">
           <header className="app-header">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
+            <div className="header-content">
+              <div className="brand-container">
                 <h1>Daat <span>AI</span></h1>
                 <p>Intelligence Dashboard v1.0</p>
               </div>
-              <button onClick={onLogout} style={{ background: 'none', border: '1px solid #334155', color: '#94A3B8', padding: '5px 10px', borderRadius: '5px', fontSize: '0.8rem', cursor: 'pointer' }}>
+              <button className="btn-logout" onClick={onLogout}>
                 Sair
               </button>
             </div>
