@@ -834,308 +834,486 @@ textarea::-webkit-scrollbar-thumb:hover {
   color: var(--text-secondary);
   padding: 8px 16px;
   border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
 
-.btn-logout:hover {
-  border-color: var(--text-primary);
-  left: 0;
-  width: 280px;
-  height: 100vh;
-  z-index: 1000;
-  transform: translateX(-100%);
-  /* Escondido por padrão */
-  border-right: 1px solid var(--border-subtle);
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
-  max-height: none;
-  /* Remove limite de altura anterior */
-}
-
-.app-sidebar.mobile-open {
-  transform: translateX(0);
-  /* Mostra quando aberto */
-}
-
-/* Overlay Escuro quando menu abre */
-.mobile-menu-overlay {
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
-.mobile-menu-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* 3. Ajusta a área principal */
-.app-main {
-  width: 100%;
-  overflow: visible;
-}
-
-.content-wrapper {
-  padding: 20px 15px;
-}
-
-/* 4. Reduz fontes gigantes */
-.app-header {
-  margin-bottom: 20px;
-}
-
-/* Header Mobile: Empilha tudo */
-.header-content {
-  flex-direction: row;
-  /* Mantém linha para caber menu e logo */
-  justify-content: center;
-  gap: 15px;
-  padding-left: 0;
-  /* Remove padding para centralizar perfeitamente */
-}
-
-.btn-mobile-menu {
-  display: block;
-  /* Mostra botão menu */
-}
-
-.btn-logout {
-  position: static;
-  transform: none;
-  display: none;
-  /* Esconde logout do header no mobile (já tem na sidebar) */
-}
-
-.brand-container h1 {
-  font-size: 1.8rem;
-}
-
-.brand-container p {
-  font-size: 0.9rem;
-  display: none;
-  /* Simplifica header mobile */
-}
-
-/* 5. Ajusta o Terminal para caber na tela */
-.daat-terminal {
-  height: auto !important;
-  min-height: 300px;
-}
-
-/* --- MOBILE FLOATING ACTION BUTTON (NOVA ANÁLISE) --- */
-.btn-new-analysis {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: auto;
-  padding: 14px 24px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  z-index: 900;
-  /* Abaixo do menu drawer */
-  font-size: 1rem;
-  background-color: var(--brand-primary);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn-new-analysis:active {
-  transform: scale(0.95);
-}
-
-/* Make delete button always visible on mobile */
-.btn-delete-history {
-  opacity: 1 !important;
-  background-color: rgba(255, 255, 255, 0.05);
-  padding: 8px;
-  /* Larger touch target */
-}
-}
-
-/* --- HISTORY SIDEBAR --- */
-.sidebar-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-header {
-  padding: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* No mobile, o botão "Nova Análise" da sidebar pode sumir, pois já temos o FAB */
-@media (max-width: 768px) {
-  .sidebar-header .btn-new-analysis {
-    display: none;
-    /* Esconde o botão duplicado dentro do menu */
+  .app-sidebar.mobile-open {
+    transform: translateX(0);
+    /* Mostra quando aberto */
   }
-}
 
-.btn-new-analysis {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--brand-primary);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
+  /* Overlay Escuro quando menu abre */
+  .mobile-menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
 
-.btn-new-analysis:hover {
-  background-color: var(--brand-hover);
-  transform: translateY(-1px);
-}
+  .mobile-menu-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
 
-.sidebar-section-title {
-  padding: 15px 24px 5px 24px;
-}
+  /* 3. Ajusta a área principal */
+  .app-main {
+    width: 100%;
+    overflow: visible;
+  }
 
-.sidebar-section-title h2 {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-muted);
-  font-weight: bold;
-  margin: 0;
-}
+  .content-wrapper {
+    padding: 20px 15px;
+  }
 
-.history-list-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
+  /* 4. Reduz fontes gigantes */
+  .app-header {
+    margin-bottom: 20px;
+  }
 
-.history-empty {
-  color: var(--text-muted);
-  text-align: center;
-  font-size: 0.9rem;
-  margin-top: 20px;
-}
+  /* Header Mobile: Empilha tudo */
+  .header-content {
+    flex-direction: row;
+    /* Mantém linha para caber menu e logo */
+    justify-content: center;
+    gap: 15px;
+    padding-left: 0;
+    /* Remove padding para centralizar perfeitamente */
+  }
 
-.history-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+  .btn-mobile-menu {
+    display: block;
+    /* Mostra botão menu */
+  }
 
-.history-item {
-  position: relative;
-  padding: 16px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  background-color: rgba(36, 38, 58, 0.4);
-  /* Item translúcido */
-  border: 1px solid var(--border-subtle);
-  cursor: pointer;
-  transition: all 0.2s;
-}
+  .btn-logout {
+    position: static;
+    transform: none;
+    display: none;
+    /* Esconde logout do header no mobile (já tem na sidebar) */
+  }
 
-.history-item:hover {
-  border-color: var(--brand-primary);
-  transform: translateY(-2px);
-  background-color: rgba(36, 38, 58, 0.6);
-}
+  .brand-container h1 {
+    font-size: 1.8rem;
+  }
 
-.history-item-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
+  .brand-container p {
+    font-size: 0.9rem;
+    display: none;
+    /* Simplifica header mobile */
+  }
 
-.history-date {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
+  /* 5. Ajusta o Terminal para caber na tela */
+  .daat-terminal {
+    height: auto !important;
+    min-height: 300px;
+  }
 
-.history-score {
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
+  /* --- MOBILE FLOATING ACTION BUTTON (NOVA ANÁLISE) --- */
+  .btn-new-analysis {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: auto;
+    padding: 14px 24px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 900;
+    /* Abaixo do menu drawer */
+    font-size: 1rem;
+    background-color: var(--brand-primary);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-.history-score.good {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: var(--status-success);
-}
+  .btn-new-analysis:active {
+    transform: scale(0.95);
+  }
 
-.history-score.bad {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: var(--status-danger);
-}
+  /* Make delete button always visible on mobile */
+  .btn-delete-history {
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    /* Larger touch target */
+  }
 
-.history-title {
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 20px;
-  /* Space for delete button */
-}
 
-.btn-delete-history {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  opacity: 0;
-  /* Hidden by default */
-  transition: all 0.2s;
-  padding: 4px;
-  border-radius: 4px;
-}
+  /* --- HISTORY SIDEBAR --- */
+  .sidebar-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
-.history-item:hover .btn-delete-history {
-  opacity: 1;
-  /* Show on hover */
-}
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
 
-.btn-delete-history:hover {
-  color: var(--status-danger);
-  background-color: rgba(239, 68, 68, 0.1);
-}
+  /* No mobile, o botão "Nova Análise" da sidebar pode sumir, pois já temos o FAB */
+  @media (max-width: 768px) {
+    .sidebar-header .btn-new-analysis {
+      display: none;
+      /* Esconde o botão duplicado dentro do menu */
+    }
+  }
 
-.sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
+  .btn-new-analysis {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--brand-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
 
-.btn-sidebar-logout {
-  width: 100%;
-  padding: 10px;
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-}
+  .btn-new-analysis:hover {
+    background-color: var(--brand-hover);
+    transform: translateY(-1px);
+  }
 
-.btn-sidebar-logout:hover {
-  border-color: var(--status-danger);
-  color: var(--status-danger);
+  .sidebar-section-title {
+    padding: 15px 24px 5px 24px;
+  }
+
+  .sidebar-section-title h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .history-list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .history-empty {
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 20px;
+  }
+
+  .history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .history-item {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background-color: rgba(36, 38, 58, 0.4);
+    /* Item translúcido */
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .history-item:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-2px);
+    background-color: rgba(36, 38, 58, 0.6);
+  }
+
+  .history-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .history-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .history-score {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .history-score.good {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--status-success);
+  }
+
+  .history-score.bad {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--status-danger);
+  }
+
+  .history-title {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 20px;
+    /* Space for delete button */
+  }
+
+  .btn-delete-history {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    /* Hidden by default */
+    transition: all 0.2s;
+    padding: 4px;
+    border-radius: 4px;
+  }
+
+  .history-item:hover .btn-delete-history {
+    opacity: 1;
+    /* Show on hover */
+  }
+
+  .btn-delete-history:hover {
+    color: var(--status-danger);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-sidebar-logout {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    right: 20px;
+    width: auto;
+    padding: 14px 24px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 900;
+    /* Abaixo do menu drawer */
+    font-size: 1rem;
+    background-color: var(--brand-primary);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-new-analysis:active {
+    transform: scale(0.95);
+  }
+
+  /* Make delete button always visible on mobile */
+  .btn-delete-history {
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    /* Larger touch target */
+  }
+
+
+  /* --- HISTORY SIDEBAR --- */
+  .sidebar-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* No mobile, o botão "Nova Análise" da sidebar pode sumir, pois já temos o FAB */
+  @media (max-width: 768px) {
+    .sidebar-header .btn-new-analysis {
+      display: none;
+      /* Esconde o botão duplicado dentro do menu */
+    }
+  }
+
+  .btn-new-analysis {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--brand-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-new-analysis:hover {
+    background-color: var(--brand-hover);
+    transform: translateY(-1px);
+  }
+
+  .sidebar-section-title {
+    padding: 15px 24px 5px 24px;
+  }
+
+  .sidebar-section-title h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .history-list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .history-empty {
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 20px;
+  }
+
+  .history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .history-item {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background-color: rgba(36, 38, 58, 0.4);
+    /* Item translúcido */
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .history-item:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-2px);
+    background-color: rgba(36, 38, 58, 0.6);
+  }
+
+  .history-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .history-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .history-score {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .history-score.good {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--status-success);
+  }
+
+  .history-score.bad {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--status-danger);
+  }
+
+  .history-title {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 20px;
+    /* Space for delete button */
+  }
+
+  .btn-delete-history {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    /* Hidden by default */
+    transition: all 0.2s;
+    padding: 4px;
+    border-radius: 4px;
+  }
+
+  .history-item:hover .btn-delete-history {
+    opacity: 1;
+    /* Show on hover */
+  }
+
+  .btn-delete-history:hover {
+    color: var(--status-danger);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-sidebar-logout {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .btn-sidebar-logout:hover {
+    border-color: var(--status-danger);
+    color: var(--status-danger);
+  }
 }
