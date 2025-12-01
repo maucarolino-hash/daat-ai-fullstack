@@ -841,19 +841,6 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .btn-logout:hover {
   border-color: var(--text-primary);
-  color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Mobile Menu Button (Hidden on Desktop) */
-.btn-mobile-menu {
-  overflow: auto;
-}
-
-/* 2. Sidebar vira um Drawer (Menu Lateral Oculto) */
-.app-sidebar {
-  position: fixed;
-  top: 0;
   left: 0;
   width: 280px;
   height: 100vh;
