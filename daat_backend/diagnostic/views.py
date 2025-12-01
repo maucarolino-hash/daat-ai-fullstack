@@ -1,3 +1,4 @@
+# ... imports existentes ...
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -5,21 +6,7 @@ from .models import Diagnostic
 from .tasks import analyze_startup_task
 from celery.result import AsyncResult
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-
-# --- VIEW TEMPORÁRIA PARA CRIAR ADMIN EM PRODUÇÃO ---
-def create_admin_user(request):
-    # SEGURANÇA: Só permite criar se tiver a chave secreta na URL
-    # Ex: /api/create-admin/?key=minha-senha-secreta-123
-    if request.GET.get('key') != 'minha-senha-secreta-123':
-        return JsonResponse({'error': 'Unauthorized'}, status=403)
-
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-        return JsonResponse({'status': 'Superuser created: admin / admin123'})
-    else:
-        return JsonResponse({'status': 'Superuser already exists'})
-# ----------------------------------------------------
+# from django.http import JsonResponse (Removido)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
