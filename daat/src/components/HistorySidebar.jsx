@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
+import toast, { Toaster } from 'react-hot-toast';
+import { Trash2 } from 'lucide-react';
 
 // Recebemos as funções do Pai via PROPS
 const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refreshTrigger }) => {
     const [history, setHistory] = useState([]);
 
-    useEffect(() => {
+    const fetchHistory = () => {
         if (!token) return;
 
         api.get('/api/history', {
@@ -27,74 +29,75 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refres
                 }
                 console.error("Erro no histórico:", err);
             });
+    };
+
+    useEffect(() => {
+        fetchHistory();
     }, [token, onLogout, refreshTrigger]);
 
+    const handleDelete = async (e, id) => {
+        e.stopPropagation(); // Impede que o clique selecione o relatório
+        if (!window.confirm("Tem certeza que deseja excluir esta análise?")) return;
+
+        try {
+            await api.delete(`/api/history/${id}/`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            toast.success("Análise excluída com sucesso!");
+            fetchHistory(); // Atualiza a lista
+        } catch (error) {
+            console.error("Erro ao excluir:", error);
+            toast.error("Erro ao excluir análise.");
+        }
+    };
+
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="sidebar-container">
+            <Toaster position="top-center" reverseOrder={false} />
 
             {/* Botão NOVA ANÁLISE (Fixo no topo) */}
-            <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)' }}>
+            <div className="sidebar-header">
                 <button
                     onClick={onNewAnalysis}
-                    style={{
-                        width: '100%',
-                        padding: '12px',
-                        backgroundColor: 'var(--brand-primary)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        fontSize: '0.9rem',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                        transition: 'background 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--brand-hover)'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--brand-primary)'}
+                    className="btn-new-analysis"
                 >
                     <span>+</span> Nova Análise
                 </button>
             </div>
 
-            <div style={{ padding: '15px 24px 5px 24px' }}>
-                <h2 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--text-muted)', fontWeight: 'bold' }}>
-                    Recentes
-                </h2>
+            <div className="sidebar-section-title">
+                <h2>Recentes</h2>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+            <div className="history-list-container">
                 {history.length === 0 ? (
-                    <p style={{ color: 'var(--text-muted)', textAlign: 'center', fontSize: '0.9rem' }}>Vazio.</p>
+                    <p className="history-empty">Vazio.</p>
                 ) : (
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    <ul className="history-list">
                         {history.map((item) => (
                             <li
                                 key={item.id}
-                                // AQUI ESTÁ A MÁGICA: Ao clicar, envia o item inteiro para o Pai
                                 onClick={() => onSelectReport(item)}
-                                style={{
-                                    padding: '16px', marginBottom: '8px', borderRadius: '8px',
-                                    backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-                                    cursor: 'pointer', transition: 'all 0.2s',
-                                }}
-                                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--brand-primary)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                                className="history-item"
                             >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                <div className="history-item-header">
+                                    <span className="history-date">
                                         {new Date(item.created_at).toLocaleDateString()}
                                     </span>
-                                    <span style={{
-                                        fontSize: '0.75rem', fontWeight: 'bold', padding: '2px 8px', borderRadius: '4px',
-                                        backgroundColor: item.score > 60 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                                        color: item.score > 60 ? 'var(--status-success)' : 'var(--status-danger)'
-                                    }}>
+                                    <span className={`history-score ${item.score > 60 ? 'good' : 'bad'}`}>
                                         {item.score}
                                     </span>
                                 </div>
-                                <div style={{ color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <div className="history-title">
                                     {item.customer_segment || "Untitled"}
                                 </div>
+                                <button
+                                    className="btn-delete-history"
+                                    onClick={(e) => handleDelete(e, item.id)}
+                                    title="Excluir análise"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
                             </li>
                         ))}
                     </ul>
@@ -102,22 +105,10 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refres
             </div>
 
             {/* Botão de Logout (Rodapé da Sidebar) */}
-            <div style={{ padding: '20px', borderTop: '1px solid var(--border-subtle)' }}>
+            <div className="sidebar-footer">
                 <button
                     onClick={onLogout}
-                    style={{
-                        width: '100%',
-                        padding: '10px',
-                        backgroundColor: 'transparent',
-                        color: 'var(--text-muted)',
-                        border: '1px solid var(--border-subtle)',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '0.85rem',
-                        transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => { e.target.style.borderColor = 'var(--status-danger)'; e.target.style.color = 'var(--status-danger)'; }}
-                    onMouseLeave={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.color = 'var(--text-muted)'; }}
+                    className="btn-sidebar-logout"
                 >
                     Sair da Conta
                 </button>

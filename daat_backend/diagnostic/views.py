@@ -74,3 +74,15 @@ def get_history(request):
         })
         
     return Response({'history': history_list})
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_history(request, pk):
+    try:
+        diagnostic = Diagnostic.objects.get(pk=pk, user=request.user)
+        diagnostic.delete()
+        return Response({"message": "Análise excluída com sucesso."}, status=204)
+    except Diagnostic.DoesNotExist:
+        return Response({"error": "Análise não encontrada."}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
