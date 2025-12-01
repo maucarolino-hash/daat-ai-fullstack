@@ -938,22 +938,7 @@ textarea::-webkit-scrollbar-thumb:hover {
     transition: transform 0.3s ease-in-out;
   }
 
-  .app-main {
-    flex: 1;
-    overflow-y: auto;
-    position: relative;
-  }
-
-  .content-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
-  }
-
-  .app-header {
-    margin-bottom: 40px;
-    text-align: center;
-  }
+  .app-main {}
 
   .sidebar-section-title h2 {
     font-size: 0.75rem;
