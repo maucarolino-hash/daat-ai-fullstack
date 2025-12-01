@@ -5,8 +5,6 @@ import HistorySidebar from './components/HistorySidebar';
 import Login from './components/Login';
 import ConnectionTest from './components/ConnectionTest';
 
-import ThemeToggle from './components/ThemeToggle';
-
 // Componente Principal do Dashboard (Protegido)
 const Dashboard = ({ token, onLogout }) => {
   const [activeReport, setActiveReport] = useState(null);
@@ -37,9 +35,8 @@ const Dashboard = ({ token, onLogout }) => {
                 <p>Intelligence Dashboard v1.0</p>
               </div>
 
-              <div style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '15px', alignItems: 'center' }}>
-                <ThemeToggle />
-                <button className="btn-logout" onClick={onLogout} style={{ position: 'static', transform: 'none' }}>
+              <div style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}>
+                <button className="btn-logout" onClick={onLogout}>
                   Sair
                 </button>
               </div>
