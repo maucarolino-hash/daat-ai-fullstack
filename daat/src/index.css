@@ -131,6 +131,25 @@ body {
   /* Defina limites para não quebrar o layout */
   min-height: 200px;
   max-height: 80vh;
+
+  /* Cores e Bordas Dinâmicas */
+  margin-top: 40px;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  transition: border-color 0.3s ease;
+}
+
+.daat-terminal.loading {
+  border-color: #4a5568;
+}
+
+.daat-terminal.score-good {
+  border-color: #48bb78;
+}
+
+.daat-terminal.score-bad {
+  border-color: #fc8181;
 }
 
 /* Conteúdo com Scroll */
@@ -166,6 +185,252 @@ textarea::-webkit-scrollbar-thumb {
 textarea::-webkit-scrollbar-thumb:hover {
   background-color: var(--text-secondary);
   /* Mais claro ao passar o mouse */
+}
+
+/* --- FORMULÁRIO E INPUTS --- */
+.diagnostic-container {
+  padding: 20px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: var(--bg-card);
+}
+
+.diagnostic-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+.diagnostic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.input-textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+  transition: border-color 0.2s;
+}
+
+.input-textarea:focus {
+  border-color: var(--brand-primary);
+}
+
+.input-text {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-input);
+  color: white;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.input-text:focus {
+  border-color: var(--brand-primary);
+}
+
+.btn-primary {
+  margin-top: 10px;
+  width: 100%;
+  padding: 14px;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--brand-hover);
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* --- LOGIN PAGE --- */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.login-title {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 2rem;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+}
+
+.error-message {
+  padding: 10px;
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #EF4444;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.login-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.login-footer span {
+  color: var(--text-muted);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--brand-primary);
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 5px;
+  font-size: 0.9rem;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+
+/* --- TERMINAL HEADER --- */
+.terminal-header {
+  padding: 20px 24px 10px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-card);
+  z-index: 10;
+}
+
+.terminal-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.score-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.score-circle.good {
+  background-color: #38a169;
+}
+
+.score-circle.bad {
+  background-color: #e53e3e;
+}
+
+.score-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #e2e8f0;
+}
+
+.score-subtitle {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.btn-download {
+  padding: 8px 16px;
+  background-color: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-download:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.empty-state {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e0;
+}
+
+.result-content {
+  padding-bottom: 20px;
 }
 
 /* --- LAYOUT PADRÃO (DESKTOP) --- */

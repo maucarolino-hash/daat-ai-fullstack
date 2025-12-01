@@ -7,17 +7,8 @@ import api from '../services/api';
 
 // Componente Reutilizável para Inputs de Texto Longo
 const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }) => (
-    <div style={{
-        marginBottom: '20px',
-        width: '100%' // Garante que o container do campo respeite o pai
-    }}>
-        <label style={{
-            display: 'block',
-            marginBottom: '8px',
-            color: 'var(--text-secondary)',
-            fontSize: '0.9rem',
-            fontWeight: '500'
-        }}>
+    <div className="input-group">
+        <label className="input-label">
             {label}
         </label>
 
@@ -25,28 +16,8 @@ const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            style={{
-                // --- A CORREÇÃO DE OURO ---
-                width: '100%',
-                maxWidth: '100%',        // Garante que nunca passa do limite
-                boxSizing: 'border-box', // O padding agora fica DENTRO da caixa
-                // --------------------------
-
-                height: height,
-                padding: '12px',
-                backgroundColor: 'var(--bg-input)',
-                border: '1px solid var(--border-light)',
-                borderRadius: '8px',
-                color: 'var(--text-primary)',
-                fontSize: '1rem',
-                lineHeight: '1.5',
-                resize: 'vertical',
-                outline: 'none',
-                fontFamily: 'Inter, sans-serif',
-                overflowY: 'auto',
-            }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--brand-primary)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border-light)'}
+            className="input-textarea"
+            style={{ height: height }} // Altura ainda pode ser dinâmica
         />
     </div>
 );
@@ -181,9 +152,9 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
     };
 
     return (
-        <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '500px', margin: '0 auto' }}>
+        <div className="diagnostic-container">
             <h2>Diagnóstico Lean Canvas</h2>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <form onSubmit={handleSubmit} className="diagnostic-form">
                 <TextAreaField
                     label="Segmento de Cliente"
                     value={customerSegment}
@@ -211,22 +182,7 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
                 <button
                     type="submit"
                     disabled={loading}
-                    style={{
-                        marginTop: '10px',
-                        width: '100%',
-                        padding: '14px',
-                        backgroundColor: 'var(--brand-primary)',
-                        color: '#ffffff',
-                        fontSize: '1rem',
-                        fontWeight: '600',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        opacity: loading ? 0.7 : 1,
-                        transition: 'background-color 0.2s'
-                    }}
-                    onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-hover)')}
-                    onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-primary)')}
+                    className={`btn-primary ${loading ? 'btn-loading' : ''}`}
                 >
                     {loading ? (statusMessage || 'Analisando...') : 'Gerar Diagnóstico'}
                 </button>
@@ -234,43 +190,27 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
             {/* ÁREA DE RESULTADOS (Espaço Reservado) */}
             {/* O TERMINAL FIXO GRID */}
-            <div className="daat-terminal" ref={terminalRef} style={{
-                marginTop: '40px', // Espaçamento extra
-                borderColor: loading ? '#4a5568' : (result ? (result.score > 60 ? '#48bb78' : '#fc8181') : '#4a5568'),
-                backgroundColor: 'var(--bg-card)',
-                color: 'var(--text-primary)'
-            }}>
+            <div className={`daat-terminal ${loading ? 'loading' : ''} ${result ? (result.score > 60 ? 'score-good' : 'score-bad') : ''}`} ref={terminalRef}>
 
                 {/* ÁREA 1: HEADER (Fixo no topo da Grade) */}
                 {/* Se tiver resultado, mostra o cabeçalho fixo. Se não, mostra nada ou loader */}
                 {!loading && result && (
-                    <div style={{
-                        padding: '20px 24px 10px 24px',
-                        borderBottom: '1px solid var(--border-subtle)',
-                        backgroundColor: 'var(--bg-card)',
-                        zIndex: 10 // Garante que fica acima do scroll
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <div style={{
-                                    width: '50px', height: '50px',
-                                    borderRadius: '50%',
-                                    backgroundColor: result.score > 60 ? '#38a169' : '#e53e3e',
-                                    color: 'white',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    fontSize: '1.4rem', fontWeight: 'bold'
-                                }}>
+                    <div className="terminal-header">
+                        <div className="terminal-header-content">
+                            <div className="score-display">
+                                <div className={`score-circle ${result.score > 60 ? 'good' : 'bad'}`}>
                                     {result.score}
                                 </div>
                                 <div>
-                                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>Análise Daat</h3>
-                                    <span style={{ fontSize: '0.8rem', color: '#718096' }}>IA Venture Capitalist</span>
+                                    <h3 className="score-title">Análise Daat</h3>
+                                    <span className="score-subtitle">IA Venture Capitalist</span>
                                 </div>
                             </div>
 
                             {/* O NOVO BOTÃO DE DOWNLOAD (Programático) */}
                             {result && (
                                 <button
+                                    className="btn-download"
                                     onClick={async () => {
                                         try {
                                             const blob = await pdf(
@@ -304,19 +244,6 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
                                             alert("Erro ao gerar o PDF.");
                                         }
                                     }}
-                                    style={{
-                                        padding: '8px 16px',
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid var(--border-light)',
-                                        borderRadius: '6px',
-                                        color: 'var(--text-secondary)',
-                                        cursor: 'pointer',
-                                        fontSize: '0.85rem',
-                                        display: 'flex', alignItems: 'center', gap: '8px',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--text-primary)')}
-                                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-light)')}
                                 >
                                     <span>⬇️</span> PDF
                                 </button>
@@ -334,14 +261,14 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
                     {/* EMPTY STATE */}
                     {!loading && !result && (
-                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e0' }}>
+                        <div className="empty-state">
                             A aguardar dados...
                         </div>
                     )}
 
                     {/* RESULTADO (Texto) */}
                     {!loading && result && (
-                        <div style={{ paddingBottom: '20px' }}> {/* Espaço extra no fim */}
+                        <div className="result-content">
                             <ComponentFeedback feedback={result.feedback} />
                         </div>
                     )}

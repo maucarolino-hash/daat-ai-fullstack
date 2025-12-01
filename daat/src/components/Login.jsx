@@ -63,69 +63,63 @@ const Login = ({ onLogin }) => {
     };
 
     return (
-        <div style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            height: '100vh', backgroundColor: 'var(--bg-main)', color: 'var(--text-primary)'
-        }}>
-            <div style={{
-                width: '100%', maxWidth: '400px', padding: '40px',
-                backgroundColor: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border-light)'
-            }}>
-                <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>Daat AI</h1>
-                <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '30px' }}>
+        <div className="login-container">
+            <div className="login-card">
+                <h1 className="login-title">Daat AI</h1>
+                <p className="login-subtitle">
                     {isRegistering ? "Criar Conta de Fundador" : "Acessar Dashboard"}
                 </p>
 
                 {error && (
-                    <div style={{ padding: '10px', backgroundColor: '#EF444420', color: '#EF4444', borderRadius: '8px', marginBottom: '20px', fontSize: '0.9rem' }}>
+                    <div className="error-message">
                         {error}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Usuário</label>
+                    <div className="input-group">
+                        <label className="input-label">Usuário</label>
                         <input
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-input)', color: 'white', outline: 'none' }}
+                            className="input-text"
                             required
                         />
                     </div>
 
                     {isRegistering && (
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Email</label>
+                        <div className="input-group">
+                            <label className="input-label">Email</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-input)', color: 'white', outline: 'none' }}
+                                className="input-text"
                                 required
                             />
                         </div>
                     )}
 
-                    <div style={{ marginBottom: '25px' }}>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Senha</label>
+                    <div className="input-group">
+                        <label className="input-label">Senha</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-input)', color: 'white', outline: 'none' }}
+                            className="input-text"
                             required
                         />
                     </div>
 
                     {isRegistering && (
-                        <div style={{ marginBottom: '25px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Confirmar Senha</label>
+                        <div className="input-group">
+                            <label className="input-label">Confirmar Senha</label>
                             <input
                                 type="password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-input)', color: 'white', outline: 'none' }}
+                                className="input-text"
                                 required
                             />
                         </div>
@@ -134,23 +128,19 @@ const Login = ({ onLogin }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        style={{
-                            width: '100%', padding: '14px', borderRadius: '8px', border: 'none',
-                            backgroundColor: 'var(--brand-primary)', color: 'white', fontWeight: 'bold', cursor: 'pointer',
-                            opacity: loading ? 0.7 : 1
-                        }}
+                        className={`btn-primary ${loading ? 'btn-loading' : ''}`}
                     >
                         {loading ? "Processando..." : (isRegistering ? "Cadastrar" : "Entrar")}
                     </button>
                 </form>
 
-                <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>
+                <div className="login-footer">
+                    <span>
                         {isRegistering ? "Já tem conta? " : "Novo por aqui? "}
                     </span>
                     <button
                         onClick={() => setIsRegistering(!isRegistering)}
-                        style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', cursor: 'pointer', fontWeight: 'bold' }}
+                        className="btn-link"
                     >
                         {isRegistering ? "Fazer Login" : "Criar Conta"}
                     </button>
