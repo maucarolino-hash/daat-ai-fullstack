@@ -349,20 +349,9 @@ textarea::-webkit-scrollbar-thumb:hover {
   -webkit-backdrop-filter: blur(12px);
 }
 
-.login-title {
-  text-align: center;
-  margin-bottom: 10px;
-  font-size: 2rem;
-  background: linear-gradient(to right, #fff, #94a3b8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* Título gradiente */
-}
-
-.login-subtitle {
-  text-align: center;
-  color: var(--text-secondary);
-  margin-bottom: 30px;
+text-align: center;
+color: var(--text-secondary);
+margin-bottom: 30px;
 }
 
 .error-message {
