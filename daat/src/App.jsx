@@ -34,12 +34,9 @@ const Dashboard = ({ token, onLogout }) => {
                 <h1>Daat <span>AI</span></h1>
                 <p>Intelligence Dashboard v1.0</p>
               </div>
-
-              <div style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}>
-                <button className="btn-logout" onClick={onLogout}>
-                  Sair
-                </button>
-              </div>
+              <button className="btn-logout" onClick={onLogout}>
+                Sair
+              </button>
             </div>
           </header>
 
