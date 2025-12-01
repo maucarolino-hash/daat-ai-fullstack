@@ -344,19 +344,6 @@ textarea::-webkit-scrollbar-thumb:hover {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
 
   /* APLICANDO GLASSMORPHISM */
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-text-align: center;
-color: var(--text-secondary);
-margin-bottom: 30px;
-}
-
-.error-message {
-  padding: 10px;
-  background-color: rgba(239, 68, 68, 0.2);
   color: #EF4444;
   border-radius: 8px;
   margin-bottom: 20px;
