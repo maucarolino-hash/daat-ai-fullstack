@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API_BASE_URL } from '../config';
+import api from '../services/api';
 
 const Login = ({ onLogin }) => {
     const [isRegistering, setIsRegistering] = useState(false);
@@ -23,40 +23,40 @@ const Login = ({ onLogin }) => {
         }
 
         // Endpoint muda se for Login ou Registro
-        const endpoint = isRegistering ? `${API_BASE_URL}/api/auth/registration/` : `${API_BASE_URL}/api/auth/login/`;
+        const endpoint = isRegistering ? '/api/auth/registration/' : '/api/auth/login/';
 
         try {
             const payload = isRegistering
                 ? { username, email, password1: password, password2: confirmPassword } // Envia password2
                 : { username, password };
 
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+            const response = await api.post(endpoint, payload);
+            const data = response.data;
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // SUCESSO!
-                // Se for JWT, o token pode vir como 'access' ou 'key'
-                const token = data.key || data.access || data.token;
-                if (token) {
-                    onLogin(token); // Avisa o App que logou
-                } else {
-                    setError("Login bem sucedido, mas nenhum token foi recebido.");
-                }
+            // SUCESSO!
+            // Se for JWT, o token pode vir como 'access' ou 'key'
+            const token = data.key || data.access || data.token;
+            if (token) {
+                onLogin(token); // Avisa o App que logou
             } else {
-                // ERRO
-                console.error("Erro Auth:", data);
+                setError("Login bem sucedido, mas nenhum token foi recebido.");
+            }
+
+        } catch (err) {
+            console.error("Erro Auth:", err);
+            if (err.response) {
+                // O servidor respondeu com um status de erro (4xx, 5xx)
+                const data = err.response.data;
                 // Tenta extrair mensagem de erro mais amigável
                 const errorMsg = data.detail || data.non_field_errors?.[0] || JSON.stringify(data);
                 setError(errorMsg);
+            } else if (err.request) {
+                // A requisição foi feita mas sem resposta
+                setError("Erro de conexão. O servidor está acordado?");
+            } else {
+                // Erro na configuração da requisição
+                setError("Erro desconhecido ao tentar logar.");
             }
-        } catch (err) {
-            console.error("Erro no fetch:", err);
-            setError("Erro de conexão. O servidor está acordado?");
         } finally {
             setLoading(false);
         }

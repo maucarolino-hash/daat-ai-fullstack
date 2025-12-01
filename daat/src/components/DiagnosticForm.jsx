@@ -3,7 +3,7 @@ import SkeletonLoader from './SkeletonLoader'
 import ComponentFeedback from './ComponentFeedback'
 import { pdf } from '@react-pdf/renderer';
 import DaatReportPDF from './DaatReportPDF';
-import { API_BASE_URL } from '../config';
+import api from '../services/api';
 
 // Componente Reutilizável para Inputs de Texto Longo
 const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }) => (
@@ -92,10 +92,10 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
         const intervalId = setInterval(async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/status/${taskId}/`, {
+                const response = await api.get(`/api/status/${taskId}/`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = await response.json();
+                const data = response.data;
 
                 if (data.status === 'completed') {
                     clearInterval(intervalId);
@@ -149,22 +149,8 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
         try {
             // 2. A Chamada Inicial (POST)
             // Chama o endpoint público
-            const response = await fetch(`${API_BASE_URL}/api/analyze-public`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'Authorization': `Token ${token}` // REMOVIDO: Não precisa de token
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (response.status === 401) {
-                alert("Sessão expirada. Por favor, faça login novamente.");
-                window.location.reload();
-                return;
-            }
-
-            const data = await response.json();
+            const response = await api.post('/api/analyze-public', payload);
+            const data = response.data;
 
             // 3. Verifica se já acabou (Modo Eager ou muito rápido)
             if (data.status === 'completed') {
@@ -184,7 +170,12 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
         } catch (error) {
             console.error("Erro ao conectar ao Daat Brain:", error);
-            alert("Erro de conexão. O servidor Django está rodando?");
+            if (error.response && error.response.status === 401) {
+                alert("Sessão expirada. Por favor, faça login novamente.");
+                window.location.reload();
+            } else {
+                alert("Erro de conexão. O servidor Django está rodando?");
+            }
             setLoading(false);
         }
     };

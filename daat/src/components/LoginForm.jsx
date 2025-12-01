@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API_BASE_URL } from '../config';
+import api from '../services/api';
 
 const LoginForm = ({ onLogin, onSwitchToRegister }) => {
     const [username, setUsername] = useState('');
@@ -13,31 +13,23 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
         setError('');
 
         try {
-            // Usa a URL do arquivo de configuração
-            const apiUrl = API_BASE_URL;
+            const response = await api.post('/api/auth/login/', { username, password });
+            const data = response.data;
 
-            const response = await fetch(`${apiUrl}/api/auth/login/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
+            // Login com sucesso!
+            // O token é salvo automaticamente nos cookies (HttpOnly) pelo backend se configurado,
+            // ou vem no corpo da resposta (data.key ou data.access).
+            // Vamos passar os dados para o App gerenciar o estado.
+            onLogin(data);
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // Login com sucesso!
-                // O token é salvo automaticamente nos cookies (HttpOnly) pelo backend se configurado,
-                // ou vem no corpo da resposta (data.key ou data.access).
-                // Vamos passar os dados para o App gerenciar o estado.
-                onLogin(data);
-            } else {
-                setError(data.non_field_errors?.[0] || 'Falha no login. Verifique suas credenciais.');
-            }
         } catch (err) {
             console.error(err);
-            setError('Erro de conexão com o servidor.');
+            if (err.response) {
+                const data = err.response.data;
+                setError(data.non_field_errors?.[0] || 'Falha no login. Verifique suas credenciais.');
+            } else {
+                setError('Erro de conexão com o servidor.');
+            }
         } finally {
             setLoading(false);
         }

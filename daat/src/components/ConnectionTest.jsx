@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../config';
+import api from '../services/api';
 
 const ConnectionTest = () => {
     const [status, setStatus] = useState('Testando...');
     const [details, setDetails] = useState('');
-    const [configUrl, setConfigUrl] = useState(API_BASE_URL);
+    const [configUrl, setConfigUrl] = useState(api.defaults.baseURL);
 
     const testConnection = async () => {
         setStatus('Conectando...');
@@ -13,25 +13,28 @@ const ConnectionTest = () => {
             const startTime = Date.now();
             // Tenta acessar uma rota pública ou o admin (que redireciona)
             // Usamos 'HEAD' ou 'GET' no root ou admin para ver se responde
-            const response = await fetch(`${API_BASE_URL}/admin/login/`, {
-                method: 'GET',
-                mode: 'cors', // Importante para testar CORS
-            });
+            const response = await api.get('/admin/login/');
 
             const endTime = Date.now();
             const duration = endTime - startTime;
 
-            if (response.ok || response.status === 200 || response.type === 'opaque') {
-                setStatus(`✅ Sucesso! (Status: ${response.status})`);
-                setDetails(`Tempo: ${duration}ms\nURL: ${response.url}\nType: ${response.type}`);
-            } else {
-                setStatus(`⚠️ Respondeu com erro (Status: ${response.status})`);
-                setDetails(`Texto: ${response.statusText}`);
-            }
+            setStatus(`✅ Sucesso! (Status: ${response.status})`);
+            setDetails(`Tempo: ${duration}ms\nURL: ${response.config.url}\nBaseURL: ${response.config.baseURL}`);
 
         } catch (error) {
-            setStatus('❌ Falha Total (Catch)');
-            setDetails(`Erro: ${error.message}\nNome: ${error.name}\nStack: ${error.stack}`);
+            if (error.response) {
+                // O servidor respondeu, mas com erro (ex: 404, 500)
+                // Isso AINDA É SUCESSO de conexão (o servidor existe!)
+                setStatus(`⚠️ Conectado, mas com erro HTTP (Status: ${error.response.status})`);
+                setDetails(`Texto: ${error.response.statusText}\nData: ${JSON.stringify(error.response.data)}`);
+            } else if (error.request) {
+                // A requisição foi feita mas sem resposta (Network Error, CORS, Server Down)
+                setStatus('❌ Falha de Rede / CORS / Servidor Offline');
+                setDetails(`Erro: ${error.message}\nVerifique se o backend permite CORS para esta origem.`);
+            } else {
+                setStatus('❌ Erro Interno');
+                setDetails(`Erro: ${error.message}`);
+            }
             console.error(error);
         }
     };
