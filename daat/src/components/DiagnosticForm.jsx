@@ -135,229 +135,194 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
             valueProposition.length < minLength
         ) {
             alert("⚠️ Dados Insuficientes.\n\nPor favor, escreva frases completas (mínimo 10 letras) para que a IA possa entender o seu negócio.");
-            return; // Pára tudo aqui. Não envia para o servidor.
+            if (onAnalysisComplete) onAnalysisComplete();
         }
-        // -----------------------------------
-
-        setLoading(true);
-        setResult(null); // Limpa resultado anterior
-        setStatusMessage("Enviando dados para o QG...");
-
-        // 1. Preparar os dados do Daat
-        const payload = { customerSegment, problem, valueProposition };
-
-        try {
-            // 2. A Chamada Inicial (POST)
-            const response = await fetch(`${API_BASE_URL}/api/analyze`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (response.status === 401) {
-                alert("Sessão expirada. Por favor, faça login novamente.");
-                window.location.reload();
-                return;
-            }
-
-            const data = await response.json();
-
-            // 3. Verifica se já acabou (Modo Eager ou muito rápido)
-            if (data.status === 'completed') {
-                setLoading(false);
-                setResult(data.data);
-                setStatusMessage("");
-                if (onAnalysisComplete) onAnalysisComplete();
-            }
-            // 4. Se não, inicia o Polling com o ID da tarefa
-            else if (data.task_id) {
-                pollTaskStatus(data.task_id);
-            } else {
-                // Fallback para erro
-                setLoading(false);
-                alert("Erro: Não foi possível iniciar a análise.");
-            }
-
-        } catch (error) {
-            console.error("Erro ao conectar ao Daat Brain:", error);
-            alert("Erro de conexão. O servidor Django está rodando?");
+        // 4. Se não, inicia o Polling com o ID da tarefa
+        else if (data.task_id) {
+            pollTaskStatus(data.task_id);
+        } else {
+            // Fallback para erro
             setLoading(false);
+            alert("Erro: Não foi possível iniciar a análise.");
         }
-    };
 
-    return (
-        <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '500px', margin: '0 auto' }}>
-            <h2>Diagnóstico Lean Canvas</h2>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <TextAreaField
-                    label="Segmento de Cliente"
-                    value={customerSegment}
-                    onChange={(e) => setCustomerSegment(e.target.value)}
-                    placeholder="Quem são seus clientes?"
-                    height="80px"
-                />
+    } catch (error) {
+        console.error("Erro ao conectar ao Daat Brain:", error);
+        alert("Erro de conexão. O servidor Django está rodando?");
+        setLoading(false);
+    }
+};
 
-                <TextAreaField
-                    label="O Problema"
-                    value={problem}
-                    onChange={(e) => setProblem(e.target.value)}
-                    placeholder="Qual problema você resolve?"
-                    height="120px"
-                />
+return (
+    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', maxWidth: '500px', margin: '0 auto' }}>
+        <h2>Diagnóstico Lean Canvas</h2>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <TextAreaField
+                label="Segmento de Cliente"
+                value={customerSegment}
+                onChange={(e) => setCustomerSegment(e.target.value)}
+                placeholder="Quem são seus clientes?"
+                height="80px"
+            />
 
-                <TextAreaField
-                    label="Proposta de Valor"
-                    value={valueProposition}
-                    onChange={(e) => setValueProposition(e.target.value)}
-                    placeholder="Ex: Uber para passeadores de cães"
-                    height="100px"
-                />
+            <TextAreaField
+                label="O Problema"
+                value={problem}
+                onChange={(e) => setProblem(e.target.value)}
+                placeholder="Qual problema você resolve?"
+                height="120px"
+            />
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    style={{
-                        marginTop: '10px',
-                        width: '100%',
-                        padding: '14px',
-                        backgroundColor: 'var(--brand-primary)',
-                        color: '#ffffff',
-                        fontSize: '1rem',
-                        fontWeight: '600',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        opacity: loading ? 0.7 : 1,
-                        transition: 'background-color 0.2s'
-                    }}
-                    onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-hover)')}
-                    onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-primary)')}
-                >
-                    {loading ? (statusMessage || 'Analisando...') : 'Gerar Diagnóstico'}
-                </button>
-            </form>
+            <TextAreaField
+                label="Proposta de Valor"
+                value={valueProposition}
+                onChange={(e) => setValueProposition(e.target.value)}
+                placeholder="Ex: Uber para passeadores de cães"
+                height="100px"
+            />
 
-            {/* ÁREA DE RESULTADOS (Espaço Reservado) */}
-            {/* O TERMINAL FIXO GRID */}
-            <div className="daat-terminal" ref={terminalRef} style={{
-                marginTop: '40px', // Espaçamento extra
-                borderColor: loading ? '#4a5568' : (result ? (result.score > 60 ? '#48bb78' : '#fc8181') : '#4a5568'),
-                backgroundColor: 'var(--bg-card)',
-                color: 'var(--text-primary)'
-            }}>
+            <button
+                type="submit"
+                disabled={loading}
+                style={{
+                    marginTop: '10px',
+                    width: '100%',
+                    padding: '14px',
+                    backgroundColor: 'var(--brand-primary)',
+                    color: '#ffffff',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    opacity: loading ? 0.7 : 1,
+                    transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-hover)')}
+                onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--brand-primary)')}
+            >
+                {loading ? (statusMessage || 'Analisando...') : 'Gerar Diagnóstico'}
+            </button>
+        </form>
 
-                {/* ÁREA 1: HEADER (Fixo no topo da Grade) */}
-                {/* Se tiver resultado, mostra o cabeçalho fixo. Se não, mostra nada ou loader */}
-                {!loading && result && (
-                    <div style={{
-                        padding: '20px 24px 10px 24px',
-                        borderBottom: '1px solid var(--border-subtle)',
-                        backgroundColor: 'var(--bg-card)',
-                        zIndex: 10 // Garante que fica acima do scroll
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <div style={{
-                                    width: '50px', height: '50px',
-                                    borderRadius: '50%',
-                                    backgroundColor: result.score > 60 ? '#38a169' : '#e53e3e',
-                                    color: 'white',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    fontSize: '1.4rem', fontWeight: 'bold'
-                                }}>
-                                    {result.score}
-                                </div>
-                                <div>
-                                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>Análise Daat</h3>
-                                    <span style={{ fontSize: '0.8rem', color: '#718096' }}>IA Venture Capitalist</span>
-                                </div>
+        {/* ÁREA DE RESULTADOS (Espaço Reservado) */}
+        {/* O TERMINAL FIXO GRID */}
+        <div className="daat-terminal" ref={terminalRef} style={{
+            marginTop: '40px', // Espaçamento extra
+            borderColor: loading ? '#4a5568' : (result ? (result.score > 60 ? '#48bb78' : '#fc8181') : '#4a5568'),
+            backgroundColor: 'var(--bg-card)',
+            color: 'var(--text-primary)'
+        }}>
+
+            {/* ÁREA 1: HEADER (Fixo no topo da Grade) */}
+            {/* Se tiver resultado, mostra o cabeçalho fixo. Se não, mostra nada ou loader */}
+            {!loading && result && (
+                <div style={{
+                    padding: '20px 24px 10px 24px',
+                    borderBottom: '1px solid var(--border-subtle)',
+                    backgroundColor: 'var(--bg-card)',
+                    zIndex: 10 // Garante que fica acima do scroll
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                            <div style={{
+                                width: '50px', height: '50px',
+                                borderRadius: '50%',
+                                backgroundColor: result.score > 60 ? '#38a169' : '#e53e3e',
+                                color: 'white',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '1.4rem', fontWeight: 'bold'
+                            }}>
+                                {result.score}
                             </div>
-
-                            {/* O NOVO BOTÃO DE DOWNLOAD (Programático) */}
-                            {result && (
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            const blob = await pdf(
-                                                <DaatReportPDF
-                                                    data={{
-                                                        ...result,
-                                                        customerSegment: customerSegment,
-                                                        problem: problem,
-                                                        valueProposition: valueProposition
-                                                    }}
-                                                />
-                                            ).toBlob();
-
-                                            // Forçar o tipo MIME para garantir a extensão
-                                            const pdfBlob = new Blob([blob], { type: 'application/pdf' });
-                                            const url = URL.createObjectURL(pdfBlob);
-
-                                            const link = document.createElement('a');
-                                            link.href = url;
-                                            const filename = `Daat_Relatorio_${result.score}.pdf`;
-                                            link.download = filename;
-
-                                            console.log("Baixando:", filename); // Debug
-
-                                            document.body.appendChild(link);
-                                            link.click();
-                                            document.body.removeChild(link);
-                                            URL.revokeObjectURL(url);
-                                        } catch (error) {
-                                            console.error("Erro ao gerar PDF:", error);
-                                            alert("Erro ao gerar o PDF.");
-                                        }
-                                    }}
-                                    style={{
-                                        padding: '8px 16px',
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid var(--border-light)',
-                                        borderRadius: '6px',
-                                        color: 'var(--text-secondary)',
-                                        cursor: 'pointer',
-                                        fontSize: '0.85rem',
-                                        display: 'flex', alignItems: 'center', gap: '8px',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--text-primary)')}
-                                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-light)')}
-                                >
-                                    <span>⬇️</span> PDF
-                                </button>
-                            )}
+                            <div>
+                                <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>Análise Daat</h3>
+                                <span style={{ fontSize: '0.8rem', color: '#718096' }}>IA Venture Capitalist</span>
+                            </div>
                         </div>
+
+                        {/* O NOVO BOTÃO DE DOWNLOAD (Programático) */}
+                        {result && (
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const blob = await pdf(
+                                            <DaatReportPDF
+                                                data={{
+                                                    ...result,
+                                                    customerSegment: customerSegment,
+                                                    problem: problem,
+                                                    valueProposition: valueProposition
+                                                }}
+                                            />
+                                        ).toBlob();
+
+                                        // Forçar o tipo MIME para garantir a extensão
+                                        const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+                                        const url = URL.createObjectURL(pdfBlob);
+
+                                        const link = document.createElement('a');
+                                        link.href = url;
+                                        const filename = `Daat_Relatorio_${result.score}.pdf`;
+                                        link.download = filename;
+
+                                        console.log("Baixando:", filename); // Debug
+
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                        URL.revokeObjectURL(url);
+                                    } catch (error) {
+                                        console.error("Erro ao gerar PDF:", error);
+                                        alert("Erro ao gerar o PDF.");
+                                    }
+                                }}
+                                style={{
+                                    padding: '8px 16px',
+                                    backgroundColor: 'transparent',
+                                    border: '1px solid var(--border-light)',
+                                    borderRadius: '6px',
+                                    color: 'var(--text-secondary)',
+                                    cursor: 'pointer',
+                                    fontSize: '0.85rem',
+                                    display: 'flex', alignItems: 'center', gap: '8px',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--text-primary)')}
+                                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-light)')}
+                            >
+                                <span>⬇️</span> PDF
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* ÁREA 2: CONTEÚDO (Scrollável) */}
+            {/* O Grid vai jogar isso para a segunda linha (minmax 1fr) */}
+            <div className="daat-content-scroll">
+
+                {/* LOADING STATE */}
+                {loading && <SkeletonLoader />}
+
+                {/* EMPTY STATE */}
+                {!loading && !result && (
+                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e0' }}>
+                        A aguardar dados...
                     </div>
                 )}
 
-                {/* ÁREA 2: CONTEÚDO (Scrollável) */}
-                {/* O Grid vai jogar isso para a segunda linha (minmax 1fr) */}
-                <div className="daat-content-scroll">
-
-                    {/* LOADING STATE */}
-                    {loading && <SkeletonLoader />}
-
-                    {/* EMPTY STATE */}
-                    {!loading && !result && (
-                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e0' }}>
-                            A aguardar dados...
-                        </div>
-                    )}
-
-                    {/* RESULTADO (Texto) */}
-                    {!loading && result && (
-                        <div style={{ paddingBottom: '20px' }}> {/* Espaço extra no fim */}
-                            <ComponentFeedback feedback={result.feedback} />
-                        </div>
-                    )}
-                </div>
-
+                {/* RESULTADO (Texto) */}
+                {!loading && result && (
+                    <div style={{ paddingBottom: '20px' }}> {/* Espaço extra no fim */}
+                        <ComponentFeedback feedback={result.feedback} />
+                    </div>
+                )}
             </div>
-        </div >
-    )
+
+        </div>
+    </div >
+)
 }
 
 export default DiagnosticForm
