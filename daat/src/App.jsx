@@ -10,16 +10,24 @@ const Dashboard = ({ token, onLogout }) => {
   const [activeReport, setActiveReport] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [formKey, setFormKey] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="app-container">
-      <div className="app-sidebar">
+      {/* Mobile Header Overlay for Menu */}
+      <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'open' : ''}`} onClick={() => setIsMobileMenuOpen(false)} />
+
+      <div className={`app-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         <HistorySidebar
           token={token}
-          onSelectReport={setActiveReport}
+          onSelectReport={(report) => {
+            setActiveReport(report);
+            setIsMobileMenuOpen(false); // Close menu on selection
+          }}
           onNewAnalysis={() => {
             setActiveReport(null);
             setFormKey(prev => prev + 1);
+            setIsMobileMenuOpen(false);
           }}
           onLogout={onLogout}
           refreshTrigger={refreshTrigger}
@@ -30,6 +38,18 @@ const Dashboard = ({ token, onLogout }) => {
         <div className="content-wrapper">
           <header className="app-header">
             <div className="header-content">
+              {/* Mobile Menu Button */}
+              <button
+                className="btn-mobile-menu"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+              </button>
+
               <div className="brand-container">
                 <h1>Daat <span>AI</span></h1>
                 <p>Intelligence Dashboard v1.0</p>

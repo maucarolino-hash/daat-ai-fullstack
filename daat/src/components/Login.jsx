@@ -66,10 +66,12 @@ const Login = ({ onLogin }) => {
     return (
         <div className="login-container">
             <div className="login-content">
-                <h2 className="brand-title-login">Daat AI</h2>
-                <h1 className="login-title">
-                    {isRegistering ? "Crie sua conta" : "Bem-vindo de volta"}
+                <h1 className="brand-title-login">
+                    Daat <span>AI</span>
                 </h1>
+                <h2 className="login-title">
+                    {isRegistering ? "Crie sua conta" : "Bem-vindo de volta"}
+                </h2>
                 <p className="login-subtitle">
                     {isRegistering ? "Já tem uma conta? " : "Não tem uma conta? "}
                     <button

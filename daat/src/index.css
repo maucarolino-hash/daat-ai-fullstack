@@ -292,12 +292,206 @@ textarea::-webkit-scrollbar-thumb:hover {
 /* --- LOGIN PAGE --- */
 .login-container {
   display: flex;
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* DAAT TERMINAL: Versão Grid (Layout First) */
+.daat-terminal {
+  /* 1. Geometria Fixa (ou redimensionável pelo usuário, veja o bônus abaixo) */
+  height: 400px;
+  width: 100%;
+  max-width: 100%;
+  /* Garante que nunca passa da tela */
+
+  /* 2. O Layout Grid */
+  display: grid;
+
+  /* LINHAS: Header Automático | Conteúdo Flexível */
+  grid-template-rows: auto minmax(0, 1fr);
+
+  /* 3. A CORREÇÃO (O Elo Perdido) */
+  /* Definimos que a coluna única pode encolher até 0.
+     Sem isso, ela trava no tamanho do texto longo. */
+  grid-template-columns: minmax(0, 100%);
+
+  /* Estilo Visual */
+  border-radius: 16px;
+  /* background-color: #f8fafc;  <-- REMOVIDO PARA GLASS */
+  border: 1px solid #2E3048;
+  overflow: hidden;
+  /* Garante que bordas arredondadas cortem o conteúdo */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  /* Permite o redimensionamento vertical pelo utilizador */
+  resize: vertical;
+
+  /* Defina limites para não quebrar o layout */
+  min-height: 200px;
+  max-height: 80vh;
+
+  /* Cores e Bordas Dinâmicas */
+  margin-top: 40px;
+  /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
+  color: var(--text-primary);
+  transition: border-color 0.3s ease;
+
+  /* APLICANDO GLASSMORPHISM */
+  background: rgba(36, 38, 58, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.daat-terminal.loading {
+  border-color: #4a5568;
+}
+
+.daat-terminal.score-good {
+  border-color: #48bb78;
+  box-shadow: 0 0 20px rgba(72, 187, 120, 0.1);
+  /* Glow verde sutil */
+}
+
+.daat-terminal.score-bad {
+  border-color: #fc8181;
+  box-shadow: 0 0 20px rgba(252, 129, 129, 0.1);
+  /* Glow vermelho sutil */
+}
+
+/* Conteúdo com Scroll */
+.daat-content-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+
+  /* Garante que o texto obedeça à largura do Grid */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Scrollbar bonita para Textareas */
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: rgba(51, 65, 85, 0.5);
+  /* Fundo translúcido */
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background-color: var(--border-light);
+  /* Cor da barra */
+  border-radius: 4px;
+  border: 2px solid transparent;
+  /* Espaço entre barra e borda */
+  background-clip: content-box;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-secondary);
+  /* Mais claro ao passar o mouse */
+}
+
+/* --- FORMULÁRIO E INPUTS --- */
+.diagnostic-container {
+  padding: 20px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
+
+  /* APLICANDO GLASSMORPHISM */
+  background: rgba(36, 38, 58, 0.4);
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.input-textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  background-color: var(--bg-input);
+  /* Input translúcido */
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+  transition: all 0.2s;
+}
+
+.input-textarea:focus {
+  border-color: var(--brand-primary);
+  background-color: #383a50;
+  /* Fica mais sólido ao focar */
+  box-shadow: 0 0 0 2px rgba(109, 84, 181, 0.2);
+}
+
+.input-text {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-input);
+  color: white;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.input-text:focus {
+  border-color: var(--brand-primary);
+  background-color: #383a50;
+  box-shadow: 0 0 0 2px rgba(109, 84, 181, 0.2);
+}
+
+.btn-primary {
+  margin-top: 10px;
+  width: 100%;
+  padding: 14px;
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(109, 84, 181, 0.25);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--brand-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(109, 84, 181, 0.35);
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- LOGIN PAGE --- */
+.login-container {
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
   background-color: var(--bg-main);
-  /* Dark Purple/Slate Background */
   background-image: none;
   color: var(--text-primary);
 }
@@ -307,35 +501,39 @@ textarea::-webkit-scrollbar-thumb:hover {
   max-width: 400px;
   padding: 40px;
   box-sizing: border-box;
-  /* Ensure padding doesn't overflow width */
 }
 
 /* Mobile Adjustment for Login */
 @media (max-width: 480px) {
   .login-content {
     padding: 20px;
-    /* Reduced padding for mobile */
     width: 90%;
-    /* Prevent touching edges */
   }
 }
 
 .brand-title-login {
   text-align: center;
-  margin: 0 0 5px 0;
-  font-size: 1.2rem;
-  color: var(--brand-primary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  margin: 0 0 10px 0;
+  font-size: 3.5rem;
+  /* Larger and prominent */
+  color: #ffffff;
+  /* White as requested */
   font-weight: 700;
+  line-height: 1;
+}
+
+.brand-title-login span {
+  color: var(--brand-primary);
+  /* AI in purple */
 }
 
 .login-title {
   text-align: center;
   margin-bottom: 10px;
-  font-size: 2.5rem;
-  color: #ffffff;
-  font-weight: 600;
+  font-size: 1.2rem;
+  /* Smaller "Bem-vindo" */
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .login-subtitle {
@@ -606,6 +804,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease-in-out;
 }
 
 .app-main {
@@ -676,6 +875,24 @@ textarea::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Mobile Menu Button (Hidden on Desktop) */
+.btn-mobile-menu {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px;
+}
+
+.mobile-menu-overlay {
+  display: none;
+}
+
 
 /* --- MODO MOBILE (A Mágica Acontece Aqui) --- */
 @media (max-width: 768px) {
@@ -683,36 +900,59 @@ textarea::-webkit-scrollbar-thumb:hover {
   /* 1. Muda de "Lado a Lado" para "Um em cima do outro" */
   .app-container {
     flex-direction: column;
-    /* Coluna vertical */
     height: auto;
-    /* Deixa a página crescer */
     overflow: auto;
-    /* Permite rolar a página toda */
   }
 
-  /* 2. Sidebar vira um Menu de Topo compacto */
+  /* 2. Sidebar vira um Drawer (Menu Lateral Oculto) */
   .app-sidebar {
-    width: 100%;
-    /* Ocupa a largura toda */
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-    max-height: 150px;
-    /* Limita altura para não ocupar a tela toda */
-    overflow-y: auto;
-    /* Permite rolar o históricozinho */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    /* Escondido por padrão */
+    border-right: 1px solid var(--border-subtle);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+    max-height: none;
+    /* Remove limite de altura anterior */
+  }
+
+  .app-sidebar.mobile-open {
+    transform: translateX(0);
+    /* Mostra quando aberto */
+  }
+
+  /* Overlay Escuro quando menu abre */
+  .mobile-menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .mobile-menu-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   /* 3. Ajusta a área principal */
   .app-main {
     width: 100%;
     overflow: visible;
-    /* Remove scroll interno duplo */
   }
 
   .content-wrapper {
     padding: 20px 15px;
-    /* Reduz margens gigantes */
   }
 
   /* 4. Reduz fontes gigantes */
@@ -722,29 +962,39 @@ textarea::-webkit-scrollbar-thumb:hover {
 
   /* Header Mobile: Empilha tudo */
   .header-content {
-    flex-direction: column;
+    flex-direction: row;
+    /* Mantém linha para caber menu e logo */
+    justify-content: center;
     gap: 15px;
+    padding-left: 40px;
+    /* Espaço para o botão menu */
+  }
+
+  .btn-mobile-menu {
+    display: block;
+    /* Mostra botão menu */
   }
 
   .btn-logout {
     position: static;
-    /* Remove posição absoluta no mobile */
     transform: none;
+    display: none;
+    /* Esconde logout do header no mobile (já tem na sidebar) */
   }
 
   .brand-container h1 {
     font-size: 1.8rem;
   }
 
-  /* Título menor */
   .brand-container p {
     font-size: 0.9rem;
+    display: none;
+    /* Simplifica header mobile */
   }
 
   /* 5. Ajusta o Terminal para caber na tela */
   .daat-terminal {
     height: auto !important;
-    /* Altura flexível no celular */
     min-height: 300px;
   }
 
@@ -757,7 +1007,8 @@ textarea::-webkit-scrollbar-thumb:hover {
     padding: 14px 24px;
     border-radius: 50px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 900;
+    /* Abaixo do menu drawer */
     font-size: 1rem;
     background-color: var(--brand-primary);
     color: white;
@@ -779,6 +1030,14 @@ textarea::-webkit-scrollbar-thumb:hover {
 .sidebar-header {
   padding: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* No mobile, o botão "Nova Análise" da sidebar pode sumir, pois já temos o FAB */
+@media (max-width: 768px) {
+  .sidebar-header .btn-new-analysis {
+    display: none;
+    /* Esconde o botão duplicado dentro do menu */
+  }
 }
 
 .btn-new-analysis {
