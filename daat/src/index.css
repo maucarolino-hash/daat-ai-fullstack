@@ -110,21 +110,6 @@ body {
   max-width: 100%;
   /* Garante que nunca passa da tela */
 
-  /* 2. O Layout Grid */
-  display: grid;
-
-  /* LINHAS: Header Automático | Conteúdo Flexível */
-  grid-template-rows: auto minmax(0, 1fr);
-
-  /* 3. A CORREÇÃO (O Elo Perdido) */
-  /* Definimos que a coluna única pode encolher até 0. 
-     Sem isso, ela trava no tamanho do texto longo. */
-  grid-template-columns: minmax(0, 100%);
-
-  /* Estilo Visual */
-  border-radius: 16px;
-  /* background-color: #f8fafc;  <-- REMOVIDO PARA GLASS */
-  border: 1px solid #2E3048;
   overflow: hidden;
   /* Garante que bordas arredondadas cortem o conteúdo */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
