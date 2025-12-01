@@ -847,147 +847,131 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 /* Mobile Menu Button (Hidden on Desktop) */
 .btn-mobile-menu {
-  display: none;
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  cursor: pointer;
-  position: absolute;
+  overflow: auto;
+}
+
+/* 2. Sidebar vira um Drawer (Menu Lateral Oculto) */
+.app-sidebar {
+  position: fixed;
+  top: 0;
   left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 8px;
+  width: 280px;
+  height: 100vh;
+  z-index: 1000;
+  transform: translateX(-100%);
+  /* Escondido por padrão */
+  border-right: 1px solid var(--border-subtle);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+  max-height: none;
+  /* Remove limite de altura anterior */
 }
 
+.app-sidebar.mobile-open {
+  transform: translateX(0);
+  /* Mostra quando aberto */
+}
+
+/* Overlay Escuro quando menu abre */
 .mobile-menu-overlay {
-  display: none;
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
 }
 
+.mobile-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-/* --- MODO MOBILE (A Mágica Acontece Aqui) --- */
-@media (max-width: 768px) {
+/* 3. Ajusta a área principal */
+.app-main {
+  width: 100%;
+  overflow: visible;
+}
 
-  /* 1. Muda de "Lado a Lado" para "Um em cima do outro" */
-  .app-container {
-    flex-direction: column;
-    height: auto;
-    overflow: auto;
-  }
+.content-wrapper {
+  padding: 20px 15px;
+}
 
-  /* 2. Sidebar vira um Drawer (Menu Lateral Oculto) */
-  .app-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px;
-    height: 100vh;
-    z-index: 1000;
-    transform: translateX(-100%);
-    /* Escondido por padrão */
-    border-right: 1px solid var(--border-subtle);
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
-    max-height: none;
-    /* Remove limite de altura anterior */
-  }
+/* 4. Reduz fontes gigantes */
+.app-header {
+  margin-bottom: 20px;
+}
 
-  .app-sidebar.mobile-open {
-    transform: translateX(0);
-    /* Mostra quando aberto */
-  }
+/* Header Mobile: Empilha tudo */
+.header-content {
+  flex-direction: row;
+  /* Mantém linha para caber menu e logo */
+  justify-content: center;
+  gap: 15px;
+  padding-left: 0;
+  /* Remove padding para centralizar perfeitamente */
+}
 
-  /* Overlay Escuro quando menu abre */
-  .mobile-menu-overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
+.btn-mobile-menu {
+  display: block;
+  /* Mostra botão menu */
+}
 
-  .mobile-menu-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
+.btn-logout {
+  position: static;
+  transform: none;
+  display: none;
+  /* Esconde logout do header no mobile (já tem na sidebar) */
+}
 
-  /* 3. Ajusta a área principal */
-  .app-main {
-    width: 100%;
-    overflow: visible;
-  }
+.brand-container h1 {
+  font-size: 1.8rem;
+}
 
-  .content-wrapper {
-    padding: 20px 15px;
-  }
+.brand-container p {
+  font-size: 0.9rem;
+  display: none;
+  /* Simplifica header mobile */
+}
 
-  /* 4. Reduz fontes gigantes */
-  .app-header {
-    margin-bottom: 20px;
-  }
+/* 5. Ajusta o Terminal para caber na tela */
+.daat-terminal {
+  height: auto !important;
+  min-height: 300px;
+}
 
-  /* Header Mobile: Empilha tudo */
-  .header-content {
-    flex-direction: row;
-    /* Mantém linha para caber menu e logo */
-    justify-content: center;
-    gap: 15px;
-    padding-left: 40px;
-    /* Espaço para o botão menu */
-  }
+/* --- MOBILE FLOATING ACTION BUTTON (NOVA ANÁLISE) --- */
+.btn-new-analysis {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: auto;
+  padding: 14px 24px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  z-index: 900;
+  /* Abaixo do menu drawer */
+  font-size: 1rem;
+  background-color: var(--brand-primary);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-  .btn-mobile-menu {
-    display: block;
-    /* Mostra botão menu */
-  }
+.btn-new-analysis:active {
+  transform: scale(0.95);
+}
 
-  .btn-logout {
-    position: static;
-    transform: none;
-    display: none;
-    /* Esconde logout do header no mobile (já tem na sidebar) */
-  }
-
-  .brand-container h1 {
-    font-size: 1.8rem;
-  }
-
-  .brand-container p {
-    font-size: 0.9rem;
-    display: none;
-    /* Simplifica header mobile */
-  }
-
-  /* 5. Ajusta o Terminal para caber na tela */
-  .daat-terminal {
-    height: auto !important;
-    min-height: 300px;
-  }
-
-  /* --- MOBILE FLOATING ACTION BUTTON (NOVA ANÁLISE) --- */
-  .btn-new-analysis {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: auto;
-    padding: 14px 24px;
-    border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    z-index: 900;
-    /* Abaixo do menu drawer */
-    font-size: 1rem;
-    background-color: var(--brand-primary);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .btn-new-analysis:active {
-    transform: scale(0.95);
-  }
+/* Make delete button always visible on mobile */
+.btn-delete-history {
+  opacity: 1 !important;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  /* Larger touch target */
+}
 }
 
 /* --- HISTORY SIDEBAR --- */
