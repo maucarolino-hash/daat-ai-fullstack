@@ -772,530 +772,512 @@ textarea::-webkit-scrollbar-thumb:hover {
   flex-shrink: 0;
   background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border-subtle);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease-in-out;
-}
 
-.app-main {
-  background-color: #eee;
-  border-radius: 4px;
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1A1B2E;
-}
-
-.custom-checkbox:hover input~.checkmark {
-  background-color: #ccc;
-}
-
-.custom-checkbox a {
-  color: var(--brand-primary);
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 4px;
-}
-
-.custom-checkbox a:hover {
-  text-decoration: underline;
-}
-
-.btn-submit {
-  width: 100%;
-  padding: 14px;
-  background-color: var(--brand-primary);
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 10px;
-}
-
-.btn-submit:hover:not(:disabled) {
-  background-color: var(--brand-hover);
-}
-
-.btn-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.error-message {
-  padding: 10px;
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #EF4444;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  text-align: center;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-  font-weight: 600;
-  text-decoration: underline;
-  padding: 0;
-  font-size: 0.95rem;
-  margin-left: 5px;
-}
-
-.btn-link:hover {
-  color: #d1d5db;
-}
-
-/* --- TERMINAL HEADER --- */
-.terminal-header {
-  padding: 20px 24px 10px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  background-color: transparent;
-  /* Transparente para o glass funcionar */
-  z-index: 10;
-}
-
-.terminal-header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.score-display {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.score-circle {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.score-circle.good {
-  background: linear-gradient(135deg, #48bb78, #2f855a);
-}
-
-.score-circle.bad {
-  background: linear-gradient(135deg, #fc8181, #c53030);
-}
-
-.score-title {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #e2e8f0;
-}
-
-.score-subtitle {
-  font-size: 0.8rem;
-  color: #718096;
-}
-
-.btn-download {
-  padding: 8px 16px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-light);
-  border-radius: 6px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
-}
-
-.btn-download:hover {
-  border-color: var(--text-primary);
-  color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.empty-state {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #cbd5e0;
-}
-
-.result-content {
-  padding-bottom: 20px;
-}
-
-/* --- LAYOUT PADRÃO (DESKTOP) --- */
-.app-container {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-  background-color: var(--bg-main);
-  background-image: none;
-}
-
-.app-sidebar {
-  width: 280px;
-  flex-shrink: 0;
-  background-color: var(--bg-sidebar);
-  border-right: 1px solid var(--border-subtle);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease-in-out;
-}
-
-.app-main {
-  flex: 1;
-  overflow-y: auto;
-  position: relative;
-}
-
-.content-wrapper {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-.app-header {
-  margin-bottom: 40px;
-  text-align: center;
-}
-
-.sidebar-section-title h2 {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-muted);
-  font-weight: bold;
-  margin: 0;
-}
-
-.history-list-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
-
-.history-empty {
-  color: var(--text-muted);
-  text-align: center;
-  font-size: 0.9rem;
-  margin-top: 20px;
-}
-
-.history-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.history-item {
-  position: relative;
-  padding: 16px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  background-color: rgba(36, 38, 58, 0.4);
-  /* Item translúcido */
-  border: 1px solid var(--border-subtle);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.history-item:hover {
-  border-color: var(--brand-primary);
-  transform: translateY(-2px);
-  background-color: rgba(36, 38, 58, 0.6);
-}
-
-.history-item-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.history-date {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.history-score {
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.history-score.good {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: var(--status-success);
-}
-
-.history-score.bad {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: var(--status-danger);
-}
-
-.history-title {
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 20px;
-  /* Space for delete button */
-}
-
-.btn-delete-history {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  opacity: 0;
-  /* Hidden by default */
-  transition: all 0.2s;
-  padding: 4px;
-  border-radius: 4px;
-}
-
-.history-item:hover .btn-delete-history {
-  opacity: 1;
-  /* Show on hover */
-}
-
-.btn-delete-history:hover {
-  color: var(--status-danger);
-  background-color: rgba(239, 68, 68, 0.1);
-}
-
-.sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.btn-sidebar-logout {
-  width: 100%;
-  padding: 10px;
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  right: 20px;
-  width: auto;
-  padding: 14px 24px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  z-index: 900;
-  /* Abaixo do menu drawer */
-  font-size: 1rem;
-  background-color: var(--brand-primary);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn-new-analysis:active {
-  transform: scale(0.95);
-}
-
-/* Make delete button always visible on mobile */
-.btn-delete-history {
-  opacity: 1 !important;
-  background-color: rgba(255, 255, 255, 0.05);
-  padding: 8px;
-  /* Larger touch target */
-}
-
-
-/* --- HISTORY SIDEBAR --- */
-.sidebar-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-header {
-  padding: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* No mobile, o botão "Nova Análise" da sidebar pode sumir, pois já temos o FAB */
-@media (max-width: 768px) {
-  .sidebar-header .btn-new-analysis {
-    display: none;
-    /* Esconde o botão duplicado dentro do menu */
+  .custom-checkbox a {
+    color: var(--brand-primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 4px;
   }
-}
 
-.btn-new-analysis {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--brand-primary);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
+  .custom-checkbox a:hover {
+    text-decoration: underline;
+  }
 
-.btn-new-analysis:hover {
-  background-color: var(--brand-hover);
-  transform: translateY(-1px);
-}
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+  }
 
-.sidebar-section-title {
-  padding: 15px 24px 5px 24px;
-}
+  .btn-submit:hover:not(:disabled) {
+    background-color: var(--brand-hover);
+  }
 
-.sidebar-section-title h2 {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-muted);
-  font-weight: bold;
-  margin: 0;
-}
+  .btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 
-.history-list-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
+  .error-message {
+    padding: 10px;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
 
-.history-empty {
-  color: var(--text-muted);
-  text-align: center;
-  font-size: 0.9rem;
-  margin-top: 20px;
-}
+  .btn-link {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: underline;
+    padding: 0;
+    font-size: 0.95rem;
+    margin-left: 5px;
+  }
 
-.history-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+  .btn-link:hover {
+    color: #d1d5db;
+  }
 
-.history-item {
-  position: relative;
-  padding: 16px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  background-color: rgba(36, 38, 58, 0.4);
-  /* Item translúcido */
-  border: 1px solid var(--border-subtle);
-  cursor: pointer;
-  transition: all 0.2s;
-}
+  /* --- TERMINAL HEADER --- */
+  .terminal-header {
+    padding: 20px 24px 10px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: transparent;
+    /* Transparente para o glass funcionar */
+    z-index: 10;
+  }
 
-.history-item:hover {
-  border-color: var(--brand-primary);
-  transform: translateY(-2px);
-  background-color: rgba(36, 38, 58, 0.6);
-}
+  .terminal-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-.history-item-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
 
-.history-date {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
+  .score-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
 
-.history-score {
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
+  .score-circle.good {
+    background: linear-gradient(135deg, #48bb78, #2f855a);
+  }
 
-.history-score.good {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: var(--status-success);
-}
+  .score-circle.bad {
+    background: linear-gradient(135deg, #fc8181, #c53030);
+  }
 
-.history-score.bad {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: var(--status-danger);
-}
+  .score-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #e2e8f0;
+  }
 
-.history-title {
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 20px;
-  /* Space for delete button */
-}
+  .score-subtitle {
+    font-size: 0.8rem;
+    color: #718096;
+  }
 
-.btn-delete-history {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  opacity: 0;
-  /* Hidden by default */
-  transition: all 0.2s;
-  padding: 4px;
-  border-radius: 4px;
-}
+  .btn-download {
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
 
-.history-item:hover .btn-delete-history {
-  opacity: 1;
-  /* Show on hover */
-}
+  .btn-download:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 
-.btn-delete-history:hover {
-  color: var(--status-danger);
-  background-color: rgba(239, 68, 68, 0.1);
-}
+  .empty-state {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e0;
+  }
 
-.sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
+  .result-content {
+    padding-bottom: 20px;
+  }
 
-.btn-sidebar-logout {
-  width: 100%;
-  padding: 10px;
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-}
+  /* --- LAYOUT PADRÃO (DESKTOP) --- */
+  .app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-main);
+    background-image: none;
+  }
 
-.btn-sidebar-logout:hover {
-  border-color: var(--status-danger);
-  color: var(--status-danger);
-}
+  .app-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .app-main {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .app-header {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .sidebar-section-title h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .history-list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .history-empty {
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 20px;
+  }
+
+  .history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .history-item {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background-color: rgba(36, 38, 58, 0.4);
+    /* Item translúcido */
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .history-item:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-2px);
+    background-color: rgba(36, 38, 58, 0.6);
+  }
+
+  .history-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .history-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .history-score {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .history-score.good {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--status-success);
+  }
+
+  .history-score.bad {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--status-danger);
+  }
+
+  .history-title {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 20px;
+    /* Space for delete button */
+  }
+
+  .btn-delete-history {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    /* Hidden by default */
+    transition: all 0.2s;
+    padding: 4px;
+    border-radius: 4px;
+  }
+
+  .history-item:hover .btn-delete-history {
+    opacity: 1;
+    /* Show on hover */
+  }
+
+  .btn-delete-history:hover {
+    color: var(--status-danger);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-sidebar-logout {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    right: 20px;
+    width: auto;
+    padding: 14px 24px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 900;
+    /* Abaixo do menu drawer */
+    font-size: 1rem;
+    background-color: var(--brand-primary);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-new-analysis:active {
+    transform: scale(0.95);
+  }
+
+  /* Make delete button always visible on mobile */
+  .btn-delete-history {
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    /* Larger touch target */
+  }
+
+
+  /* --- HISTORY SIDEBAR --- */
+  .sidebar-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* No mobile, o botão "Nova Análise" da sidebar pode sumir, pois já temos o FAB */
+  @media (max-width: 768px) {
+    .sidebar-header .btn-new-analysis {
+      display: none;
+      /* Esconde o botão duplicado dentro do menu */
+    }
+  }
+
+  .btn-new-analysis {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--brand-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-new-analysis:hover {
+    background-color: var(--brand-hover);
+    transform: translateY(-1px);
+  }
+
+  .sidebar-section-title {
+    padding: 15px 24px 5px 24px;
+  }
+
+  .sidebar-section-title h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .history-list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .history-empty {
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 20px;
+  }
+
+  .history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .history-item {
+    position: relative;
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background-color: rgba(36, 38, 58, 0.4);
+    /* Item translúcido */
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .history-item:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-2px);
+    background-color: rgba(36, 38, 58, 0.6);
+  }
+
+  .history-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .history-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .history-score {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .history-score.good {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--status-success);
+  }
+
+  .history-score.bad {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--status-danger);
+  }
+
+  .history-title {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 20px;
+    /* Space for delete button */
+  }
+
+  .btn-delete-history {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    /* Hidden by default */
+    transition: all 0.2s;
+    padding: 4px;
+    border-radius: 4px;
+  }
+
+  .history-item:hover .btn-delete-history {
+    opacity: 1;
+    /* Show on hover */
+  }
+
+  .btn-delete-history:hover {
+    color: var(--status-danger);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-sidebar-logout {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .btn-sidebar-logout:hover {
+    border-color: var(--status-danger);
+    color: var(--status-danger);
+  }
