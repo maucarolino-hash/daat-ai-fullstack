@@ -9,14 +9,17 @@ from django.contrib.auth.models import User
 # from django.http import JsonResponse (Removido)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny]) # Permite acesso sem login
 def process_diagnostic(request):
     segment = request.data.get('customerSegment', '')
     problem = request.data.get('problem', '')
     proposition = request.data.get('valueProposition', '')
     
+    # Se não tiver usuário logado, usa None (ou um ID fixo se necessário)
+    user_id = request.user.id if request.user.is_authenticated else None
+
     try:
-        task = analyze_startup_task.delay(segment, problem, proposition, request.user.id)
+        task = analyze_startup_task.delay(segment, problem, proposition, user_id)
         
         if task.ready():
             return Response({
@@ -38,7 +41,7 @@ def process_diagnostic(request):
         }, status=500)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny]) # Permite checar status sem login
 def check_status(request, task_id):
     result = AsyncResult(task_id)
 
