@@ -45,6 +45,8 @@ body {
   background-color: var(--bg-main);
   color: var(--text-primary);
   font-family: 'Inter', sans-serif;
+  background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b1120 100%);
+  /* Gradiente sutil no fundo */
 }
 
 /* Scrollbar Dark (Estilo Hacker) */
@@ -98,6 +100,16 @@ body {
   }
 }
 
+/* GLASSMORPHISM UTILS */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  /* --bg-card com transparência */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
 /* DAAT TERMINAL: Versão Grid (Layout First) */
 .daat-terminal {
   /* 1. Geometria Fixa (ou redimensionável pelo usuário, veja o bônus abaixo) */
@@ -119,7 +131,7 @@ body {
 
   /* Estilo Visual */
   border-radius: 16px;
-  background-color: #f8fafc;
+  /* background-color: #f8fafc;  <-- REMOVIDO PARA GLASS */
   border: 1px solid #e2e8f0;
   overflow: hidden;
   /* Garante que bordas arredondadas cortem o conteúdo */
@@ -134,10 +146,15 @@ body {
 
   /* Cores e Bordas Dinâmicas */
   margin-top: 40px;
-  background-color: var(--bg-card);
+  /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
   color: var(--text-primary);
   border: 1px solid var(--border-light);
   transition: border-color 0.3s ease;
+
+  /* APLICANDO GLASSMORPHISM */
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .daat-terminal.loading {
@@ -146,10 +163,14 @@ body {
 
 .daat-terminal.score-good {
   border-color: #48bb78;
+  box-shadow: 0 0 20px rgba(72, 187, 120, 0.1);
+  /* Glow verde sutil */
 }
 
 .daat-terminal.score-bad {
   border-color: #fc8181;
+  box-shadow: 0 0 20px rgba(252, 129, 129, 0.1);
+  /* Glow vermelho sutil */
 }
 
 /* Conteúdo com Scroll */
@@ -169,8 +190,8 @@ textarea::-webkit-scrollbar {
 }
 
 textarea::-webkit-scrollbar-track {
-  background: var(--bg-input);
-  /* Fundo igual ao input */
+  background: rgba(51, 65, 85, 0.5);
+  /* Fundo translúcido */
   border-radius: 4px;
 }
 
@@ -178,8 +199,9 @@ textarea::-webkit-scrollbar-thumb {
   background-color: var(--border-light);
   /* Cor da barra */
   border-radius: 4px;
-  border: 2px solid var(--bg-input);
+  border: 2px solid transparent;
   /* Espaço entre barra e borda */
+  background-clip: content-box;
 }
 
 textarea::-webkit-scrollbar-thumb:hover {
@@ -194,7 +216,13 @@ textarea::-webkit-scrollbar-thumb:hover {
   border-radius: 16px;
   max-width: 600px;
   margin: 0 auto;
-  background-color: var(--bg-card);
+  /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
+
+  /* APLICANDO GLASSMORPHISM */
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
 .diagnostic-container h2 {
@@ -227,7 +255,8 @@ textarea::-webkit-scrollbar-thumb:hover {
   max-width: 100%;
   box-sizing: border-box;
   padding: 12px;
-  background-color: var(--bg-input);
+  background-color: rgba(51, 65, 85, 0.4);
+  /* Input translúcido */
   border: 1px solid var(--border-light);
   border-radius: 8px;
   color: var(--text-primary);
@@ -237,11 +266,14 @@ textarea::-webkit-scrollbar-thumb:hover {
   outline: none;
   font-family: 'Inter', sans-serif;
   overflow-y: auto;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
 
 .input-textarea:focus {
   border-color: var(--brand-primary);
+  background-color: rgba(51, 65, 85, 0.7);
+  /* Fica mais sólido ao focar */
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 .input-text {
@@ -249,15 +281,17 @@ textarea::-webkit-scrollbar-thumb:hover {
   padding: 12px;
   border-radius: 8px;
   border: 1px solid var(--border-light);
-  background-color: var(--bg-input);
+  background-color: rgba(51, 65, 85, 0.4);
   color: white;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
 
 .input-text:focus {
   border-color: var(--brand-primary);
+  background-color: rgba(51, 65, 85, 0.7);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 .btn-primary {
@@ -271,16 +305,21 @@ textarea::-webkit-scrollbar-thumb:hover {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.25);
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--brand-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(99, 102, 241, 0.35);
 }
 
 .btn-primary:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+  transform: none;
+  box-shadow: none;
 }
 
 /* --- LOGIN PAGE --- */
@@ -291,6 +330,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   justify-content: center;
   height: 100vh;
   background-color: var(--bg-main);
+  background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0b1120 100%);
   color: var(--text-primary);
 }
 
@@ -298,16 +338,25 @@ textarea::-webkit-scrollbar-thumb:hover {
   width: 100%;
   max-width: 400px;
   padding: 40px;
-  background-color: var(--bg-card);
+  /* background-color: var(--bg-card); <-- REMOVIDO PARA GLASS */
   border-radius: 16px;
-  border: 1px solid var(--border-light);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+
+  /* APLICANDO GLASSMORPHISM */
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .login-title {
   text-align: center;
   margin-bottom: 10px;
   font-size: 2rem;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Título gradiente */
 }
 
 .login-subtitle {
@@ -324,6 +373,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   margin-bottom: 20px;
   font-size: 0.9rem;
   text-align: center;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .login-footer {
@@ -348,14 +398,16 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .btn-link:hover {
   text-decoration: underline;
+  color: #818cf8;
 }
 
 
 /* --- TERMINAL HEADER --- */
 .terminal-header {
   padding: 20px 24px 10px 24px;
-  border-bottom: 1px solid var(--border-subtle);
-  background-color: var(--bg-card);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: transparent;
+  /* Transparente para o glass funcionar */
   z-index: 10;
 }
 
@@ -381,14 +433,15 @@ textarea::-webkit-scrollbar-thumb:hover {
   justify-content: center;
   font-size: 1.4rem;
   font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .score-circle.good {
-  background-color: #38a169;
+  background: linear-gradient(135deg, #48bb78, #2f855a);
 }
 
 .score-circle.bad {
-  background-color: #e53e3e;
+  background: linear-gradient(135deg, #fc8181, #c53030);
 }
 
 .score-title {
@@ -404,7 +457,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .btn-download {
   padding: 8px 16px;
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-light);
   border-radius: 6px;
   color: var(--text-secondary);
@@ -419,6 +472,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 .btn-download:hover {
   border-color: var(--text-primary);
   color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .empty-state {
@@ -439,12 +493,15 @@ textarea::-webkit-scrollbar-thumb:hover {
   height: 100vh;
   overflow: hidden;
   background-color: var(--bg-main);
+  background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b1120 100%);
 }
 
 .app-sidebar {
   width: 280px;
   flex-shrink: 0;
-  background-color: var(--bg-sidebar);
+  background-color: rgba(15, 23, 42, 0.8);
+  /* Sidebar translúcida */
+  backdrop-filter: blur(10px);
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
@@ -484,6 +541,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   font-size: 2.5rem;
   color: var(--text-primary);
   margin: 0 0 5px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .brand-container h1 span {
@@ -501,7 +559,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-light);
   color: var(--text-secondary);
   padding: 8px 16px;
@@ -514,6 +572,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 .btn-logout:hover {
   border-color: var(--text-primary);
   color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 
@@ -598,7 +657,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .sidebar-header {
   padding: 20px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .btn-new-analysis {
@@ -615,11 +674,13 @@ textarea::-webkit-scrollbar-thumb:hover {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .btn-new-analysis:hover {
   background-color: var(--brand-hover);
+  transform: translateY(-1px);
 }
 
 .sidebar-section-title {
@@ -659,7 +720,8 @@ textarea::-webkit-scrollbar-thumb:hover {
   padding: 16px;
   margin-bottom: 8px;
   border-radius: 8px;
-  background-color: var(--bg-card);
+  background-color: rgba(30, 41, 59, 0.4);
+  /* Item translúcido */
   border: 1px solid var(--border-subtle);
   cursor: pointer;
   transition: all 0.2s;
@@ -668,6 +730,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 .history-item:hover {
   border-color: var(--brand-primary);
   transform: translateY(-2px);
+  background-color: rgba(30, 41, 59, 0.6);
 }
 
 .history-item-header {
@@ -736,7 +799,7 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 .sidebar-footer {
   padding: 20px;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .btn-sidebar-logout {
