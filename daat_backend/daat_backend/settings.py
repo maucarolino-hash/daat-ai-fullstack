@@ -151,9 +151,25 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS CONFIGURATION
-# In production, you might want to restrict this to your Vercel URL
-CORS_ALLOW_ALL_ORIGINS = True 
+CORS_ALLOW_ALL_ORIGINS = False 
 CORS_ALLOW_CREDENTIALS = True
+
+# Lista de origens permitidas (Localhost)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://daat-ai-fullstack.vercel.app", # URL Oficial
+]
+
+# PERMITIR QUALQUER SUBDOMÍNIO DA VERCEL (Previews, Deploys, etc)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+]
+
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += ['http://localhost:5173', 'http://127.0.0.1:5173']
+
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://daat-ai-fullstack.vercel.app"] # Adicione a URL oficial aqui também
 
 from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [

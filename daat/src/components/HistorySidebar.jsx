@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../config';
+import api from '../services/api';
 
 // Recebemos as funções do Pai via PROPS
 const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refreshTrigger }) => {
@@ -8,20 +8,11 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refres
     useEffect(() => {
         if (!token) return;
 
-        fetch(`${API_BASE_URL}/api/history`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+        api.get('/api/history', {
+            headers: { 'Authorization': `Bearer ${token}` }
         })
-            .then(res => {
-                if (res.status === 401 || res.status === 403) {
-                    onLogout();
-                    throw new Error("Sessão expirada");
-                }
-                return res.json();
-            })
-            .then(data => {
+            .then(response => {
+                const data = response.data;
                 if (data && Array.isArray(data)) {
                     setHistory(data);
                 } else if (data && data.history) {
@@ -30,7 +21,12 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refres
                     setHistory([]);
                 }
             })
-            .catch(err => console.error("Erro no histórico:", err));
+            .catch(err => {
+                if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                    onLogout();
+                }
+                console.error("Erro no histórico:", err);
+            });
     }, [token, onLogout, refreshTrigger]);
 
     return (
