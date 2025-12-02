@@ -120,8 +120,12 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
         try {
             // 2. A Chamada Inicial (POST)
-            // Chama o endpoint público
-            const response = await api.post('/api/analyze-public', payload);
+            // Chama o endpoint público (mas envia token se tiver, para salvar histórico)
+            const response = await api.post('/api/analyze-public', payload, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const data = response.data;
 
             // 3. Verifica se já acabou (Modo Eager ou muito rápido)
