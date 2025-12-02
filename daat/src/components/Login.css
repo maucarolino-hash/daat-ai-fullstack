@@ -1,0 +1,228 @@
+/* Login.css - Dark & Clean Design */
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #0B1120;
+    /* Fundo escuro profundo */
+    background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0b1120 100%);
+    color: #F1F5F9;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.login-content {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Sem borda, sem fundo de cartão, estilo "flutuante" */
+}
+
+.brand-title-login {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #F1F5F9;
+    text-align: center;
+}
+
+.brand-title-login span {
+    color: #6366F1;
+    /* Roxo vibrante */
+}
+
+.login-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #F1F5F9;
+    text-align: center;
+}
+
+.login-subtitle {
+    font-size: 0.95rem;
+    color: #94A3B8;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.login-subtitle .btn-link {
+    color: #6366F1;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+.login-subtitle .btn-link:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    width: 100%;
+    padding: 12px;
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-group {
+    width: 100%;
+    position: relative;
+}
+
+.input-field {
+    width: 100%;
+    padding: 14px 16px;
+    background-color: #1E293B;
+    /* Fundo do input levemente mais claro que o fundo da tela */
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.input-field::placeholder {
+    color: #64748B;
+}
+
+.input-field:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    background-color: #253045;
+}
+
+.password-group {
+    position: relative;
+}
+
+.btn-show-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.btn-show-password:hover {
+    color: #F1F5F9;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #94A3B8;
+    user-select: none;
+}
+
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    height: 18px;
+    width: 18px;
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.2s;
+}
+
+.custom-checkbox:hover input~.checkmark {
+    border-color: #64748B;
+}
+
+.custom-checkbox input:checked~.checkmark {
+    background-color: #6366F1;
+    border-color: #6366F1;
+}
+
+.label-text a {
+    color: #6366F1;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.label-text a:hover {
+    text-decoration: underline;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background-color: #6366F1;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.25);
+}
+
+.btn-submit:hover {
+    background-color: #4F46E5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px rgba(99, 102, 241, 0.35);
+}
+
+.btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-loading {
+    opacity: 0.8;
+    cursor: wait;
+}

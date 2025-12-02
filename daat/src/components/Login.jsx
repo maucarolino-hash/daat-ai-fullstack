@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../services/api';
 import { Eye, EyeOff, Check } from 'lucide-react';
+import './Login.css'; // Import dedicated styles
 
 const Login = ({ onLogin }) => {
     const [isRegistering, setIsRegistering] = useState(false);
