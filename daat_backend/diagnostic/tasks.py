@@ -16,9 +16,6 @@ def analyze_startup_task(segment, problem, proposition, user_id):
     client = OpenAI(api_key=api_key)
     tavily = TavilyClient(api_key=tavily_key) if tavily_key else None
 
-    print(f"DEBUG: OpenAI Key Length: {len(api_key) if api_key else 'None'}")
-    print(f"DEBUG: Tavily Key Length: {len(tavily_key) if tavily_key else 'None'}")
-
     # 1. Busca Web (Tavily)
     web_context_str = ""
     if tavily:
@@ -114,9 +111,6 @@ def analyze_startup_task(segment, problem, proposition, user_id):
         }
 
     except Exception as e:
-        import traceback
-        print("ERRO CRÍTICO NA TAREFA:")
-        print(traceback.format_exc())
         return {
             "score": 0,
             "feedback": f"Erro na IA: {str(e)}"
