@@ -33,6 +33,7 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
     // Estado do Resultado
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("Iniciando IA...");
 
     // MÁGICA DE SINCRONIZAÇÃO:
     // Sempre que "initialData" mudar (clique na sidebar), atualiza o formulário
@@ -57,10 +58,33 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
         }
     }, [initialData]);
 
+    // Storytelling no Loading
+    useEffect(() => {
+        let interval;
+        if (loading) {
+            const steps = [
+                "Conectando ao Cérebro Neural...",
+                "🔍 Varrendo a web por concorrentes (Tavily)...",
+                "📊 Cruzando dados de mercado...",
+                "⚖️ O Advogado do Diabo está julgando...",
+                "📄 Gerando PDF Oficial...",
+                "Quase pronto..."
+            ];
+            let i = 0;
+            setLoadingText(steps[0]);
+
+            interval = setInterval(() => {
+                i = (i + 1) % steps.length; // Loop se demorar muito
+                setLoadingText(steps[i]);
+            }, 5000); // Muda a frase a cada 5 segundos
+        }
+        return () => clearInterval(interval);
+    }, [loading]);
+
     const [statusMessage, setStatusMessage] = useState(""); // Feedback para o usuário
 
     const pollTaskStatus = async (taskId) => {
-        setStatusMessage("A IA está pesquisando concorrentes no mercado...");
+        // setStatusMessage("A IA está pesquisando concorrentes no mercado..."); // Removido em favor do loadingText dinâmico
 
         const intervalId = setInterval(async () => {
             try {
@@ -113,7 +137,7 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
         setLoading(true);
         setResult(null); // Limpa resultado anterior
-        setStatusMessage("Enviando dados para o QG...");
+        // setStatusMessage("Enviando dados para o QG..."); // Removido em favor do loadingText dinâmico
 
         // 1. Preparar os dados do Daat
         const payload = { customerSegment, problem, valueProposition };
@@ -189,7 +213,7 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
                     disabled={loading}
                     className={`btn-primary ${loading ? 'btn-loading' : ''}`}
                 >
-                    {loading ? (statusMessage || 'Analisando...') : 'Gerar Diagnóstico'}
+                    {loading ? 'Analisando...' : 'Gerar Diagnóstico'}
                 </button>
             </form>
 
@@ -262,7 +286,14 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
                 <div className="daat-content-scroll">
 
                     {/* LOADING STATE */}
-                    {loading && <SkeletonLoader />}
+                    {loading && (
+                        <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem' }}>
+                            <SkeletonLoader />
+                            <p className="loading-text" style={{ color: '#a0aec0', fontSize: '0.9rem', animation: 'pulse 2s infinite' }}>
+                                {loadingText}
+                            </p>
+                        </div>
+                    )}
 
                     {/* EMPTY STATE */}
                     {!loading && !result && (
