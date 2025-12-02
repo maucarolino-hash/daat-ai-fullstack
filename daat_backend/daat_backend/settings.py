@@ -208,3 +208,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db' # Salva o resultado no banco de dados normal para facilitar
 CELERY_TASK_ALWAYS_EAGER = True # Modo de desenvolvimento (sem Redis)
 CELERY_TASK_EAGER_PROPAGATES = True
+
+# EMAIL CONFIGURATION (Dev)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
