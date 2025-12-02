@@ -1,10 +1,12 @@
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const api = axios.create({
-    // Tem que ser a URL do RENDER (Backend), não da Vercel (Frontend).
-    // Tem que ter https://
-    // NÃO pode ter barra / no final (ex: .com/ ❌ -> .com ✅)
-    baseURL: "https://daat-ai-fullstack.onrender.com",
+    baseURL: API_BASE_URL,
+    timeout: 10000, // 10 seconds timeout
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
 export default api;

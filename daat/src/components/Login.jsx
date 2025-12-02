@@ -25,7 +25,7 @@ const Login = ({ onLogin }) => {
             return;
         }
 
-        if (isRegistering && password !== confirmPassword) {
+        if (isRegistering && password.trim() !== confirmPassword.trim()) {
             setError("As senhas não coincidem.");
             setLoading(false);
             return;
@@ -35,8 +35,8 @@ const Login = ({ onLogin }) => {
 
         try {
             const payload = isRegistering
-                ? { username, email, password1: password, password2: confirmPassword }
-                : { username, password };
+                ? { username, email, password1: password.trim(), password2: confirmPassword.trim() }
+                : { username, password: password.trim() };
 
             const response = await api.post(endpoint, payload);
             const data = response.data;
@@ -63,6 +63,11 @@ const Login = ({ onLogin }) => {
             setLoading(false);
         }
     };
+
+    // Clear error when switching modes
+    React.useEffect(() => {
+        setError("");
+    }, [isRegistering]);
 
     return (
         <div className="login-container">
