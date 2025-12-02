@@ -245,638 +245,691 @@ textarea::-webkit-scrollbar-thumb:hover {
 .input-label {
   display: block;
   margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
 
-  .score-display {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
+.input-textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  background-color: rgba(51, 65, 85, 0.4);
+  /* Input translúcido */
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+  transition: all 0.2s;
+}
 
-  .score-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  }
+.input-textarea:focus {
+  border-color: var(--brand-primary);
+  background-color: rgba(51, 65, 85, 0.7);
+  /* Fica mais sólido ao focar */
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
 
-  .score-circle.good {
-    background: linear-gradient(135deg, #48bb78, #2f855a);
-  }
+.input-text {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background-color: rgba(51, 65, 85, 0.4);
+  color: white;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s;
+  padding: 20px 24px 10px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: transparent;
+  /* Transparente para o glass funcionar */
+  z-index: 10;
+}
 
-  .score-circle.bad {
-    background: linear-gradient(135deg, #fc8181, #c53030);
-  }
+.terminal-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .score-title {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #e2e8f0;
-  }
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
-  .score-subtitle {
-    font-size: 0.8rem;
-    color: #718096;
-  }
+.score-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
-  .btn-download {
-    padding: 8px 16px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-light);
-    border-radius: 6px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-  }
+.score-circle.good {
+  background: linear-gradient(135deg, #48bb78, #2f855a);
+}
 
-  .btn-download:hover {
-    border-color: var(--text-primary);
-    color: var(--text-primary);
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+.score-circle.bad {
+  background: linear-gradient(135deg, #fc8181, #c53030);
+}
 
-  .empty-state {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #cbd5e0;
-  }
+.score-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #e2e8f0;
+}
 
-  .result-content {
-    padding-bottom: 20px;
-  }
+.score-subtitle {
+  font-size: 0.8rem;
+  color: #718096;
+}
 
-  /* --- LAYOUT PADRÃO (DESKTOP) --- */
+.btn-download {
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-download:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.empty-state {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e0;
+}
+
+.result-content {
+  padding-bottom: 20px;
+}
+
+/* --- LAYOUT PADRÃO (DESKTOP) --- */
+.app-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-main);
+  background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b1120 100%);
+}
+
+.app-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: rgba(15, 23, 42, 0.8);
+  /* Sidebar translúcida */
+  backdrop-filter: blur(10px);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.content-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.app-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* NOVO HEADER LAYOUT */
+.header-content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.brand-container {
+  text-align: center;
+}
+
+.brand-container h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin: 0 0 5px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.brand-container h1 span {
+  color: var(--brand-primary);
+}
+
+.brand-container p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.btn-logout {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+/* --- MODO MOBILE (A Mágica Acontece Aqui) --- */
+@media (max-width: 768px) {
+
+  /* 1. Muda de "Lado a Lado" para "Um em cima do outro" */
   .app-container {
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-    background-color: var(--bg-main);
-    background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b1120 100%);
-  }
-
-  .app-sidebar {
-    width: 280px;
-    flex-shrink: 0;
-    background-color: rgba(15, 23, 42, 0.8);
-    /* Sidebar translúcida */
-    backdrop-filter: blur(10px);
-    border-right: 1px solid var(--border-subtle);
-    display: flex;
     flex-direction: column;
+    /* Coluna vertical */
+    height: auto;
+    /* Deixa a página crescer */
+    overflow: auto;
+    /* Permite rolar a página toda */
   }
 
-  .app-main {
-    flex: 1;
+  /* 2. Sidebar vira um Menu de Topo compacto */
+  .app-sidebar {
+    width: 100%;
+    /* Ocupa a largura toda */
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    max-height: 150px;
+    /* Limita altura para não ocupar a tela toda */
     overflow-y: auto;
-    position: relative;
+    /* Permite rolar o históricozinho */
+  }
+
+  /* 3. Ajusta a área principal */
+  .app-main {
+    width: 100%;
+    overflow: visible;
+    /* Remove scroll interno duplo */
   }
 
   .content-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    padding: 20px 15px;
+    /* Reduz margens gigantes */
   }
 
+  /* 4. Reduz fontes gigantes */
   .app-header {
-    margin-bottom: 40px;
-    text-align: center;
+    margin-bottom: 20px;
   }
 
-  /* NOVO HEADER LAYOUT */
+  /* Header Mobile: Empilha tudo */
   .header-content {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-
-  .brand-container {
-    text-align: center;
-  }
-
-  .brand-container h1 {
-    font-size: 2.5rem;
-    color: var(--text-primary);
-    margin: 0 0 5px 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .brand-container h1 span {
-    color: var(--brand-primary);
-  }
-
-  .brand-container p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    margin: 0;
+    flex-direction: column;
+    gap: 15px;
   }
 
   .btn-logout {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-light);
-    color: var(--text-secondary);
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
+    position: static;
+    /* Remove posição absoluta no mobile */
+    transform: none;
   }
 
-  .btn-logout:hover {
-    border-color: var(--text-primary);
-    color: var(--text-primary);
-    background-color: rgba(255, 255, 255, 0.1);
+  .brand-container h1 {
+    font-size: 1.8rem;
   }
 
-
-  /* --- MODO MOBILE (A Mágica Acontece Aqui) --- */
-  @media (max-width: 768px) {
-
-    /* 1. Muda de "Lado a Lado" para "Um em cima do outro" */
-    .app-container {
-      flex-direction: column;
-      /* Coluna vertical */
-      height: auto;
-      /* Deixa a página crescer */
-      overflow: auto;
-      /* Permite rolar a página toda */
-    }
-
-    /* 2. Sidebar vira um Menu de Topo compacto */
-    .app-sidebar {
-      width: 100%;
-      /* Ocupa a largura toda */
-      height: auto;
-      border-right: none;
-      border-bottom: 1px solid var(--border-subtle);
-      max-height: 150px;
-      /* Limita altura para não ocupar a tela toda */
-      overflow-y: auto;
-      /* Permite rolar o históricozinho */
-    }
-
-    /* 3. Ajusta a área principal */
-    .app-main {
-      width: 100%;
-      overflow: visible;
-      /* Remove scroll interno duplo */
-    }
-
-    .content-wrapper {
-      padding: 20px 15px;
-      /* Reduz margens gigantes */
-    }
-
-    /* 4. Reduz fontes gigantes */
-    .app-header {
-      margin-bottom: 20px;
-    }
-
-    /* Header Mobile: Empilha tudo */
-    .header-content {
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .btn-logout {
-      position: static;
-      /* Remove posição absoluta no mobile */
-      transform: none;
-    }
-
-    .brand-container h1 {
-      font-size: 1.8rem;
-    }
-
-    /* Título menor */
-    .brand-container p {
-      font-size: 0.9rem;
-    }
-
-    /* 5. Ajusta o Terminal para caber na tela */
-    .daat-terminal {
-      height: auto !important;
-      /* Altura flexível no celular */
-      min-height: 300px;
-    }
+  /* Título menor */
+  .brand-container p {
+    font-size: 0.9rem;
   }
 
-  /* --- HISTORY SIDEBAR --- */
-  .sidebar-container {
-    height: 100%;
-    display: flex;
+  /* 5. Ajusta o Terminal para caber na tela */
+  .daat-terminal {
+    height: auto !important;
+    /* Altura flexível no celular */
+    min-height: 300px;
+  }
+}
+
+/* --- HISTORY SIDEBAR --- */
+.sidebar-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-new-analysis {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--brand-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-new-analysis:hover {
+  background-color: var(--brand-hover);
+  transform: translateY(-1px);
+}
+
+.sidebar-section-title {
+  padding: 15px 24px 5px 24px;
+}
+
+.sidebar-section-title h2 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  font-weight: bold;
+  margin: 0;
+}
+
+.history-list-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.history-empty {
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 20px;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  position: relative;
+  padding: 16px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: rgba(30, 41, 59, 0.4);
+  /* Item translúcido */
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.history-item:hover {
+  border-color: var(--brand-primary);
+  transform: translateY(-2px);
+  background-color: rgba(30, 41, 59, 0.6);
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.history-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.history-score {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.history-score.good {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: var(--status-success);
+}
+
+.history-score.bad {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--status-danger);
+}
+
+.history-title {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 20px;
+  /* Space for delete button */
+}
+
+.btn-delete-history {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  /* Hidden by default */
+  transition: all 0.2s;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.history-item:hover .btn-delete-history {
+  opacity: 1;
+  /* Show on hover */
+}
+
+.btn-delete-history:hover {
+  color: var(--status-danger);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-sidebar-logout {
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+
+  /* 4. Reduz fontes gigantes */
+  .app-header {
+    margin-bottom: 20px;
+  }
+
+  /* Header Mobile: Empilha tudo */
+  .header-content {
     flex-direction: column;
+    gap: 15px;
   }
 
-  .sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  .btn-logout {
+    position: static;
+    /* Remove posição absoluta no mobile */
+    transform: none;
   }
 
-  .btn-new-analysis {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--brand-primary);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
+  .brand-container h1 {
+    font-size: 1.8rem;
+  }
+
+  /* Título menor */
+  .brand-container p {
     font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   }
 
-  .btn-new-analysis:hover {
-    background-color: var(--brand-hover);
-    transform: translateY(-1px);
+  /* 5. Ajusta o Terminal para caber na tela */
+  .daat-terminal {
+    height: auto !important;
+    /* Altura flexível no celular */
+    min-height: 300px;
   }
+}
 
-  .sidebar-section-title {
-    padding: 15px 24px 5px 24px;
-  }
+/* --- HISTORY SIDEBAR --- */
+.sidebar-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-  .sidebar-section-title h2 {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-muted);
-    font-weight: bold;
-    margin: 0;
-  }
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-  .history-list-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-  }
+.btn-new-analysis {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--brand-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
-  .history-empty {
-    color: var(--text-muted);
-    text-align: center;
-    font-size: 0.9rem;
-    margin-top: 20px;
-  }
+.btn-new-analysis:hover {
+  background-color: var(--brand-hover);
+  transform: translateY(-1px);
+}
 
-  .history-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+.sidebar-section-title {
+  padding: 15px 24px 5px 24px;
+}
 
-  .history-item {
-    position: relative;
-    padding: 16px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    background-color: rgba(30, 41, 59, 0.4);
-    /* Item translúcido */
-    border: 1px solid var(--border-subtle);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+.sidebar-section-title h2 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  font-weight: bold;
+  margin: 0;
+}
 
-  .history-item:hover {
-    border-color: var(--brand-primary);
-    transform: translateY(-2px);
-    background-color: rgba(30, 41, 59, 0.6);
-  }
+.history-list-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
 
-  .history-item-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
+.history-empty {
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 20px;
+}
 
-  .history-date {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-  .history-score {
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
+.history-item {
+  position: relative;
+  padding: 16px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: rgba(30, 41, 59, 0.4);
+  /* Item translúcido */
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-  .history-score.good {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: var(--status-success);
-  }
+.history-item:hover {
+  border-color: var(--brand-primary);
+  transform: translateY(-2px);
+  background-color: rgba(30, 41, 59, 0.6);
+}
 
-  .history-score.bad {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: var(--status-danger);
-  }
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
 
-  .history-title {
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 20px;
-    /* Space for delete button */
-  }
+.history-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
 
-  .btn-delete-history {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    opacity: 0;
-    /* Hidden by default */
-    transition: all 0.2s;
-    padding: 4px;
-    border-radius: 4px;
-  }
+.history-score {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
 
-  .history-item:hover .btn-delete-history {
-    opacity: 1;
-    /* Show on hover */
-  }
+.history-score.good {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: var(--status-success);
+}
 
-  .btn-delete-history:hover {
-    color: var(--status-danger);
-    background-color: rgba(239, 68, 68, 0.1);
-  }
+.history-score.bad {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--status-danger);
+}
 
-  .sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
+.history-title {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 20px;
+  /* Space for delete button */
+}
 
-  .btn-sidebar-logout {
-    width: 100%;
-    padding: 10px;
-    background-color: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border-subtle);
-    border-radius: 6px;
+.btn-delete-history {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  /* Hidden by default */
+  transition: all 0.2s;
+  padding: 4px;
+  border-radius: 4px;
+}
 
-    /* 4. Reduz fontes gigantes */
-    .app-header {
-      margin-bottom: 20px;
-    }
+.history-item:hover .btn-delete-history {
+  opacity: 1;
+  /* Show on hover */
+}
 
-    /* Header Mobile: Empilha tudo */
-    .header-content {
-      flex-direction: column;
-      gap: 15px;
-    }
+.btn-delete-history:hover {
+  color: var(--status-danger);
+  background-color: rgba(239, 68, 68, 0.1);
+}
 
-    .btn-logout {
-      position: static;
-      /* Remove posição absoluta no mobile */
-      transform: none;
-    }
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-    .brand-container h1 {
-      font-size: 1.8rem;
-    }
+.btn-sidebar-logout {
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
 
-    /* Título menor */
-    .brand-container p {
-      font-size: 0.9rem;
-    }
+.btn-sidebar-logout:hover {
+  border-color: var(--status-danger);
+  color: var(--status-danger);
+}
 
-    /* 5. Ajusta o Terminal para caber na tela */
-    .daat-terminal {
-      height: auto !important;
-      /* Altura flexível no celular */
-      min-height: 300px;
-    }
-  }
+/* --- MOBILE ADJUSTMENTS --- */
 
-  /* --- HISTORY SIDEBAR --- */
-  .sidebar-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+/* Hide mobile menu button on desktop by default */
+.btn-mobile-menu {
+  display: none;
+}
 
-  .sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
+@media (max-width: 768px) {
 
-  .btn-new-analysis {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--brand-primary);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  }
-
-  .btn-new-analysis:hover {
-    background-color: var(--brand-hover);
-    transform: translateY(-1px);
-  }
-
-  .sidebar-section-title {
-    padding: 15px 24px 5px 24px;
-  }
-
-  .sidebar-section-title h2 {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-muted);
-    font-weight: bold;
-    margin: 0;
-  }
-
-  .history-list-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-  }
-
-  .history-empty {
-    color: var(--text-muted);
-    text-align: center;
-    font-size: 0.9rem;
-    margin-top: 20px;
-  }
-
-  .history-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .history-item {
-    position: relative;
-    padding: 16px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    background-color: rgba(30, 41, 59, 0.4);
-    /* Item translúcido */
-    border: 1px solid var(--border-subtle);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .history-item:hover {
-    border-color: var(--brand-primary);
-    transform: translateY(-2px);
-    background-color: rgba(30, 41, 59, 0.6);
-  }
-
-  .history-item-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-
-  .history-date {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  .history-score {
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-
-  .history-score.good {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: var(--status-success);
-  }
-
-  .history-score.bad {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: var(--status-danger);
-  }
-
-  .history-title {
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 20px;
-    /* Space for delete button */
-  }
-
-  .btn-delete-history {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    opacity: 0;
-    /* Hidden by default */
-    transition: all 0.2s;
-    padding: 4px;
-    border-radius: 4px;
-  }
-
-  .history-item:hover .btn-delete-history {
-    opacity: 1;
-    /* Show on hover */
-  }
-
-  .btn-delete-history:hover {
-    color: var(--status-danger);
-    background-color: rgba(239, 68, 68, 0.1);
-  }
-
-  .sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .btn-sidebar-logout {
-    width: 100%;
-    padding: 10px;
-    background-color: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border-subtle);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-  }
-
-  .btn-sidebar-logout:hover {
-    border-color: var(--status-danger);
-    color: var(--status-danger);
-  }
-
-  /* --- MOBILE ADJUSTMENTS --- */
-
-  /* Hide mobile menu button on desktop by default */
+  /* Show mobile menu button on mobile */
   .btn-mobile-menu {
-    display: none;
+    display: block;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 100;
   }
 
-  @media (max-width: 768px) {
-
-    /* Show mobile menu button on mobile */
-    .btn-mobile-menu {
-      display: block;
-      position: absolute;
-      left: 20px;
-      top: 20px;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.5rem;
-      cursor: pointer;
-      z-index: 100;
-    }
-
-    /* Center Header Title */
-    .header-content {
-      justify-content: center;
-      padding-left: 0;
-    }
-
-    /* Always show delete button on mobile */
-    .btn-delete-history {
-      opacity: 1 !important;
-      background-color: rgba(255, 255, 255, 0.05);
-      padding: 8px;
-    }
+  /* Center Header Title */
+  .header-content {
+    justify-content: center;
+    padding-left: 0;
   }
+
+  /* Always show delete button on mobile */
+  .btn-delete-history {
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+  }
+}
