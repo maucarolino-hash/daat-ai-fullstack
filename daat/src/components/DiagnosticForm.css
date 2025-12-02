@@ -47,6 +47,55 @@
     font-family: 'Inter', sans-serif;
 }
 
+/* DiagnosticForm.css - Estilos específicos do formulário de diagnóstico */
+
+/* Botão Gerar Diagnóstico - Estilo Robusto (Forçado) */
+.diagnostic-form .btn-primary {
+    width: 100% !important;
+    padding: 16px !important;
+    background-color: #6366F1 !important;
+    /* Roxo vibrante */
+    color: white !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.25) !important;
+    margin-top: 10px !important;
+    display: block !important;
+}
+
+.diagnostic-form .btn-primary:hover:not(:disabled) {
+    background-color: #4F46E5 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 8px rgba(99, 102, 241, 0.35) !important;
+}
+
+.diagnostic-form .btn-primary:disabled {
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    background-color: #4B5563 !important;
+    box-shadow: none !important;
+}
+
+/* Inputs do Diagnóstico (Garantia de estilo) */
+.diagnostic-form .input-textarea {
+    width: 100%;
+    padding: 14px;
+    background-color: rgba(51, 65, 85, 0.4);
+    border: 1px solid #334155;
+    /* Border Light */
+    border-radius: 8px;
+    color: #F1F5F9;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
 .diagnostic-form .input-textarea:focus {
     border-color: #6366F1;
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
@@ -59,4 +108,24 @@
     font-weight: 500;
     margin-bottom: 8px;
     display: block;
+}
+
+/* --- MOBILE OPTIMIZATIONS --- */
+@media (max-width: 768px) {
+    .diagnostic-form .input-textarea {
+        font-size: 16px !important;
+        /* Evita zoom no iOS */
+        padding: 12px !important;
+    }
+
+    .diagnostic-form .btn-primary {
+        padding: 14px !important;
+        font-size: 1rem !important;
+    }
+
+    .diagnostic-container h2 {
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
 }
