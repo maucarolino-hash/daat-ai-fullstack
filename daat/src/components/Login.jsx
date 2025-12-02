@@ -76,6 +76,7 @@ const Login = ({ onLogin }) => {
                 <p className="login-subtitle">
                     {isRegistering ? "Já tem uma conta? " : "Não tem uma conta? "}
                     <button
+                        type="button"
                         onClick={() => setIsRegistering(!isRegistering)}
                         className="btn-link"
                     >
