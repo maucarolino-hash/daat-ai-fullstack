@@ -4,6 +4,7 @@ import ComponentFeedback from './ComponentFeedback'
 import { pdf } from '@react-pdf/renderer';
 import DaatReportPDF from './DaatReportPDF';
 import api from '../services/api';
+import './DiagnosticForm.css'; // Import styles safely
 
 // Componente Reutilizável para Inputs de Texto Longo
 const TextAreaField = ({ label, value, onChange, placeholder, height = '100px' }) => (
