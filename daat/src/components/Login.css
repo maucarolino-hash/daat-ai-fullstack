@@ -8,7 +8,6 @@
     min-height: 100vh;
     width: 100%;
     background-color: #0B1120;
-    /* Fundo escuro profundo */
     background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0b1120 100%);
     color: #F1F5F9;
     padding: 20px;
@@ -21,7 +20,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Sem borda, sem fundo de cartão, estilo "flutuante" */
 }
 
 .brand-title-login {
@@ -34,7 +32,6 @@
 
 .brand-title-login span {
     color: #6366F1;
-    /* Roxo vibrante */
 }
 
 .login-title {
@@ -96,7 +93,6 @@
     width: 100%;
     padding: 14px 16px;
     background-color: #1E293B;
-    /* Fundo do input levemente mais claro que o fundo da tela */
     border: 1px solid #334155;
     border-radius: 8px;
     color: white;

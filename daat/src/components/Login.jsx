@@ -183,9 +183,6 @@ const Login = ({ onLogin }) => {
                         {loading ? "Processando..." : (isRegistering ? "Criar conta" : "Entrar")}
                     </button>
                 </form>
-
-                {/* Opcional: Divisor social se quiser adicionar depois */}
-                {/* <div className="social-divider">Ou registre-se com</div> */}
             </div>
         </div>
     );
