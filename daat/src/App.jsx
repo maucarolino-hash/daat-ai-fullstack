@@ -4,6 +4,7 @@ import DiagnosticForm from './components/DiagnosticForm';
 import HistorySidebar from './components/HistorySidebar';
 import Login from './components/Login';
 import ConnectionTest from './components/ConnectionTest';
+import './components/MobileLayout.css'; // Import Mobile Menu Styles
 
 // Componente Principal do Dashboard (Protegido)
 const Dashboard = ({ token, onLogout }) => {

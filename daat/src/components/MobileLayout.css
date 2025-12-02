@@ -1,0 +1,92 @@
+/* MobileLayout.css - Regras para o Menu Hambúrguer e Sidebar Mobile */
+
+/* --- DESKTOP (Padrão) --- */
+/* O botão de menu deve ficar invisível no Desktop */
+.btn-mobile-menu {
+    display: none;
+}
+
+.mobile-menu-overlay {
+    display: none;
+}
+
+/* --- MOBILE (max-width: 768px) --- */
+@media (max-width: 768px) {
+
+    /* 1. Botão de Menu (Hambúrguer) */
+    .btn-mobile-menu {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        position: absolute;
+        left: 0;
+        /* Alinhado à esquerda do header */
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 50;
+    }
+
+    /* 2. Sidebar (Gaveta) */
+    .app-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -280px !important;
+        /* Escondida à esquerda */
+        width: 280px !important;
+        height: 100vh !important;
+        background-color: #0F172A !important;
+        /* --bg-sidebar */
+        z-index: 1000 !important;
+        /* Acima de tudo */
+        transition: left 0.3s ease-in-out !important;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5) !important;
+        border-right: 1px solid #334155 !important;
+        border-bottom: none !important;
+        /* Remove borda inferior do index.css */
+        max-height: none !important;
+        /* Remove limite de altura do index.css */
+        overflow-y: auto !important;
+    }
+
+    /* Estado Aberto */
+    .app-sidebar.mobile-open {
+        left: 0 !important;
+        /* Aparece */
+    }
+
+    /* 3. Overlay (Fundo escuro ao abrir menu) */
+    .mobile-menu-overlay {
+        display: none;
+        /* Escondido por padrão */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+        /* Abaixo da sidebar, acima do resto */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-menu-overlay.open {
+        display: block;
+        opacity: 1;
+    }
+
+    /* Ajuste do Header para acomodar o botão */
+    .header-content {
+        justify-content: center;
+        /* Mantém título centralizado */
+        padding: 0 40px;
+        /* Espaço para os botões nas laterais */
+    }
+}
