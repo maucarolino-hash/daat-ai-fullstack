@@ -145,7 +145,7 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
         try {
             // 2. A Chamada Inicial (POST)
             // Chama o endpoint público (mas envia token se tiver, para salvar histórico)
-            const response = await api.post('/api/analyze-public', payload, {
+            const response = await api.post('/api/analyze-public/', payload, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

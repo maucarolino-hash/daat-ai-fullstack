@@ -10,7 +10,7 @@ const HistorySidebar = ({ onSelectReport, onNewAnalysis, token, onLogout, refres
     const fetchHistory = () => {
         if (!token) return;
 
-        api.get('/api/history', {
+        api.get('/api/history/', {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(response => {
