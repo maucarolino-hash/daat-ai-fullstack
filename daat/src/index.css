@@ -264,21 +264,6 @@ textarea::-webkit-scrollbar-thumb:hover {
   line-height: 1.5;
   resize: vertical;
   outline: none;
-  font-family: 'Inter', sans-serif;
-  overflow-y: auto;
-  transition: all 0.2s;
-}
-
-.input-textarea:focus {
-  border-color: var(--brand-primary);
-  background-color: rgba(51, 65, 85, 0.7);
-  /* Fica mais sólido ao focar */
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-}
-
-.input-text {
-  width: 100%;
-  padding: 12px;
   border-radius: 8px;
   border: 1px solid var(--border-light);
   background-color: rgba(51, 65, 85, 0.4);
