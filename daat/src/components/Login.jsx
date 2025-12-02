@@ -52,7 +52,32 @@ const Login = ({ onLogin }) => {
             console.error("Erro Auth:", err);
             if (err.response) {
                 const data = err.response.data;
-                const errorMsg = data.detail || data.non_field_errors?.[0] || JSON.stringify(data);
+                let errorMsg = "Ocorreu um erro desconhecido.";
+
+                if (typeof data === 'string' && data.length > 0) {
+                    errorMsg = data;
+                } else if (typeof data === 'object') {
+                    if (data.detail) {
+                        errorMsg = data.detail;
+                    } else if (data.non_field_errors && data.non_field_errors.length > 0) {
+                        errorMsg = data.non_field_errors[0];
+                    } else if (Object.keys(data).length > 0) {
+                        // Tenta pegar a primeira mensagem de erro de qualquer campo
+                        const firstKey = Object.keys(data)[0];
+                        const firstError = data[firstKey];
+                        if (Array.isArray(firstError)) {
+                            errorMsg = `${firstKey}: ${firstError[0]}`;
+                        } else {
+                            errorMsg = `${firstKey}: ${firstError}`;
+                        }
+                    }
+                }
+
+                // Evita mostrar aspas vazias ou JSON cru feio
+                if (errorMsg === '""' || errorMsg === '{}') {
+                    errorMsg = "Erro de comunicação com o servidor (Resposta vazia).";
+                }
+
                 setError(errorMsg);
             } else if (err.request) {
                 setError("Erro de conexão. O servidor está acordado?");
