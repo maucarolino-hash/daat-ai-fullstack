@@ -78,6 +78,11 @@ const Login = ({ onLogin }) => {
                     errorMsg = "Erro de comunicação com o servidor (Resposta vazia).";
                 }
 
+                // DEBUG: Se ainda for desconhecido, mostra o que veio
+                if (errorMsg === "Ocorreu um erro desconhecido.") {
+                    errorMsg = "DEBUG SERVER: " + (typeof data === 'string' ? data.substring(0, 100) : JSON.stringify(data));
+                }
+
                 setError(errorMsg);
             } else if (err.request) {
                 setError("Erro de conexão. O servidor está acordado?");
