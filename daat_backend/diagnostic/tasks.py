@@ -17,6 +17,10 @@ def analyze_startup_task(segment, problem, proposition, user_id):
     tavily = TavilyClient(api_key=tavily_key) if tavily_key else None
 
     # 1. Busca Web (Tavily)
+    import time
+    start_time = time.time()
+    print("DEBUG: Iniciando Tavily...")
+    
     web_context_str = ""
     if tavily:
         try:
@@ -26,11 +30,13 @@ def analyze_startup_task(segment, problem, proposition, user_id):
             for result in search.get('results', []):
                 web_context.append(f"- {result['title']}: {result['content']}")
             web_context_str = "\n".join(web_context)
+            print(f"DEBUG: Tavily concluiu em {time.time() - start_time:.2f}s")
         except Exception as e:
             print(f"Erro Tavily: {e}")
             web_context_str = "Sem dados de web."
     else:
         web_context_str = "Modo Offline (Sem Tavily)."
+        print("DEBUG: Tavily pulado (Sem chave).")
 
     # 2. Prompt (O mesmo de antes - Robusto)
     system_prompt = f"""
@@ -62,6 +68,8 @@ def analyze_startup_task(segment, problem, proposition, user_id):
 
     # 3. OpenAI
     try:
+        openai_start = time.time()
+        print("DEBUG: Iniciando OpenAI...")
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -71,6 +79,7 @@ def analyze_startup_task(segment, problem, proposition, user_id):
             temperature=0.7,
             response_format={"type": "json_object"}
         )
+        print(f"DEBUG: OpenAI concluiu em {time.time() - openai_start:.2f}s")
         
         analysis_json = json.loads(response.choices[0].message.content)
         
