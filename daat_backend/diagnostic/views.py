@@ -8,6 +8,11 @@ from celery.result import AsyncResult
 from django.contrib.auth.models import User
 # from django.http import JsonResponse (Removido)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    return Response({"status": "ok", "message": "Server is running"})
+
 @api_view(['POST'])
 @permission_classes([AllowAny]) # Permite acesso sem login
 def process_diagnostic(request):
