@@ -2,7 +2,7 @@ import json
 import logging
 from ..utils.tavily_client import TavilySearchClient
 from ..utils.query_generator import SearchQueryGenerator
-from ..utils.openai_client import DaatOpenAIClient
+from ..utils.openai_client import OpenAIClient
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ class Phase1MarketResearch:
     Serviço completo de pesquisa de mercado (Fase 1)
     """
     
-    def __init__(self, openai_client: DaatOpenAIClient, tavily_client: TavilySearchClient):
+    def __init__(self, openai_client: OpenAIClient, tavily_client: TavilySearchClient):
         self.tavily = tavily_client
         self.openai = openai_client
         self.query_gen = SearchQueryGenerator()

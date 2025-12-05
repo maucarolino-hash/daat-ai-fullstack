@@ -1,10 +1,11 @@
 import json
-from ..utils.openai_client import DaatOpenAIClient
+from ..utils.openai_client import OpenAIClient
 from .prompts import PROMPT_PHASE_3_SCORING
+from django.conf import settings
 
 class Phase3Scoring:
-    def __init__(self, openai_client: DaatOpenAIClient):
-        self.openai = openai_client.get_client()
+    def __init__(self, openai_client: OpenAIClient):
+        self.openai = openai_client
 
     def execute(self, market_research, critical_analysis):
         prompt = PROMPT_PHASE_3_SCORING.format(
@@ -12,22 +13,14 @@ class Phase3Scoring:
             critical_analysis_results=json.dumps(critical_analysis, indent=2, ensure_ascii=False)
         )
         
-        if not self.openai:
-            return {"error": "OpenAI client not initialized"}
-
-        from django.conf import settings
         ai_config = getattr(settings, 'AI_SETTINGS', {})
-        model = ai_config.get('model', 'gpt-4o-mini')
         temp = ai_config.get('temperature', {}).get('scoring', 0.2)
         
-        response = self.openai.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": "Calcule o score final."}
-            ],
+        response_content = self.openai.create_completion(
+            system_prompt=prompt,
+            user_message="Calcule o score final.",
             temperature=temp,
             response_format={"type": "json_object"}
         )
         
-        return json.loads(response.choices[0].message.content)
+        return json.loads(response_content)

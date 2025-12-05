@@ -1,34 +1,60 @@
-import os
-from django.conf import settings
 from openai import OpenAI
+from django.conf import settings
+import logging
 
-class DaatOpenAIClient:
-    def __init__(self):
-        # Prefer settings, fallback to env (though settings should have it)
-        api_key = getattr(settings, 'OPENAI_API_KEY', os.getenv('OPENAI_API_KEY'))
-        self.client = OpenAI(api_key=api_key) if api_key else None
+logger = logging.getLogger(__name__)
+
+class OpenAIClient:
+    """
+    Wrapper para OpenAI com configuração consistente
+    """
     
-    def get_client(self):
-        return self.client
-
-    def create_completion(self, system_prompt, user_message, temperature=0.3, response_format=None, model="gpt-4o-mini"):
+    def __init__(self):
+        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.default_model = settings.AI_SETTINGS['model']
+    
+    def create_completion(self, system_prompt, user_message, temperature=0.3, 
+                         model=None, response_format=None, max_tokens=4000):
         """
-        Helper para criar chat completions de forma simplificada
-        """
-        if not self.client:
-            raise Exception("OpenAI client not initialized")
+        Cria completion com configuração padrão
+        
+        Args:
+            system_prompt (str): Prompt do sistema
+            user_message (str): Mensagem do usuário
+            temperature (float): Temperatura (0-1)
+            model (str): Modelo a usar
+            response_format (dict): Formato de resposta
+            max_tokens (int): Máximo de tokens
             
-        kwargs = {
-            "model": model,
-            "messages": [
+        Returns:
+            str: Conteúdo da resposta
+        """
+        try:
+            messages = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message}
-            ],
-            "temperature": temperature
-        }
-        
-        if response_format:
-            kwargs["response_format"] = response_format
+            ]
             
-        response = self.client.chat.completions.create(**kwargs)
-        return response.choices[0].message.content
+            params = {
+                "model": model or self.default_model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens
+            }
+            
+            if response_format:
+                params["response_format"] = response_format
+            
+            logger.info(f"🤖 Chamando OpenAI ({params['model']}, temp={temperature})")
+            
+            response = self.client.chat.completions.create(**params)
+            
+            content = response.choices[0].message.content
+            
+            logger.info(f"✅ OpenAI respondeu ({len(content)} chars)")
+            
+            return content
+            
+        except Exception as e:
+            logger.error(f"❌ Erro na chamada OpenAI: {str(e)}")
+            raise

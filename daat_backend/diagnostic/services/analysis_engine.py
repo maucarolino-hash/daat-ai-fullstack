@@ -1,15 +1,16 @@
 import json
-from ..utils.openai_client import DaatOpenAIClient
+from ..utils.openai_client import OpenAIClient
 from ..utils.tavily_client import TavilySearchClient
 from .market_research import Phase1MarketResearch
 from .critical_analysis import Phase2CriticalAnalysis
 from .scoring import Phase3Scoring
 from .strategic_advice import Phase4StrategicAdvice
 from .prompts import PROMPT_FINAL_COMPILATION
+from django.conf import settings
 
 class DaatAnalysisEngine:
     def __init__(self):
-        self.openai_client = DaatOpenAIClient()
+        self.openai_client = OpenAIClient()
         self.tavily_client = TavilySearchClient()
         
         # Initialize Phase Handlers
@@ -19,12 +20,9 @@ class DaatAnalysisEngine:
         self.phase4 = Phase4StrategicAdvice(self.openai_client)
 
     def generate_complete_analysis(self, startup_data):
-        if not self.openai_client.client:
-             return {
-                "score": 0,
-                "feedback": "⚠️ **Modo Offline**: A chave da API OpenAI não foi encontrada."
-            }
-
+        # We assume client is initialized; if not, wrapper handles error usually,
+        # but let's check basic attr if we really want, or just rely on try/except block below.
+        
         try:
             # FASE 1: Pesquisa de Mercado
             print("🔍 Fase 1: Pesquisando mercado...")
@@ -78,23 +76,15 @@ class DaatAnalysisEngine:
             strategic_advice_formatted=strategic_fmt
         )
         
-        from django.conf import settings
-        ai_config = getattr(settings, 'AI_SETTINGS', {})
-        model = ai_config.get('model', 'gpt-4o-mini')
-        # Fase 5 não tinha temperatura específica, vamos usar a de strategic ou um padrão 0.3
-        temp = 0.3
-        
-        response = self.openai_client.client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": "Compile o relatório final com base nos dados fornecidos."}
-            ],
-            temperature=temp
+        # Using the wrapper method
+        response_content = self.openai_client.create_completion(
+            system_prompt=prompt,
+            user_message="Compile o relatório final com base nos dados fornecidos.",
+            temperature=0.3
         )
         
         return {
-            'feedback_text': response.choices[0].message.content
+            'feedback_text': response_content
         }
 
 # Wrapper function

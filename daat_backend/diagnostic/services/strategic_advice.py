@@ -1,10 +1,11 @@
 import json
-from ..utils.openai_client import DaatOpenAIClient
+from ..utils.openai_client import OpenAIClient
 from .prompts import PROMPT_PHASE_4_STRATEGIC_ADVICE
+from django.conf import settings
 
 class Phase4StrategicAdvice:
-    def __init__(self, openai_client: DaatOpenAIClient):
-        self.openai = openai_client.get_client()
+    def __init__(self, openai_client: OpenAIClient):
+        self.openai = openai_client
 
     def execute(self, scoring, market_research, critical_analysis):
         prompt = PROMPT_PHASE_4_STRATEGIC_ADVICE.format(
@@ -15,22 +16,14 @@ class Phase4StrategicAdvice:
             score_breakdown=json.dumps(scoring.get('score_breakdown', {}), indent=2, ensure_ascii=False)
         )
         
-        if not self.openai:
-            return {"error": "OpenAI client not initialized"}
-
-        from django.conf import settings
         ai_config = getattr(settings, 'AI_SETTINGS', {})
-        model = ai_config.get('model', 'gpt-4o-mini')
         temp = ai_config.get('temperature', {}).get('strategic_advice', 0.5)
 
-        response = self.openai.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": "Forneça conselhos estratégicos."}
-            ],
+        response_content = self.openai.create_completion(
+            system_prompt=prompt,
+            user_message="Forneça conselhos estratégicos.",
             temperature=temp,
             response_format={"type": "json_object"}
         )
         
-        return json.loads(response.choices[0].message.content)
+        return json.loads(response_content)
