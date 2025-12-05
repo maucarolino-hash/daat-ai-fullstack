@@ -16,67 +16,76 @@ def health_check(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def process_diagnostic(request):
-    segment = request.data.get('customerSegment', '')
-    problem = request.data.get('problem', '')
-    proposition = request.data.get('valueProposition', '')
-    user_id = request.user.id if request.user.is_authenticated else None
-
-    # WORKAROUND PARA RENDER FREE TIER (timeout 100s)
-    # Se Celery estiver em modo EAGER (Sem Redis), usamos Threading para não bloquear
-    # o request HTTP e evitar erro 504 Gateway Timeout.
-    if getattr(settings, 'CELERY_TASK_ALWAYS_EAGER', False):
-        import threading
-        from .services import analyze_idea
-        
-        # 1. Cria o registro no banco 'Processing'
-        diagnostic = Diagnostic.objects.create(
-            user_id=user_id,
-            customer_segment=segment,
-            problem=problem,
-            value_proposition=proposition,
-            score=0,
-            feedback="Processando...",
-            # Adicione status field se seu model tiver, senão usamos convention
-        )
-        
-        # 2. Define a função worker
-        def run_analysis_thread(diag_id, seg, prob, prop):
-            try:
-                print(f"🧵 Thread iniciada para Diagnostic {diag_id}")
-                result = analyze_idea(seg, prob, prop)
-                
-                # Atualiza o registro
-                d = Diagnostic.objects.get(pk=diag_id)
-                d.score = result.get('score', 0)
-                d.feedback = result.get('feedback', '')
-                d.save()
-                print(f"✅ Thread finalizada para Diagnostic {diag_id}")
-            except Exception as e:
-                print(f"❌ Thread falhou: {e}")
-                d = Diagnostic.objects.get(pk=diag_id)
-                d.feedback = f"Erro interno: {str(e)}"
-                d.save()
-
-        # 3. Dispara a thread
-        t = threading.Thread(target=run_analysis_thread, args=(diagnostic.id, segment, problem, proposition))
-        t.daemon = True # Morre se o processo principal morrer
-        t.start()
-
-        # 4. Retorna ID imediatamente para polling
-        return Response({
-            "task_id": f"db_task_{diagnostic.id}", # Prefixo para identificar que é DB polling
-            "status": "processing"
-        })
-
-    # MODO CELERY REAL (Com Redis)
     try:
+        segment = request.data.get('customerSegment', '')
+        problem = request.data.get('problem', '')
+        proposition = request.data.get('valueProposition', '')
+        user_id = request.user.id if request.user.is_authenticated else None
+
+        # WORKAROUND PARA RENDER FREE TIER (timeout 100s)
+        if getattr(settings, 'CELERY_TASK_ALWAYS_EAGER', False):
+            import threading
+            # Import preguiçoso para evitar erros de ciclo/init module level
+            from .services import analyze_idea
+            
+            # 1. Cria o registro no banco 'Processing'
+            diagnostic = Diagnostic.objects.create(
+                user_id=user_id,
+                customer_segment=segment,
+                problem=problem,
+                value_proposition=proposition,
+                score=0,
+                feedback="Processando... (Servidor Acordando)",
+            )
+            
+            # 2. Define a função worker
+            def run_analysis_thread(diag_id, seg, prob, prop):
+                try:
+                    print(f"🧵 Thread iniciada para Diagnostic {diag_id}")
+                    result = analyze_idea(seg, prob, prop)
+                    
+                    d = Diagnostic.objects.get(pk=diag_id)
+                    d.score = result.get('score', 0)
+                    d.feedback = result.get('feedback', '')
+                    d.save()
+                    print(f"✅ Thread finalizada para Diagnostic {diag_id}")
+                except Exception as e:
+                    print(f"❌ Thread falhou: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    try:
+                        d = Diagnostic.objects.get(pk=diag_id)
+                        d.feedback = f"Erro interno na análise: {str(e)}"
+                        d.save()
+                    except:
+                        pass
+
+            # 3. Dispara a thread
+            t = threading.Thread(target=run_analysis_thread, args=(diagnostic.id, segment, problem, proposition))
+            t.daemon = True 
+            t.start()
+
+            return Response({
+                "task_id": f"db_task_{diagnostic.id}", 
+                "status": "processing"
+            })
+
+        # MODO CELERY REAL (Com Redis)
         task = analyze_startup_task.delay(segment, problem, proposition, user_id)
         return Response({
             "task_id": task.id, 
             "status": "processing"
         })
+
     except Exception as e:
-        return Response({"error": str(e)}, status=500)
+        import traceback
+        error_details = traceback.format_exc()
+        print(error_details)
+        return Response({
+            "error": str(e),
+            "detail": "Erro interno no servidor (Views Check)",
+            "trace": error_details 
+        }, status=500)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
