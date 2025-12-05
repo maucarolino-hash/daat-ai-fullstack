@@ -1,5 +1,6 @@
 import json
 from ..utils.tavily_client import TavilySearchClient
+from ..utils.query_generator import SearchQueryGenerator
 from ..utils.openai_client import DaatOpenAIClient
 from .prompts import PROMPT_PHASE_1_MARKET_RESEARCH
 
@@ -17,13 +18,22 @@ class Phase1MarketResearch:
         used_web_search = False
 
         try:
-            # Construir queries de pesquisa
-            search_queries = [
-                f"{sector} competitors Brazil 2024",
-                f"{solution_type} similar companies",
-                f"{sector} market size Brazil",
-                f"{solution_type} startups funding"
-            ]
+            # 1. Preparar dados para o gerador de queries
+            query_data = {
+                'sector': sector,
+                'solution_type': solution_type,
+                'target_audience': sector, # Fallback, já que o form não tem campo específico
+                'geography': 'Brazil'
+            }
+            
+            # 2. Gerar Smart Queries
+            generated_queries = SearchQueryGenerator.generate_all_queries(query_data)
+            
+            # 3. Flatten queries (Prioridade: Concorrentes > Mercado > Trends)
+            search_queries = []
+            search_queries.extend(generated_queries.get('competitors', [])[:3])
+            search_queries.extend(generated_queries.get('market_size', [])[:2])
+            
             
             # Usando o novo search_multiple do cliente robusto
             search_results_list = self.tavily.search_multiple(search_queries)
