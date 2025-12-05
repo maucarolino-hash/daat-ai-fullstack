@@ -62,12 +62,17 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware', # Static Files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'allauth.account.middleware.AccountMiddleware', # Required by allauth
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Confia no header do proxy (Render/Vercel) para saber que é HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 ROOT_URLCONF = 'daat_backend.urls'
 
