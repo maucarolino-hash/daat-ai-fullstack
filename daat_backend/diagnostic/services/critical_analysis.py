@@ -9,6 +9,7 @@ class Phase2CriticalAnalysis:
     def execute(self, startup_data, market_research):
         prompt = PROMPT_PHASE_2_CRITICAL_ANALYSIS.format(
             startup_data=json.dumps(startup_data, indent=2, ensure_ascii=False),
+            # The new phase 1 returns a rich dict, we dump it all for the AI
             market_research_results=json.dumps(market_research, indent=2, ensure_ascii=False)
         )
         
