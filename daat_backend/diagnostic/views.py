@@ -117,19 +117,35 @@ def check_status(request, task_id):
         except Diagnostic.DoesNotExist:
             return Response({"status": "failed", "error": "Diagnóstico não encontrado"})
             
-    # Polling padrão do Celery
+    # Polling padrão do Celery (Redis)
     result = AsyncResult(task_id)
     if result.ready():
-            'id': item.id,
-            'customer_segment': item.customer_segment,
-            'problem': item.problem,
-            'value_proposition': item.value_proposition,
-            'score': item.score,
-            'feedback': item.feedback,
-            'created_at': item.created_at.strftime('%Y-%m-%d %H:%M')
+        return Response({
+            "status": "completed", 
+            "data": result.result 
         })
-        
-    return Response({'history': history_list})
+    else:
+        return Response({"status": "processing"})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_history(request):
+    try:
+        diagnostics = Diagnostic.objects.filter(user=request.user).order_by('-created_at')
+        history_list = []
+        for item in diagnostics:
+            history_list.append({
+                'id': item.id,
+                'customer_segment': item.customer_segment,
+                'problem': item.problem,
+                'value_proposition': item.value_proposition,
+                'score': item.score,
+                'feedback': item.feedback,
+                'created_at': item.created_at.strftime('%Y-%m-%d %H:%M')
+            })
+        return Response({'history': history_list})
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

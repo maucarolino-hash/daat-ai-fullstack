@@ -98,10 +98,10 @@ Você DEVE usar EXATAMENTE o formato `[SEÇÃO X: Título]` para cada parte.
 **ESTRUTURA OBRIGATÓRIA DA RESPOSTA**:
 
 [SEÇÃO 1: Análise de Mercado]
-(Escreva aqui um resumo executivo dos dados de mercado, competidores e tamanho do mercado. Use markdown simples.)
+(Escreva aqui um resumo executivo robusto. OBRIGATÓRIO: Inclua os números de TAM, SAM e SOM estimados na Fase 1. Se não houver números exatos, explique a estimativa. Cite as Tendências de Mercado.)
 
-[SEÇÃO 2: Forças e Potencial]
-(Liste aqui os principais pontos fortes e oportunidades de crescimento. Use bullet points.)
+[SEÇÃO 2: Forças e Potencial e Concorrentes]
+(Liste os principais pontos fortes. OBRIGATÓRIO: Liste os 3 principais concorrentes encontrados e seus diferenciais. Use bullet points.)
 
 [SEÇÃO 3: Riscos e Desafios]
 (Liste aqui os principais riscos, ameaças e fraquezas identificadas pelo 'Advogado do Diabo'. Use bullet points.)
