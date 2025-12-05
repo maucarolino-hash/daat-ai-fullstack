@@ -170,12 +170,29 @@ const DiagnosticForm = ({ initialData, token, onAnalysisComplete }) => {
 
         } catch (error) {
             console.error("Erro ao conectar ao Daat Brain:", error);
-            if (error.response && error.response.status === 401) {
-                alert("Sessão expirada. Por favor, faça login novamente.");
-                window.location.reload();
+
+            let errorMsg = "Erro desconhecido.";
+            let debugInfo = "";
+
+            if (error.response) {
+                // O servidor respondeu com um status code de erro (4xx, 5xx)
+                errorMsg = `Erro do Servidor (${error.response.status})`;
+                if (error.response.data && error.response.data.error) {
+                    errorMsg += `: ${error.response.data.error}`;
+                } else if (error.response.status === 500) {
+                    errorMsg += ": Erro Interno (Verifique logs do Render).";
+                }
+                debugInfo = JSON.stringify(error.response.data || {});
+            } else if (error.request) {
+                // A requisição foi feita mas não houve resposta (Network Error, CORS, Timeout, 502 Bad Gateway)
+                errorMsg = "Erro de Conexão (Sem Resposta do Servidor).";
+                debugInfo = "O servidor pode estar offline, dormindo (Cold Start) ou bloqueando CORS. Verifique o console do navegador.";
             } else {
-                alert("Erro de conexão. O servidor Django está rodando?");
+                // Algo aconteceu na configuração da requisição
+                errorMsg = `Erro de Configuração: ${error.message}`;
             }
+
+            alert(`${errorMsg}\n\nDetalhes Técnicos:\n${debugInfo}`);
             setLoading(false);
         }
     };
