@@ -18,13 +18,18 @@ class Phase4StrategicAdvice:
         if not self.openai:
             return {"error": "OpenAI client not initialized"}
 
+        from django.conf import settings
+        ai_config = getattr(settings, 'AI_SETTINGS', {})
+        model = ai_config.get('model', 'gpt-4o-mini')
+        temp = ai_config.get('temperature', {}).get('strategic_advice', 0.5)
+
         response = self.openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model=model,
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": "Forneça conselhos estratégicos."}
             ],
-            temperature=0.5,
+            temperature=temp,
             response_format={"type": "json_object"}
         )
         

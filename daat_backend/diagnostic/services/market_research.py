@@ -62,14 +62,19 @@ class Phase1MarketResearch:
 
         if not self.openai:
              return {"error": "OpenAI client not initialized"}
+        
+        from django.conf import settings
+        ai_config = getattr(settings, 'AI_SETTINGS', {})
+        model = ai_config.get('model', 'gpt-4o-mini')
+        temp = ai_config.get('temperature', {}).get('market_research', 0.3)
 
         response = self.openai.chat.completions.create(
-            model="gpt-4o-mini", 
+            model=model, 
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": input_content}
             ],
-            temperature=0.3,
+            temperature=temp,
             response_format={"type": "json_object"}
         )
         

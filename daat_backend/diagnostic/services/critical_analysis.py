@@ -15,13 +15,18 @@ class Phase2CriticalAnalysis:
         if not self.openai:
             return {"error": "OpenAI client not initialized"}
 
+        from django.conf import settings
+        ai_config = getattr(settings, 'AI_SETTINGS', {})
+        model = ai_config.get('model', 'gpt-4o-mini')
+        temp = ai_config.get('temperature', {}).get('critical_analysis', 0.4)
+
         response = self.openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model=model,
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": "Faça a análise crítica baseada nos dados fornecidos."}
             ],
-            temperature=0.4,
+            temperature=temp,
             response_format={"type": "json_object"}
         )
         

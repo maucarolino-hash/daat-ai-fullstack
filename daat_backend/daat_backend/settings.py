@@ -220,5 +220,31 @@ CELERY_RESULT_BACKEND = 'django-db' # Salva o resultado no banco de dados normal
 CELERY_TASK_ALWAYS_EAGER = True # Modo de desenvolvimento (sem Redis)
 CELERY_TASK_EAGER_PROPAGATES = True
 
+
 # EMAIL CONFIGURATION (Dev)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# --- DAAT INTELLIGENCE CONFIGURATION ---
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+TAVILY_API_KEY = os.getenv('TAVILY_API_KEY')
+
+# Configurações de AI
+AI_SETTINGS = {
+    'model': 'gpt-4-turbo-preview',  # ou 'gpt-3.5-turbo' para economia
+    'temperature': {
+        'market_research': 0.3,
+        'critical_analysis': 0.4,
+        'scoring': 0.2,
+        'strategic_advice': 0.5
+    },
+    'max_tokens': 4000,
+    'timeout': 60  # segundos
+}
+
+# Configurações de Pesquisa
+SEARCH_SETTINGS = {
+    'max_results_per_query': 5,
+    'search_depth': 'advanced',  # 'basic' ou 'advanced'
+    'include_domains': [],  # Lista de domínios prioritários
+    'exclude_domains': ['pinterest.com', 'instagram.com']  # Domínios inúteis
+}

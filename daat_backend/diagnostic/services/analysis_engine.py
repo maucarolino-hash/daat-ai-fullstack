@@ -78,13 +78,19 @@ class DaatAnalysisEngine:
             strategic_advice_formatted=strategic_fmt
         )
         
+        from django.conf import settings
+        ai_config = getattr(settings, 'AI_SETTINGS', {})
+        model = ai_config.get('model', 'gpt-4o-mini')
+        # Fase 5 não tinha temperatura específica, vamos usar a de strategic ou um padrão 0.3
+        temp = 0.3
+        
         response = self.openai_client.client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=model,
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": "Compile o relatório final com base nos dados fornecidos."}
             ],
-            temperature=0.3
+            temperature=temp
         )
         
         return {
