@@ -6,6 +6,7 @@ from .models import Diagnostic
 from .tasks import analyze_startup_task
 from celery.result import AsyncResult
 from django.contrib.auth.models import User
+from django.conf import settings
 # from django.http import JsonResponse (Removido)
 
 @api_view(['GET'])
