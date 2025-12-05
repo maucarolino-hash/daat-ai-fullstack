@@ -1,6 +1,6 @@
 import json
 from ..utils.openai_client import DaatOpenAIClient
-from ..utils.tavily_client import DaatTavilyClient
+from ..utils.tavily_client import TavilySearchClient
 from .market_research import Phase1MarketResearch
 from .critical_analysis import Phase2CriticalAnalysis
 from .scoring import Phase3Scoring
@@ -10,7 +10,7 @@ from .prompts import PROMPT_FINAL_COMPILATION
 class DaatAnalysisEngine:
     def __init__(self):
         self.openai_client = DaatOpenAIClient()
-        self.tavily_client = DaatTavilyClient()
+        self.tavily_client = TavilySearchClient()
         
         # Initialize Phase Handlers
         self.phase1 = Phase1MarketResearch(self.openai_client, self.tavily_client)

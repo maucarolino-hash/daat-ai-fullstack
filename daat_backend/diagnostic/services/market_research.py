@@ -1,10 +1,10 @@
 import json
-from ..utils.tavily_client import DaatTavilyClient
+from ..utils.tavily_client import TavilySearchClient
 from ..utils.openai_client import DaatOpenAIClient
 from .prompts import PROMPT_PHASE_1_MARKET_RESEARCH
 
 class Phase1MarketResearch:
-    def __init__(self, openai_client: DaatOpenAIClient, tavily_client: DaatTavilyClient):
+    def __init__(self, openai_client: DaatOpenAIClient, tavily_client: TavilySearchClient):
         self.openai = openai_client.get_client()
         self.tavily = tavily_client
 
@@ -25,19 +25,9 @@ class Phase1MarketResearch:
                 f"{solution_type} startups funding"
             ]
             
-            # Usando o wrapper do Tavily
-            for query in search_queries:
-                try:
-                    results = self.tavily.search(query)
-                    search_results_list.append({
-                        'query': query,
-                        'results': results.get('results', [])
-                    })
-                except Exception as e:
-                    print(f"⚠️ Erro pontual na pesquisa '{query}': {str(e)}")
-
-            if search_results_list:
-                used_web_search = True
+            # Usando o novo search_multiple do cliente robusto
+            search_results_list = self.tavily.search_multiple(search_queries)
+            used_web_search = True
             
         except Exception as e:
             print(f"⚠️ Tavily falhou ou não configurado na Fase 1: {str(e)}")

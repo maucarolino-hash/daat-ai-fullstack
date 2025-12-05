@@ -1,29 +1,125 @@
-import os
-from django.conf import settings
 from tavily import TavilyClient
+from django.conf import settings
+import time
+import logging
 
-class DaatTavilyClient:
+logger = logging.getLogger(__name__)
+
+class TavilySearchClient:
+    """
+    Wrapper robusto para Tavily API com retry logic e tratamento de erros
+    """
+    
     def __init__(self):
-        tavily_key = getattr(settings, 'TAVILY_API_KEY', os.getenv('TAVILY_API_KEY'))
-        self.client = TavilyClient(api_key=tavily_key) if tavily_key else None
-        self.search_settings = getattr(settings, 'SEARCH_SETTINGS', {})
-
-    def search(self, query, max_results=None, search_depth=None):
-        if not self.client:
-            raise Exception("Tavily API key not configured")
+        self.client = TavilyClient(api_key=settings.TAVILY_API_KEY)
+        self.max_retries = 3
+        self.retry_delay = 2  # segundos
+    
+    def search(self, query, max_results=5, search_depth='advanced'):
+        """
+        Executa pesquisa com retry logic
         
-        # Use args if provided, otherwise fallback to settings, then defaults
-        limit = max_results or self.search_settings.get('max_results_per_query', 3)
-        depth = search_depth or self.search_settings.get('search_depth', 'basic')
-        exclude = self.search_settings.get('exclude_domains', [])
+        Args:
+            query (str): Query de pesquisa
+            max_results (int): Número máximo de resultados
+            search_depth (str): 'basic' ou 'advanced'
+            
+        Returns:
+            dict: Resultados da pesquisa ou None se falhar
+        """
+        for attempt in range(self.max_retries):
+            try:
+                logger.info(f"🔍 Pesquisando: '{query}' (tentativa {attempt + 1}/{self.max_retries})")
+                
+                result = self.client.search(
+                    query=query,
+                    search_depth=search_depth,
+                    max_results=max_results,
+                    include_domains=settings.SEARCH_SETTINGS.get('include_domains', []),
+                    exclude_domains=settings.SEARCH_SETTINGS.get('exclude_domains', [])
+                )
+                
+                logger.info(f"✅ Pesquisa concluída: {len(result.get('results', []))} resultados")
+                return result
+                
+            except Exception as e:
+                logger.error(f"❌ Erro na tentativa {attempt + 1}: {str(e)}")
+                
+                if attempt < self.max_retries - 1:
+                    time.sleep(self.retry_delay)
+                else:
+                    logger.error(f"🚫 Falha após {self.max_retries} tentativas")
+                    return None
+    
+    def search_multiple(self, queries, max_results=5):
+        """
+        Executa múltiplas pesquisas e agrega resultados
         
-        try:
-            return self.client.search(
-                query=query,
-                search_depth=depth,
-                max_results=limit,
-                exclude_domains=exclude
-            )
-        except Exception as e:
-            # Re-raise or handle as needed, but for now we just pass it up
-            raise e
+        Args:
+            queries (list): Lista de queries
+            max_results (int): Resultados por query
+            
+        Returns:
+            list: Lista de dicts com query e resultados
+        """
+        all_results = []
+        
+        for query in queries:
+            result = self.search(query, max_results)
+            
+            if result:
+                all_results.append({
+                    'query': query,
+                    'results': result.get('results', []),
+                    'answer': result.get('answer', ''),  # Tavily retorna resumo
+                    'images': result.get('images', [])
+                })
+            else:
+                all_results.append({
+                    'query': query,
+                    'results': [],
+                    'error': 'Pesquisa falhou'
+                })
+            
+            # Rate limiting: pequena pausa entre queries
+            time.sleep(0.5)
+        
+        return all_results
+    
+    def extract_key_facts(self, search_results):
+        """
+        Extrai fatos-chave dos resultados de pesquisa
+        
+        Args:
+            search_results (list): Resultados de search_multiple
+            
+        Returns:
+            dict: Fatos estruturados extraídos
+        """
+        all_urls = []
+        all_content = []
+        all_answers = []
+        
+        for search in search_results:
+            if search.get('answer'):
+                all_answers.append({
+                    'query': search['query'],
+                    'answer': search['answer']
+                })
+            
+            for result in search.get('results', []):
+                all_urls.append(result.get('url'))
+                all_content.append({
+                    'title': result.get('title'),
+                    'content': result.get('content'),
+                    'url': result.get('url'),
+                    'score': result.get('score', 0)
+                })
+        
+        return {
+            'total_sources': len(all_urls),
+            'unique_domains': len(set([url.split('/')[2] for url in all_urls if url])),
+            'answers': all_answers,
+            'top_content': sorted(all_content, key=lambda x: x.get('score', 0), reverse=True)[:10],
+            'all_urls': all_urls
+        }
