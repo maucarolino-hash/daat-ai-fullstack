@@ -87,161 +87,40 @@ class Phase1MarketResearch:
         """
         Processa resultados de pesquisa com GPT para extrair insights
         """
-        # Extrair fatos-chave de todos os resultados usando método do cliente Tavily
-        competitor_facts = self.tavily.extract_key_facts(search_results['competitors'])
-        market_facts = self.tavily.extract_key_facts(search_results['market_size'])
-        trend_facts = self.tavily.extract_key_facts(search_results['trends'])
+        # Formata resultados para o prompt
+        search_context = json.dumps(search_results, indent=2, ensure_ascii=False)
         
-        # Construir contexto para GPT
-        context = f"""
-DADOS DA STARTUP:
-{json.dumps(startup_data, indent=2, ensure_ascii=False)}
-
-RESULTADOS DA PESQUISA WEB:
-
-=== CONCORRENTES ===
-Total de fontes: {competitor_facts['total_sources']}
-Domínios únicos: {competitor_facts['unique_domains']}
-
-Respostas principais:
-{json.dumps(competitor_facts['answers'], indent=2, ensure_ascii=False)}
-
-Conteúdo relevante:
-{json.dumps(competitor_facts['top_content'][:5], indent=2, ensure_ascii=False)}
-
-=== TAMANHO DE MERCADO ===
-Total de fontes: {market_facts['total_sources']}
-
-Respostas principais:
-{json.dumps(market_facts['answers'], indent=2, ensure_ascii=False)}
-
-Conteúdo relevante:
-{json.dumps(market_facts['top_content'][:3], indent=2, ensure_ascii=False)}
-
-=== TENDÊNCIAS ===
-Total de fontes: {trend_facts['total_sources']}
-
-Respostas principais:
-{json.dumps(trend_facts['answers'], indent=2, ensure_ascii=False)}
-"""
+        # Constrói o prompt com a template atualizada
+        from .prompts import PROMPT_PHASE_1_MARKET_RESEARCH
         
-        # Prompt para análise
-        analysis_prompt = """
-Você é um analista de mercado expert. Analise os resultados de pesquisa web e extraia informações estruturadas.
+        system_prompt = PROMPT_PHASE_1_MARKET_RESEARCH.format(
+            startup_name=startup_data.get('startup_name', 'Startup em Análise'),
+            startup_description=startup_data.get('solution_type', 'Solução Inovadora'),
+            startup_sector=startup_data.get('sector', 'Tecnologia'),
+            business_model=startup_data.get('business_model', 'SaaS/B2B'),
+            target_audience=startup_data.get('target_audience', 'Empresas')
+        )
 
-TAREFA:
-Com base nas pesquisas realizadas, identifique e estruture:
-
-1. CONCORRENTES DIRETOS
-Liste APENAS empresas que fazem algo realmente similar à startup analisada.
-Para cada concorrente:
-- Nome da empresa
-- País/Região
-- Breve descrição (1 linha)
-- Status (ativa, funding conhecido, etc)
-- URL da fonte
-
-Se NÃO encontrar concorrentes diretos claros, diga explicitamente.
-
-2. DADOS DE MERCADO
-Extraia números concretos encontrados:
-- Tamanho de mercado (com ano e fonte)
-- Taxa de crescimento (com período e fonte)
-- Número de potenciais clientes (se disponível)
-- Investimentos recentes no setor
-
-3. TENDÊNCIAS PRINCIPAIS
-Liste 2-3 tendências principais do setor com evidências específicas.
-
-4. GAPS DE INFORMAÇÃO
-O que NÃO foi encontrado nas pesquisas que seria importante saber?
-
-RETORNE JSON estruturado seguindo este formato:
-{
-  "competitors": [
-    {
-      "name": "Nome",
-      "location": "País",
-      "description": "O que fazem",
-      "status": "Status conhecido",
-      "source_url": "URL"
-    }
-  ],
-  "market_data": {
-    "market_size": {
-      "value": "Valor numérico com unidade",
-      "year": "Ano da informação",
-      "source": "URL",
-      "confidence": "alta/média/baixa"
-    },
-    "growth_rate": {
-      "value": "% crescimento",
-      "period": "Período",
-      "source": "URL",
-      "confidence": "alta/média/baixa"
-    },
-    "potential_customers": {
-      "value": "Número estimado",
-      "description": "Descrição do segmento",
-      "source": "URL",
-      "confidence": "alta/média/baixa"
-    }
-  },
-  "trends": [
-    {
-      "trend": "Descrição da tendência",
-      "evidence": "Evidência específica",
-      "source": "URL"
-    }
-  ],
-  "information_gaps": [
-    "Gap 1",
-    "Gap 2"
-  ],
-  "search_summary": {
-    "total_sources_analyzed": 0,
-    "competitor_sources": 0,
-    "market_sources": 0,
-    "data_availability": "alta/média/baixa"
-  }
-}
-
-REGRAS CRÍTICAS:
-- NUNCA invente dados
-- Se não encontrou, diga "Não encontrado"
-- SEMPRE inclua source_url quando citar dados
-- Diferencie entre fatos confirmados e estimativas
-"""
+        user_message = f"RESULTADOS DA PESQUISA TAVILY:\n{search_context}"
         
         # Configurar modelo
         ai_config = getattr(settings, 'AI_SETTINGS', {})
         model = ai_config.get('model', 'gpt-4o-mini')
-        temp = ai_config.get('temperature', {}).get('market_research', 0.3)
+        temp = ai_config.get('temperature', {}).get('market_research', 0.2)
 
         # Chamar GPT via helper
         response_content = self.openai.create_completion(
-            system_prompt=analysis_prompt,
-            user_message=context,
+            system_prompt=system_prompt,
+            user_message=user_message,
             temperature=temp,
             response_format={"type": "json_object"},
             model=model
         )
         
         try:
-            processed = json.loads(response_content)
-            
-            # Adicionar URLs completas dos resultados
-            processed['raw_search_urls'] = {
-                'competitors': competitor_facts['all_urls'],
-                'market': market_facts['all_urls'],
-                'trends': trend_facts['all_urls']
-            }
-            
-            return processed
-            
+            return json.loads(response_content)
         except json.JSONDecodeError as e:
             logger.error(f"Erro ao parsear JSON do GPT: {e}")
-            logger.error(f"Response: {response_content}")
             raise
     
     def _assess_data_quality(self, processed_data):
