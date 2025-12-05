@@ -158,3 +158,26 @@ def delete_history(request, pk):
         return Response({"error": "Análise não encontrada."}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    return Response({"status": "ok", "service": "Daat AI Backend"})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def analyze_startup(request):
+    try:
+        startup_data = request.data
+        
+        # Instancia dependências
+        openai_client = OpenAIClient()
+        tavily_client = TavilySearchClient()
+        
+        # Executa Fase 1
+        service = Phase1MarketResearch(openai_client, tavily_client)
+        result = service.execute(startup_data)
+        
+        return Response(result)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
