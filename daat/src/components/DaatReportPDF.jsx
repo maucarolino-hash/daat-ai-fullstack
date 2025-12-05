@@ -4,11 +4,13 @@ import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 // Cores do Daat AI (Dark/Professional Theme adaptado para fundo branco de papel)
 const colors = {
     primary: '#2563EB',   // Azul Royal
-    success: '#16A34A',   // Verde
-    danger: '#DC2626',    // Vermelho
+    success: '#16A34A',   // Verde Escuro (Sucesso)
+    warning: '#D97706',   // Ambar/Laranja (Alerta)
+    danger: '#DC2626',    // Vermelho (Perigo)
     dark: '#111827',      // Preto quase total
     gray: '#4B5563',      // Cinza texto
-    lightGray: '#F3F4F6'  // Fundo cinza claro
+    lightGray: '#F3F4F6', // Fundo cinza claro
+    footerGray: '#6B7280' // Cinza médio para rodapé (mais escuro que antes)
 };
 
 const styles = StyleSheet.create({
@@ -34,58 +36,131 @@ const styles = StyleSheet.create({
     cardRed: { padding: 10, backgroundColor: '#FEF2F2', borderLeftWidth: 4, borderLeftColor: colors.danger, borderRadius: 4 },
     bullet: { fontSize: 10, marginBottom: 4, color: colors.dark },
 
-    footer: { position: 'absolute', bottom: 30, left: 40, right: 40, textAlign: 'center', fontSize: 9, color: '#9CA3AF', borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 10 }
+    // Rodapé (Mais visível agora)
+    footer: { position: 'absolute', bottom: 30, left: 40, right: 40, textAlign: 'center', fontSize: 9, color: colors.footerGray, borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 10 }
 });
 
 // Componente da Barra de Progresso
 const ProgressBar = ({ score }) => {
     // Define cor baseada na nota
-    const getColor = (s) => s >= 80 ? colors.success : s >= 50 ? '#D97706' : colors.danger;
+    // Sincronizado com os Labels de Texto
+    const getColor = (s) => {
+        if (s >= 60) return colors.success; // Alta e Altíssima (Verde)
+        if (s >= 40) return colors.warning; // Média (Laranja)
+        return colors.danger;               // Baixa (Vermelho)
+    };
 
     return (
         <View style={styles.progressBarBg}>
             <View style={{
                 width: `${score}%`,
                 height: '100%',
-                backgroundColor: getColor(score),
+                backgroundColor: getColor(score || 0),
                 borderRadius: 5
             }} />
         </View>
     );
 };
 
+// Helper: Calcula o texto de viabilidade baseado no score
+const getViabilityLabel = (score) => {
+    if (!score) return "Calculando...";
+    if (score >= 80) return "Altíssima Viabilidade";
+    if (score >= 60) return "Alta Viabilidade";
+    if (score >= 40) return "Média Viabilidade";
+    return "Baixa Viabilidade (Alto Risco)";
+};
+
+// Helper function to extract bullet points intelligently (handling multi-line)
+const extractBullets = (text) => {
+    if (!text) return [];
+
+    // Remove markdown bold/italic (** or *) for cleaner PDF
+    const cleanText = text.replace(/\*\*/g, '').replace(/\*/g, '');
+
+    const lines = cleanText.split('\n');
+    const bullets = [];
+    let currentBullet = "";
+
+    lines.forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+
+        // Verifica se é um novo bullet (começa com -, •, numero ou *)
+        const isNewBullet = /^(?:-|\u2022|\d+\.|>)\s/.test(trimmed);
+
+        if (isNewBullet) {
+            if (currentBullet) bullets.push(currentBullet);
+            currentBullet = trimmed.replace(/^(?:-|\u2022|\d+\.|>)\s/, '').trim();
+        } else {
+            // Continuação da linha anterior
+            if (currentBullet) {
+                currentBullet += " " + trimmed;
+            } else {
+                currentBullet = trimmed;
+            }
+        }
+    });
+
+    if (currentBullet) bullets.push(currentBullet);
+
+    return bullets.slice(0, 6);
+};
+
+
 // Função auxiliar para extrair seções do Markdown
 const parseFeedback = (markdown) => {
-    if (!markdown) return {};
-
     const sections = {
-        mercado: "",
-        risco: "N/A",
+        mercado: "Não foi possível extrair a análise de mercado.",
         pros: [],
         contras: [],
-        veredito: ""
+        veredito: "Conselho não disponível."
     };
 
-    // Extração simples baseada nos cabeçalhos conhecidos
-    try {
-        const parts = markdown.split('### ');
+    if (!markdown) return sections;
 
-        parts.forEach(part => {
-            if (part.includes('Análise de Mercado')) {
-                sections.mercado = part.replace('📊 Análise de Mercado (Baseada em Dados Reais)', '').trim();
-            } else if (part.includes('Nível de Risco')) {
-                const match = part.match(/\*\*(.*?)\*\*/);
-                if (match) sections.risco = match[1];
-            } else if (part.includes('Pontos Fortes')) {
-                const lines = part.split('\n').filter(l => l.trim().startsWith('-'));
-                sections.pros = lines.map(l => l.replace('-', '').trim());
-            } else if (part.includes('Pontos Fracos')) {
-                const lines = part.split('\n').filter(l => l.trim().startsWith('-'));
-                sections.contras = lines.map(l => l.replace('-', '').trim());
-            } else if (part.includes('Veredito Final')) {
-                sections.veredito = part.replace('🎯 Veredito Final', '').trim();
+    try {
+        const regex = /(?:\[|\*\*|##|^)\s*SEÇÃO\s+(\d+)[^\]\*\n]*(?:\]|\*\*|:|\n|$)/gmi;
+        const parts = markdown.split(regex);
+
+        for (let i = 1; i < parts.length; i += 2) {
+            const sectionNum = parts[i];
+            const content = parts[i + 1] ? parts[i + 1].trim() : "";
+
+            if (sectionNum === "1") {
+                sections.mercado = content.replace(/\*\*/g, '');
+            } else if (sectionNum === "2") {
+                sections.pros = extractBullets(content);
+            } else if (sectionNum === "3") {
+                sections.contras = extractBullets(content);
+            } else if (sectionNum === "4") {
+                sections.veredito = content.replace(/\*\*/g, '');
             }
-        });
+        }
+
+        // --- FALLBACKS ---
+        if (parts.length < 3 && markdown.includes('### ')) {
+            const legacyParts = markdown.split('### ');
+            legacyParts.forEach(part => {
+                if (part.includes('Análise de Mercado')) {
+                    sections.mercado = part.replace('📊 Análise de Mercado (Baseada em Dados Reais)', '').trim();
+                } else if (part.includes('Pontos Fortes')) {
+                    const lines = part.split('\n').filter(l => l.trim().startsWith('-'));
+                    sections.pros = lines.map(l => l.replace('-', '').trim());
+                } else if (part.includes('Pontos Fracos')) {
+                    const lines = part.split('\n').filter(l => l.trim().startsWith('-'));
+                    sections.contras = lines.map(l => l.replace('-', '').trim());
+                } else if (part.includes('Veredito Final')) {
+                    sections.veredito = part.replace('🎯 Veredito Final', '').trim();
+                }
+            });
+        }
+        else if (parts.length < 3 && markdown.trim().length > 50 && !sections.mercado.includes("Não foi possível")) {
+            sections.mercado = markdown;
+        } else if (parts.length < 3 && markdown.trim().length > 50) {
+            sections.mercado = markdown;
+        }
+
     } catch (e) {
         console.error("Erro ao parsear feedback para PDF", e);
     }
@@ -97,8 +172,8 @@ const parseFeedback = (markdown) => {
 const DiagnosticPDF = ({ data }) => {
     if (!data) return null;
 
-    // Parseia o feedback markdown para o formato estruturado
     const parsedData = parseFeedback(data.feedback);
+    const viabilityLabel = getViabilityLabel(data.score); // Calcula label dinamicamente
 
     return (
         <Document>
@@ -112,26 +187,25 @@ const DiagnosticPDF = ({ data }) => {
 
                 {/* 2. O Veredito Visual (Score) */}
                 <View style={styles.scoreSection}>
-                    <Text style={styles.scoreBig}>{data.score}/100</Text>
+                    <Text style={styles.scoreBig}>{data.score || 0}/100</Text>
                     <View style={styles.scoreText}>
                         <Text style={{ fontSize: 12, fontWeight: 'bold', color: colors.dark }}>
-                            Índice de Viabilidade: {parsedData.risco}
+                            Índice de Viabilidade: {viabilityLabel}
                         </Text>
                         <ProgressBar score={data.score} />
                     </View>
                 </View>
 
-                {/* 3. Análise de Mercado (Dados da Tavily) */}
+                {/* 3. Análise de Mercado */}
                 <View>
                     <Text style={styles.sectionTitle}>Análise de Mercado & Concorrência</Text>
                     <Text style={styles.text}>
-                        {parsedData.mercado || "Nenhum dado de mercado específico foi encontrado."}
+                        {parsedData.mercado}
                     </Text>
                 </View>
 
-                {/* 4. Grid Lado a Lado (Prós e Contras) */}
+                {/* 4. Grid Lado a Lado */}
                 <View style={styles.gridContainer}>
-                    {/* Coluna Esquerda: Forças */}
                     <View style={styles.column}>
                         <Text style={[styles.sectionTitle, { color: colors.success }]}>Potencial & Forças</Text>
                         <View style={styles.cardGreen}>
@@ -143,7 +217,6 @@ const DiagnosticPDF = ({ data }) => {
                         </View>
                     </View>
 
-                    {/* Coluna Direita: Riscos */}
                     <View style={styles.column}>
                         <Text style={[styles.sectionTitle, { color: colors.danger }]}>Riscos & Desafios</Text>
                         <View style={styles.cardRed}>
@@ -164,9 +237,9 @@ const DiagnosticPDF = ({ data }) => {
                     </Text>
                 </View>
 
-                {/* Rodapé White-Label Ready */}
                 <Text style={styles.footer}>
                     Este relatório foi gerado por inteligência artificial. Valide os dados antes de investir.
+                    Ao usar o Daat AI, você contribui para nosso Índice de Inovação. Seus dados podem ser usados de forma anônima e agregada para gerar benchmarks de mercado.
                     Daat AI Solutions © 2025
                 </Text>
             </Page>
