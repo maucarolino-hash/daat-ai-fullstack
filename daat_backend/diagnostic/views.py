@@ -1,23 +1,3 @@
-# ... imports existentes ...
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
-from .models import Diagnostic
-from .tasks import analyze_startup_task
-from celery.result import AsyncResult
-from django.contrib.auth.models import User
-from django.conf import settings
-# from django.http import JsonResponse (Removido)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def health_check(request):
-    return Response({"status": "ok", "message": "Server is running"})
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def process_diagnostic(request):
-    try:
         segment = request.data.get('customerSegment', '')
         problem = request.data.get('problem', '')
         proposition = request.data.get('valueProposition', '')
@@ -115,23 +95,6 @@ def check_status(request, task_id):
     # Polling padrão do Celery
     result = AsyncResult(task_id)
     if result.ready():
-        if result.failed():
-             return Response({"status": "failed", "error": str(result.result)})
-        return Response({
-            "status": "completed", 
-            "data": result.result
-        })
-    else:
-        return Response({"status": "processing"})
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_history(request):
-    diagnostics = Diagnostic.objects.filter(user=request.user).order_by('-created_at')[:10]
-    
-    history_list = []
-    for item in diagnostics:
-        history_list.append({
             'id': item.id,
             'customer_segment': item.customer_segment,
             'problem': item.problem,
