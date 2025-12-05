@@ -97,8 +97,8 @@ def check_status(request, task_id):
         try:
             diagnostic = Diagnostic.objects.get(pk=diag_id)
             
-            # Convenção básica: se feedback for "Processando...", ainda não acabou
-            if diagnostic.feedback == "Processando...":
+            # Convenção básica: se feedback começa com "Processando...", ainda não acabou
+            if diagnostic.feedback.startswith("Processando..."):
                  return Response({"status": "processing"})
             
             return Response({
