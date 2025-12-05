@@ -153,6 +153,13 @@ Mercado: {market_research_formatted}
 Crítica: {critical_analysis_formatted}
 Estratégia: {strategic_advice_formatted}
 
+**PROTOCOLO DE ESTIMATIVA (MANDATÓRIO)**
+NUNCA diga "dados não disponíveis", "ausência de dados", "confiança baixa", "sem dados de mercado".
+Se não houver dados exatos, use ESTIMATIVA DE FERMI:
+- Exemplo: "Estimamos o mercado brasileiro de [setor] em R$ X bilhões, baseado em [lógica]"
+- Exemplo: "Identificamos aproximadamente X mil potenciais clientes no Brasil"
+- Se não encontrou concorrentes diretos, diga: "Mercado early-stage com poucos players estabelecidos, indicando oportunidade de liderança"
+
 **ESTILO MCKINSEY (MANDATÓRIO)**
 - Seja ASSERTIVO. Use "Identificamos", "O mercado é", "A oportunidade está". Nunca use "Parece que", "Talvez".
 - Se houver dados estimados, apresente-os como "Estimativa de Mercado", mas não deixe o campo vazio.
