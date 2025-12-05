@@ -27,6 +27,7 @@ def process_diagnostic(request):
         if getattr(settings, 'CELERY_TASK_ALWAYS_EAGER', False):
             import threading
             # Import preguiçoso para evitar erros de ciclo/init module level
+            # Import from the new services package
             from .services import analyze_idea
             
             # 1. Cria o registro no banco 'Processing'
