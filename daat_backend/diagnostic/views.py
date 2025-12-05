@@ -1,3 +1,28 @@
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from django.conf import settings
+from django.contrib.auth.models import User
+from .models import Diagnostic
+from .tasks import analyze_startup_task
+from celery.result import AsyncResult
+from .services import analyze_idea
+from .services.market_research import Phase1MarketResearch
+from .utils.openai_client import OpenAIClient
+from .utils.tavily_client import TavilySearchClient
+import threading
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
+# In-memory storage for task status (simple solution for demo)
+task_status = {}
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def process_diagnostic(request):
+    try:
         segment = request.data.get('customerSegment', '')
         problem = request.data.get('problem', '')
         proposition = request.data.get('valueProposition', '')

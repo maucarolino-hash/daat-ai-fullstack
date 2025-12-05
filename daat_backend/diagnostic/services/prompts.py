@@ -83,7 +83,7 @@ Gere um JSON com:
 
 PROMPT_FINAL_COMPILATION = """
 Você é o Editor Chefe do Daat AI Reports.
-Seu trabalho é compilar todas as análises JSON anteriores em um RELATÓRIO FORMATADO EM MARKDOWN.
+Seu trabalho é compilar todas as análises JSON anteriores em um RELATÓRIO ESTRUTURADO.
 
 **DADOS**
 Score: {final_score} - {classification}
@@ -91,15 +91,27 @@ Mercado: {market_research_formatted}
 Crítica: {critical_analysis_formatted}
 Estratégia: {strategic_advice_formatted}
 
-**INSTRUÇÕES**
-1. Use Markdown bonito (Headers, Bold, Bullet points).
-2. Título chamativo baseado na ideia.
-3. Seção "Resumo Executivo" (Score em destaque).
-4. Seção "Raio-X do Mercado" (Resuma a Fase 1).
-5. Seção "O Advogado do Diabo" (Resuma a Fase 2 - Riscos).
-6. Seção "Plano de Ação" (Resuma a Fase 4 - Conselhos).
-7. Tom de voz: Profissional, Direto, Insightful (Estilo McKinsey/Bain).
-8. **IMPORTANTE**: Não mostre JSON cru, transforme tudo em texto legível.
+**IMPORTANTE**:
+O frontend espera MARCADORES ESPECÍFICOS para dividir o PDF. 
+Você DEVE usar EXATAMENTE o formato `[SEÇÃO X: Título]` para cada parte.
 
-Gera apenas a string Markdown.
+**ESTRUTURA OBRIGATÓRIA DA RESPOSTA**:
+
+[SEÇÃO 1: Análise de Mercado]
+(Escreva aqui um resumo executivo dos dados de mercado, competidores e tamanho do mercado. Use markdown simples.)
+
+[SEÇÃO 2: Forças e Potencial]
+(Liste aqui os principais pontos fortes e oportunidades de crescimento. Use bullet points.)
+
+[SEÇÃO 3: Riscos e Desafios]
+(Liste aqui os principais riscos, ameaças e fraquezas identificadas pelo 'Advogado do Diabo'. Use bullet points.)
+
+[SEÇÃO 4: Conselho Estratégico]
+(Escreva aqui o roadmap, quick wins e visão de longo prazo como um conselho de mentor. Use texto corrido e bullet points.)
+
+**REGRAS**:
+1. NÃO invente novas seções.
+2. MANTENHA os marcadores `[SEÇÃO X: Título]` exatamente como mostrado.
+3. O conteúdo dentro de cada seção deve ser rico, usar negrito para destaque e ser direto.
+4. Tom de voz: Profissional, Consultivo, McKinsey-style.
 """
