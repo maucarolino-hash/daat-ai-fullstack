@@ -35,8 +35,8 @@ const Login = ({ onLogin }) => {
 
         try {
             const payload = isRegistering
-                ? { username, email, password1: password.trim(), password2: confirmPassword.trim() }
-                : { username, password: password.trim() };
+                ? { username: username.trim(), email, password1: password.trim(), password2: confirmPassword.trim() }
+                : { username: username.trim(), password: password.trim() };
 
             const response = await api.post(endpoint, payload);
             const data = response.data;
@@ -218,6 +218,19 @@ const Login = ({ onLogin }) => {
                     >
                         {loading ? "Processando..." : (isRegistering ? "Criar conta" : "Entrar")}
                     </button>
+
+                    {loading && (
+                        <p style={{ marginTop: '15px', color: '#D97706', fontSize: '0.9rem', textAlign: 'center', animation: 'fadeIn 1s' }}>
+                            ⏳ O servidor está acordando, isso pode levar até 50s. <br /> Por favor, aguarde...
+                        </p>
+                    )}
+
+
+                    {isRegistering && (
+                        <p className="data-disclaimer" style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '1rem', textAlign: 'center', lineHeight: '1.4' }}>
+                            Ao usar o Daat AI, você contribui para nosso Índice de Inovação. Seus dados podem ser usados de forma anônima e agregada para gerar benchmarks de mercado.
+                        </p>
+                    )}
                 </form>
             </div>
         </div>
