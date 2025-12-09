@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { CompetitorList } from "@/components/dashboard/CompetitorList";
@@ -16,6 +17,13 @@ export default function Index() {
 
   const isDashboardRoute = location.pathname === "/dashboard";
   const hasActiveAnalysis = isAnalyzing || logs.length > 0;
+
+  // Reset analysis when navigating to "/" (Painel) and not actively analyzing
+  useEffect(() => {
+    if (location.pathname === "/" && !isAnalyzing && logs.length > 0) {
+      resetAnalysis();
+    }
+  }, [location.pathname, isAnalyzing, logs.length, resetAnalysis]);
 
   const marketShare = result?.scoreBreakdown.totalScore 
     ? `${(result.scoreBreakdown.totalScore / 10).toFixed(1)}%` 
