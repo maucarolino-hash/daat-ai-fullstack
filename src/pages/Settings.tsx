@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { User, Key, Bell, CreditCard, Save, Webhook } from "lucide-react";
+import { User, Key, Bell, CreditCard, Save, Webhook, Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
 import { IntegrationsTab } from "@/components/settings/IntegrationsTab";
 import { usePreferences } from "@/hooks/usePreferences";
@@ -76,9 +76,20 @@ export default function Settings() {
             <h2 className="text-lg font-semibold text-foreground">Preferências de Interface</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
-                <div>
-                  <span className="text-sm font-medium text-foreground">Modo Escuro</span>
-                  <p className="text-xs text-muted-foreground">Usar tema escuro em todo o aplicativo</p>
+                <div className="flex items-center gap-3">
+                  {isDarkMode ? (
+                    <Moon className="w-5 h-5 text-accent" />
+                  ) : (
+                    <Sun className="w-5 h-5 text-neon-orange" />
+                  )}
+                  <div>
+                    <span className="text-sm font-medium text-foreground">
+                      {isDarkMode ? "Modo Escuro" : "Modo Claro"}
+                    </span>
+                    <p className="text-xs text-muted-foreground">
+                      {isDarkMode ? "Tema escuro ativado" : "Tema claro ativado"}
+                    </p>
+                  </div>
                 </div>
                 <Switch checked={isDarkMode} onCheckedChange={toggleTheme} />
               </div>
