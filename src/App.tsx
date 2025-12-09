@@ -10,6 +10,9 @@ import { DaatEngineProvider } from "@/lib/daat-engine/context";
 import Index from "./pages/Index";
 import History from "./pages/History";
 import Analysis from "./pages/Analysis";
+import AnalysisOverview from "./pages/AnalysisOverview";
+import AnalysisSimulator from "./pages/AnalysisSimulator";
+import AnalysisFeatures from "./pages/AnalysisFeatures";
 import AnalysisReport from "./pages/AnalysisReport";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -36,6 +39,9 @@ const App = () => (
                       <Route path="/dashboard" element={<Index />} />
                       <Route path="/history" element={<History />} />
                       <Route path="/analysis" element={<Analysis />} />
+                      <Route path="/analysis/overview" element={<AnalysisOverview />} />
+                      <Route path="/analysis/simulator" element={<AnalysisSimulator />} />
+                      <Route path="/analysis/features" element={<AnalysisFeatures />} />
                       <Route path="/report" element={<AnalysisReport />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<NotFound />} />
