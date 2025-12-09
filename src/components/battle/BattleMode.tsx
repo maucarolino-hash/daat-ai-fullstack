@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/select";
 import { Swords, Trophy, X, Zap, Shield, Users, DollarSign, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDaatEngine } from "@/lib/daat-engine/context";
+import { Competitor } from "@/lib/daat-engine/types";
 
 interface CompetitorData {
   name: string;
@@ -22,31 +24,11 @@ interface CompetitorData {
   };
 }
 
-const competitors: Record<string, CompetitorData> = {
+const defaultCompetitors: Record<string, CompetitorData> = {
   "our-ai": {
     name: "Nossa IA",
     color: "accent",
     stats: { pricing: 85, ux: 92, features: 88, support: 95, innovation: 90 },
-  },
-  acme: {
-    name: "Acme Corp",
-    color: "neon-blue",
-    stats: { pricing: 70, ux: 75, features: 80, support: 60, innovation: 65 },
-  },
-  globex: {
-    name: "Globex",
-    color: "neon-orange",
-    stats: { pricing: 80, ux: 70, features: 75, support: 72, innovation: 68 },
-  },
-  soylent: {
-    name: "Soylent",
-    color: "primary",
-    stats: { pricing: 90, ux: 65, features: 60, support: 55, innovation: 50 },
-  },
-  umbrella: {
-    name: "Umbrella",
-    color: "destructive",
-    stats: { pricing: 60, ux: 80, features: 85, support: 78, innovation: 82 },
   },
 };
 
@@ -64,12 +46,32 @@ interface BattleModeProps {
 }
 
 export function BattleMode({ isOpen, onClose }: BattleModeProps) {
-  const [selectedCompetitor, setSelectedCompetitor] = useState<string>("acme");
+  const { getCompetitors } = useDaatEngine();
+  const analysisCompetitors = getCompetitors();
+  
+  // Build competitors from Daat Engine data
+  const competitors: Record<string, CompetitorData> = {
+    ...defaultCompetitors,
+    ...analysisCompetitors.reduce((acc, comp: Competitor) => ({
+      ...acc,
+      [comp.id]: {
+        name: comp.name,
+        color: "neon-blue",
+        stats: comp.stats,
+      },
+    }), {}),
+  };
+
+  const [selectedCompetitor, setSelectedCompetitor] = useState<string>(
+    analysisCompetitors[0]?.id || "acme"
+  );
 
   if (!isOpen) return null;
 
   const ourData = competitors["our-ai"];
-  const theirData = competitors[selectedCompetitor];
+  const theirData = competitors[selectedCompetitor] || competitors[analysisCompetitors[0]?.id];
+
+  if (!theirData) return null;
 
   const getWinner = (category: keyof CompetitorData["stats"]) => {
     const ourScore = ourData.stats[category];
@@ -115,7 +117,7 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
             Modo Batalha
             <Swords className="w-8 h-8 text-accent transform scale-x-[-1]" />
           </h2>
-          <p className="text-muted-foreground">Análise competitiva frente a frente</p>
+          <p className="text-muted-foreground">Análise competitiva frente a frente (dados do Motor Daat)</p>
         </div>
 
         {/* Competitor Selector */}
@@ -125,13 +127,11 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
               <SelectValue placeholder="Selecione o concorrente" />
             </SelectTrigger>
             <SelectContent>
-              {Object.entries(competitors)
-                .filter(([key]) => key !== "our-ai")
-                .map(([key, data]) => (
-                  <SelectItem key={key} value={key}>
-                    {data.name}
-                  </SelectItem>
-                ))}
+              {analysisCompetitors.map((comp) => (
+                <SelectItem key={comp.id} value={comp.id}>
+                  {comp.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

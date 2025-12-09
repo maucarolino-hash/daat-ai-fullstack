@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronLeft, ChevronRight, Loader2, Sparkles, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Sparkles, Check, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useDaatEngine } from "@/lib/daat-engine/context";
 
 interface WizardModalProps {
   open: boolean;
@@ -21,13 +23,15 @@ const steps = [
 ];
 
 const dataSources = [
+  { id: "tavily", name: "Tavily AI", description: "Pesquisa de mercado com IA" },
   { id: "crunchbase", name: "Crunchbase", description: "Dados de empresas e investimentos" },
   { id: "semrush", name: "SEMRush", description: "Dados de SEO e marketing" },
   { id: "linkedin", name: "LinkedIn", description: "Dados de funcionários e contratações" },
-  { id: "g2", name: "G2 Reviews", description: "Feedback de clientes" },
 ];
 
 export function WizardModal({ open, onOpenChange }: WizardModalProps) {
+  const navigate = useNavigate();
+  const { startAnalysis } = useDaatEngine();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   
@@ -35,7 +39,7 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
   const [segment, setSegment] = useState("");
   const [competitors, setCompetitors] = useState("");
   const [deepDive, setDeepDive] = useState(false);
-  const [selectedSources, setSelectedSources] = useState<string[]>(["crunchbase", "g2"]);
+  const [selectedSources, setSelectedSources] = useState<string[]>(["tavily", "crunchbase"]);
 
   const handleNext = () => {
     if (currentStep < 3) setCurrentStep(currentStep + 1);
@@ -46,19 +50,44 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
   };
 
   const handleSubmit = async () => {
+    if (!segment.trim()) {
+      toast.error("Segmento obrigatório", {
+        description: "Por favor, informe o segmento de mercado para análise.",
+      });
+      return;
+    }
+
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    
+    // Parse competitors
+    const competitorList = competitors
+      .split("\n")
+      .map(c => c.trim())
+      .filter(Boolean);
+
+    // Start the Daat Engine analysis
+    startAnalysis(segment, competitorList);
+    
+    // Small delay for UX
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
     setLoading(false);
     onOpenChange(false);
-    toast.success("Análise Iniciada!", {
-      description: "Sua análise competitiva está em andamento. Notificaremos você quando estiver concluída.",
+    
+    toast.success("Motor Daat AI Iniciado!", {
+      description: "Acompanhe o progresso no terminal de análise.",
+      icon: <Zap className="w-4 h-4 text-accent" />,
     });
-    // Reset
+    
+    // Navigate to dashboard to see the terminal
+    navigate('/dashboard');
+    
+    // Reset form
     setCurrentStep(1);
     setSegment("");
     setCompetitors("");
     setDeepDive(false);
-    setSelectedSources(["crunchbase", "g2"]);
+    setSelectedSources(["tavily", "crunchbase"]);
   };
 
   const toggleSource = (id: string) => {
@@ -75,7 +104,7 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-accent" />
-            Nova Análise
+            Nova Análise Daat
           </DialogTitle>
         </DialogHeader>
 
@@ -114,18 +143,21 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
             <div className="space-y-4 animate-fade-in">
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Segmento de Mercado
+                  Segmento de Mercado *
                 </label>
                 <Input
-                  placeholder="ex: SaaS B2B, Fintech Mobile"
+                  placeholder="ex: SaaS B2B, Fintech Mobile, HealthTech"
                   value={segment}
                   onChange={(e) => setSegment(e.target.value)}
                   className="bg-secondary border-border"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  O Motor Daat usará isso para buscar concorrentes e dados de mercado
+                </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Concorrentes (um por linha)
+                  Concorrentes Conhecidos (opcional)
                 </label>
                 <Textarea
                   placeholder="Acme Corp&#10;Globex Inc&#10;Umbrella Corp"
@@ -147,7 +179,7 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
           {currentStep === 2 && (
             <div className="space-y-3 animate-fade-in">
               <p className="text-sm text-muted-foreground mb-4">
-                Selecione as fontes de dados para sua análise
+                Selecione as fontes de dados para o Motor Daat
               </p>
               {dataSources.map((source) => (
                 <label
@@ -197,7 +229,15 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
                 </div>
               </div>
 
+              {/* Daat Engine Info */}
               <div className="p-4 rounded-lg bg-accent/10 border border-accent/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-4 h-4 text-accent" />
+                  <span className="text-sm font-semibold text-accent">Motor Daat AI</span>
+                </div>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Processo de análise em 4 fases: Pesquisa de Mercado → Análise Crítica → Algoritmo de Pontuação → Consultoria Estratégica
+                </p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground">Custo Estimado</span>
                   <span className="text-2xl font-bold neon-text-purple">{creditCost} Créditos</span>
@@ -225,14 +265,17 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
               <ChevronRight className="w-4 h-4" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} variant="default" disabled={loading}>
+            <Button onClick={handleSubmit} variant="neon" disabled={loading} className="gap-2">
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Processando...
+                  Iniciando...
                 </>
               ) : (
-                "Iniciar Análise"
+                <>
+                  <Zap className="w-4 h-4" />
+                  Iniciar Análise Daat
+                </>
               )}
             </Button>
           )}

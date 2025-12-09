@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, DollarSign, Megaphone, BarChart3 } from "lucide-react";
+import { TrendingUp, DollarSign, Megaphone, BarChart3, Zap } from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -11,16 +11,16 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-const baseMarketShare = 12.5;
-const competitors = [
-  { name: "Acme Corp", share: 24 },
-  { name: "Globex", share: 18 },
-  { name: "Soylent", share: 15 },
-  { name: "Umbrella", share: 12 },
-];
+import { useDaatEngine } from "@/lib/daat-engine/context";
 
 export function ScenarioSimulator() {
+  const { getBaseScore, getCompetitors } = useDaatEngine();
+  const baseScore = getBaseScore();
+  const competitors = getCompetitors();
+
+  // Convert score to market share for simulation
+  const baseMarketShare = baseScore / 8; // Scale score to ~12.5% base share
+  
   const [pricing, setPricing] = useState(0);
   const [marketing, setMarketing] = useState(0);
 
@@ -28,7 +28,7 @@ export function ScenarioSimulator() {
     const marketingEffect = marketing * 0.08;
     const pricingEffect = pricing * -0.05;
     return Math.max(0, Math.min(100, baseMarketShare + marketingEffect + pricingEffect));
-  }, [pricing, marketing]);
+  }, [pricing, marketing, baseMarketShare]);
 
   const projectionData = useMemo(() => {
     const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
@@ -40,9 +40,15 @@ export function ScenarioSimulator() {
         projected: baseMarketShare + growth,
       };
     });
-  }, [projectedShare]);
+  }, [projectedShare, baseMarketShare]);
 
   const shareChange = projectedShare - baseMarketShare;
+
+  // Use competitors from Daat Engine
+  const competitorData = competitors.slice(0, 4).map(c => ({
+    name: c.name,
+    share: c.marketShare,
+  }));
 
   return (
     <div className="glass-card p-6 space-y-6">
@@ -51,8 +57,14 @@ export function ScenarioSimulator() {
           <BarChart3 className="w-5 h-5 text-accent" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Simulador de Cenários</h3>
-          <p className="text-sm text-muted-foreground">Análise "e se" para previsão de participação de mercado</p>
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            Simulador de Cenários
+            <span className="text-xs px-2 py-0.5 rounded bg-accent/20 text-accent flex items-center gap-1">
+              <Zap className="w-3 h-3" />
+              Daat Score: {baseScore}
+            </span>
+          </h3>
+          <p className="text-sm text-muted-foreground">Análise "e se" baseada na sua pontuação Daat</p>
         </div>
       </div>
 
@@ -105,7 +117,7 @@ export function ScenarioSimulator() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-4 rounded-lg bg-secondary/50 border border-border">
           <span className="text-xs text-muted-foreground uppercase tracking-wider">Participação Atual</span>
-          <div className="text-2xl font-bold text-foreground mt-1">{baseMarketShare}%</div>
+          <div className="text-2xl font-bold text-foreground mt-1">{baseMarketShare.toFixed(1)}%</div>
         </div>
         <div className="p-4 rounded-lg bg-accent/10 border border-accent/30">
           <span className="text-xs text-accent uppercase tracking-wider">Participação Projetada</span>
@@ -179,7 +191,7 @@ export function ScenarioSimulator() {
       <div className="space-y-3">
         <h4 className="text-sm font-medium text-muted-foreground">Ranking de Concorrentes (Projetado)</h4>
         <div className="space-y-2">
-          {[...competitors, { name: "Nossa IA", share: projectedShare }]
+          {[...competitorData, { name: "Nossa IA", share: projectedShare }]
             .sort((a, b) => b.share - a.share)
             .map((c, i) => (
               <div key={c.name} className="flex items-center gap-3">
