@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,10 +6,10 @@ import { Label } from "@/components/ui/label";
 import { User, Key, Bell, CreditCard, Save, Webhook } from "lucide-react";
 import { toast } from "sonner";
 import { IntegrationsTab } from "@/components/settings/IntegrationsTab";
+import { usePreferences } from "@/hooks/usePreferences";
 
 export default function Settings() {
-  const [darkMode, setDarkMode] = useState(true);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const { isDarkMode, reducedMotion, toggleTheme, setReducedMotion } = usePreferences();
 
   const handleSave = () => {
     toast.success("Settings saved successfully");
@@ -81,7 +80,7 @@ export default function Settings() {
                   <span className="text-sm font-medium text-foreground">Dark Mode</span>
                   <p className="text-xs text-muted-foreground">Use dark theme across the app</p>
                 </div>
-                <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+                <Switch checked={isDarkMode} onCheckedChange={toggleTheme} />
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
                 <div>
