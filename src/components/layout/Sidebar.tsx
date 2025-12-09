@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Home, List, BarChart3, Settings, User, Menu, X, LogOut, Sun, Moon } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Home, List, BarChart3, Settings, User, Menu, X, LogOut, Sun, Moon, Eye, Activity, Grid3X3, ChevronDown } from "lucide-react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,7 +23,16 @@ import {
 const navItems = [
   { icon: Home, label: "Painel", path: "/" },
   { icon: List, label: "Histórico", path: "/history" },
-  { icon: BarChart3, label: "Análise", path: "/analysis" },
+  { 
+    icon: BarChart3, 
+    label: "Análise", 
+    path: "/analysis",
+    subItems: [
+      { icon: Eye, label: "Visão Geral", path: "/analysis/overview" },
+      { icon: Activity, label: "Simulador", path: "/analysis/simulator" },
+      { icon: Grid3X3, label: "Recursos", path: "/analysis/features" },
+    ]
+  },
   { icon: Settings, label: "Configurações", path: "/settings" },
 ];
 
@@ -32,6 +41,7 @@ export function Sidebar() {
   const { user, signOut } = useAuth();
   const { isDarkMode, toggleTheme } = usePreferences();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -42,6 +52,8 @@ export function Sidebar() {
       navigate("/auth");
     }
   };
+
+  const isAnalysisActive = location.pathname.startsWith("/analysis");
 
   return (
     <>
@@ -81,34 +93,84 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 flex flex-col gap-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={() => setMobileMenuOpen(false)}
-              className={({ isActive }) =>
-                cn(
+          {navItems.map((item) => {
+            const hasSubItems = 'subItems' in item && item.subItems;
+            const isActive = item.path === "/analysis" 
+              ? isAnalysisActive 
+              : location.pathname === item.path;
+
+            if (hasSubItems) {
+              return (
+                <div key={item.path} className="relative group">
+                  <NavLink
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 relative",
+                      isActive
+                        ? "bg-primary/20 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    )}
+                  >
+                    <item.icon className="w-6 h-6" />
+                    {isActive && (
+                      <div className="absolute left-0 w-0.5 h-7 bg-primary rounded-r-full" />
+                    )}
+                  </NavLink>
+                  
+                  {/* Sub-menu flyout */}
+                  <div className="absolute left-16 top-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="bg-popover border border-border rounded-lg shadow-lg p-2 min-w-[180px]">
+                      <div className="text-sm font-semibold text-foreground px-3 py-2 border-b border-border mb-1">
+                        {item.label}
+                      </div>
+                      {item.subItems.map((subItem) => (
+                        <NavLink
+                          key={subItem.path}
+                          to={subItem.path}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={({ isActive: subActive }) =>
+                            cn(
+                              "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
+                              subActive
+                                ? "bg-primary/20 text-primary"
+                                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                            )
+                          }
+                        >
+                          <subItem.icon className="w-4 h-4" />
+                          {subItem.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
                   "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 group relative",
                   isActive
                     ? "bg-primary/20 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <item.icon className="w-6 h-6" />
-                  {isActive && (
-                    <div className="absolute left-0 w-0.5 h-7 bg-primary rounded-r-full" />
-                  )}
-                  {/* Tooltip */}
-                  <div className="absolute left-16 px-2 py-1 bg-popover border border-border rounded-md text-xs font-medium opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-                    {item.label}
-                  </div>
-                </>
-              )}
-            </NavLink>
-          ))}
+                )}
+              >
+                <item.icon className="w-6 h-6" />
+                {isActive && (
+                  <div className="absolute left-0 w-0.5 h-7 bg-primary rounded-r-full" />
+                )}
+                {/* Tooltip */}
+                <div className="absolute left-16 px-2 py-1 bg-popover border border-border rounded-md text-sm font-medium opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                  {item.label}
+                </div>
+              </NavLink>
+            );
+          })}
         </nav>
 
         {/* Theme Toggle */}
