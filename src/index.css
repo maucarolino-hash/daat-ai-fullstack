@@ -63,56 +63,56 @@
     --sidebar-ring: 142 76% 45%;
   }
 
-  /* Light mode theme - warm off-white */
+  /* Light mode theme - higher contrast warm cream */
   .light {
-    --background: 40 20% 96%;
-    --foreground: 222 35% 15%;
+    --background: 35 25% 92%;
+    --foreground: 222 47% 11%;
 
-    --card: 40 15% 98%;
-    --card-foreground: 222 35% 15%;
+    --card: 35 20% 97%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 40 15% 98%;
-    --popover-foreground: 222 35% 15%;
+    --popover: 35 20% 97%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 142 50% 35%;
-    --primary-foreground: 40 15% 98%;
+    --primary: 142 55% 30%;
+    --primary-foreground: 35 20% 97%;
 
-    --secondary: 40 15% 90%;
-    --secondary-foreground: 222 35% 15%;
+    --secondary: 35 18% 85%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 40 12% 88%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 35 15% 82%;
+    --muted-foreground: 220 20% 35%;
 
-    --accent: 271 55% 50%;
-    --accent-foreground: 40 15% 98%;
+    --accent: 271 60% 45%;
+    --accent-foreground: 35 20% 97%;
 
-    --destructive: 0 65% 50%;
-    --destructive-foreground: 40 15% 98%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 35 20% 97%;
 
-    --border: 40 15% 85%;
-    --input: 40 15% 90%;
-    --ring: 142 50% 35%;
+    --border: 35 18% 78%;
+    --input: 35 18% 85%;
+    --ring: 142 55% 30%;
 
-    /* Custom tech colors - softer for light mode */
-    --neon-green: 142 50% 35%;
-    --neon-red: 0 60% 50%;
-    --neon-purple: 271 55% 50%;
-    --neon-blue: 217 55% 50%;
-    --neon-orange: 25 70% 48%;
+    /* Custom tech colors - more contrast for light mode */
+    --neon-green: 142 55% 28%;
+    --neon-red: 0 65% 45%;
+    --neon-purple: 271 60% 45%;
+    --neon-blue: 217 60% 45%;
+    --neon-orange: 25 75% 42%;
 
-    --sidebar-background: 40 15% 97%;
-    --sidebar-foreground: 222 35% 15%;
-    --sidebar-primary: 142 50% 35%;
-    --sidebar-primary-foreground: 40 15% 98%;
-    --sidebar-accent: 40 15% 93%;
-    --sidebar-accent-foreground: 222 35% 15%;
-    --sidebar-border: 40 15% 85%;
-    --sidebar-ring: 142 50% 35%;
+    --sidebar-background: 35 20% 94%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 142 55% 30%;
+    --sidebar-primary-foreground: 35 20% 97%;
+    --sidebar-accent: 35 18% 88%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 35 18% 78%;
+    --sidebar-ring: 142 55% 30%;
 
-    /* Light mode glows - very subtle */
-    --glow-green: 0 0 12px hsl(142 50% 35% / 0.15);
-    --glow-purple: 0 0 12px hsl(271 55% 50% / 0.15);
-    --glow-red: 0 0 12px hsl(0 65% 50% / 0.15);
+    /* Light mode glows - subtle */
+    --glow-green: 0 0 12px hsl(142 55% 30% / 0.2);
+    --glow-purple: 0 0 12px hsl(271 60% 45% / 0.2);
+    --glow-red: 0 0 12px hsl(0 70% 45% / 0.2);
   }
 
   /* Keep dark as the default and explicit dark class */
