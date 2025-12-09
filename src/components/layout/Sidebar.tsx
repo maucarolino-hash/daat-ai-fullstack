@@ -57,14 +57,14 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed left-0 top-0 h-screen w-16 bg-sidebar border-r border-border flex flex-col items-center py-6 z-50 transition-transform duration-300",
+        "fixed left-0 top-0 h-screen w-20 bg-sidebar border-r border-border flex flex-col items-center py-6 z-50 transition-transform duration-300",
         "md:translate-x-0",
         mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       )}>
         {/* Logo */}
         <div className="mb-8">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-neon-blue flex items-center justify-center cyber-glow">
-            <span className="text-lg font-bold text-accent-foreground">M</span>
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-neon-blue flex items-center justify-center cyber-glow">
+            <span className="text-xl font-bold text-accent-foreground">M</span>
           </div>
         </div>
 
@@ -77,7 +77,7 @@ export function Sidebar() {
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
                 cn(
-                  "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 group relative",
+                  "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 group relative",
                   isActive
                     ? "bg-primary/20 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -86,12 +86,12 @@ export function Sidebar() {
             >
               {({ isActive }) => (
                 <>
-                  <item.icon className="w-5 h-5" />
+                  <item.icon className="w-6 h-6" />
                   {isActive && (
-                    <div className="absolute left-0 w-0.5 h-6 bg-primary rounded-r-full" />
+                    <div className="absolute left-0 w-0.5 h-7 bg-primary rounded-r-full" />
                   )}
                   {/* Tooltip */}
-                  <div className="absolute left-14 px-2 py-1 bg-popover border border-border rounded-md text-xs font-medium opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                  <div className="absolute left-16 px-2 py-1 bg-popover border border-border rounded-md text-xs font-medium opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
                     {item.label}
                   </div>
                 </>
@@ -104,7 +104,7 @@ export function Sidebar() {
         <div className="mt-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary/50 transition-colors duration-200">
+              <button className="w-12 h-12 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary/50 transition-colors duration-200">
                 <User className="w-5 h-5 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
