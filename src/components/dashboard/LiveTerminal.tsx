@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Terminal, Sparkles } from "lucide-react";
 
 const logLines = [
@@ -13,22 +13,74 @@ const logLines = [
 
 const aiInsight = "Based on current market trends, your competitive position has strengthened by 15% this quarter. Key opportunity: Expand into the enterprise segment where Acme Corp shows vulnerability in customer satisfaction scores.";
 
+interface TypedLineProps {
+  text: string;
+  onComplete?: () => void;
+  speed?: number;
+}
+
+function TypedLine({ text, onComplete, speed = 30 }: TypedLineProps) {
+  const [displayedText, setDisplayedText] = useState("");
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    indexRef.current = 0;
+    setDisplayedText("");
+    
+    const interval = setInterval(() => {
+      if (indexRef.current < text.length) {
+        setDisplayedText(text.slice(0, indexRef.current + 1));
+        indexRef.current++;
+      } else {
+        clearInterval(interval);
+        onComplete?.();
+      }
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text, onComplete, speed]);
+
+  return (
+    <span>
+      {displayedText}
+      {displayedText.length < text.length && (
+        <span className="animate-pulse text-primary">▋</span>
+      )}
+    </span>
+  );
+}
+
 export function LiveTerminal() {
-  const [visibleLines, setVisibleLines] = useState<number>(0);
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [completedLines, setCompletedLines] = useState<string[]>([]);
   const [showInsight, setShowInsight] = useState(false);
   const [displayedInsight, setDisplayedInsight] = useState("");
 
   useEffect(() => {
-    logLines.forEach((line, index) => {
-      setTimeout(() => {
-        setVisibleLines(index + 1);
-      }, line.delay);
-    });
+    if (currentLineIndex > 0 && currentLineIndex <= logLines.length) {
+      setCompletedLines(logLines.slice(0, currentLineIndex - 1).map(l => l.text));
+    }
+  }, [currentLineIndex]);
 
-    setTimeout(() => {
-      setShowInsight(true);
-    }, 5500);
+  useEffect(() => {
+    // Start the first line after a short delay
+    const timer = setTimeout(() => {
+      setCurrentLineIndex(1);
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
+
+  const handleLineComplete = () => {
+    if (currentLineIndex < logLines.length) {
+      setTimeout(() => {
+        setCompletedLines(prev => [...prev, logLines[currentLineIndex - 1].text]);
+        setCurrentLineIndex(prev => prev + 1);
+      }, 300);
+    } else {
+      setCompletedLines(prev => [...prev, logLines[currentLineIndex - 1].text]);
+      setTimeout(() => setShowInsight(true), 500);
+    }
+  };
 
   useEffect(() => {
     if (showInsight) {
@@ -45,6 +97,14 @@ export function LiveTerminal() {
     }
   }, [showInsight]);
 
+  const getLineColor = (text: string) => {
+    if (text.includes("[SUCCESS]")) return "text-primary";
+    if (text.includes("[AI]")) return "text-accent";
+    if (text.includes("[CALC]")) return "text-neon-blue";
+    if (text.includes("[INFO]")) return "text-muted-foreground";
+    return "text-foreground";
+  };
+
   return (
     <div className="glass-card overflow-hidden">
       {/* Terminal Header */}
@@ -60,25 +120,26 @@ export function LiveTerminal() {
 
       {/* Terminal Body */}
       <div className="terminal-bg p-4 min-h-[250px] font-mono text-sm space-y-1.5 overflow-y-auto scrollbar-thin">
-        {logLines.slice(0, visibleLines).map((line, index) => (
-          <div
-            key={index}
-            className="animate-fade-in"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <span className={
-              line.text.includes("[SUCCESS]") ? "text-primary" :
-              line.text.includes("[AI]") ? "text-accent" :
-              line.text.includes("[CALC]") ? "text-neon-blue" :
-              line.text.includes("[INFO]") ? "text-muted-foreground" :
-              "text-foreground"
-            }>
-              {line.text}
-            </span>
+        {/* Completed lines */}
+        {completedLines.map((line, index) => (
+          <div key={index} className={getLineColor(line)}>
+            {line}
           </div>
         ))}
         
-        {visibleLines === logLines.length && !showInsight && (
+        {/* Currently typing line */}
+        {currentLineIndex > 0 && currentLineIndex <= logLines.length && (
+          <div className={getLineColor(logLines[currentLineIndex - 1].text)}>
+            <TypedLine 
+              text={logLines[currentLineIndex - 1].text} 
+              onComplete={handleLineComplete}
+              speed={25}
+            />
+          </div>
+        )}
+        
+        {/* Waiting cursor */}
+        {currentLineIndex === 0 && (
           <div className="text-muted-foreground cursor-blink">_</div>
         )}
       </div>
