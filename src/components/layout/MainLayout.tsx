@@ -40,7 +40,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="min-h-screen bg-background">
       <Sidebar />
       <div 
-        className="transition-all duration-300"
+        className="transition-[margin] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
         style={{ marginLeft: isCollapsed ? '5rem' : '14rem' }}
       >
         <TopNav />

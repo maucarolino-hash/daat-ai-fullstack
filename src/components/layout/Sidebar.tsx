@@ -84,7 +84,8 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed left-0 top-0 h-screen bg-sidebar border-r border-border flex flex-col py-6 z-50 transition-all duration-300",
+        "fixed left-0 top-0 h-screen bg-sidebar border-r border-border flex flex-col py-6 z-50",
+        "transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
         "md:translate-x-0",
         mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         isCollapsed ? "w-20 items-center" : "w-56 px-3"
@@ -129,17 +130,23 @@ export function Sidebar() {
                       to={item.path}
                       onClick={() => setMobileMenuOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg transition-all duration-200 relative",
+                        "flex items-center gap-3 rounded-lg relative overflow-hidden",
+                        "transition-all duration-200 ease-out",
                         isCollapsed ? "w-12 h-12 justify-center" : "h-11 px-3",
                         isActive
                           ? "bg-primary/20 text-primary"
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                       )}
                     >
-                      <item.icon className="w-5 h-5 flex-shrink-0" />
-                      {!isCollapsed && (
-                        <span className="text-sm font-medium">{item.label}</span>
-                      )}
+                      <item.icon className="w-5 h-5 flex-shrink-0 transition-transform duration-200" />
+                      <span 
+                        className={cn(
+                          "text-sm font-medium whitespace-nowrap transition-all duration-300 ease-out",
+                          isCollapsed ? "opacity-0 w-0 -translate-x-2" : "opacity-100 w-auto translate-x-0"
+                        )}
+                      >
+                        {item.label}
+                      </span>
                       {isActive && (
                         <div className="absolute left-0 w-0.5 h-6 bg-primary rounded-r-full" />
                       )}
@@ -163,20 +170,24 @@ export function Sidebar() {
               <button
                 onClick={toggleTheme}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary mb-2",
+                  "flex items-center gap-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary mb-2 overflow-hidden",
+                  "transition-all duration-200 ease-out",
                   isCollapsed ? "w-12 h-12 justify-center" : "h-11 px-3 w-full"
                 )}
               >
                 {isDarkMode ? (
-                  <Sun className="w-5 h-5 flex-shrink-0" />
+                  <Sun className="w-5 h-5 flex-shrink-0 transition-transform duration-200" />
                 ) : (
-                  <Moon className="w-5 h-5 flex-shrink-0" />
+                  <Moon className="w-5 h-5 flex-shrink-0 transition-transform duration-200" />
                 )}
-                {!isCollapsed && (
-                  <span className="text-sm font-medium">
-                    {isDarkMode ? 'Modo Claro' : 'Modo Escuro'}
-                  </span>
-                )}
+                <span 
+                  className={cn(
+                    "text-sm font-medium whitespace-nowrap transition-all duration-300 ease-out",
+                    isCollapsed ? "opacity-0 w-0 -translate-x-2" : "opacity-100 w-auto translate-x-0"
+                  )}
+                >
+                  {isDarkMode ? 'Modo Claro' : 'Modo Escuro'}
+                </span>
               </button>
             </TooltipTrigger>
             {isCollapsed && (
