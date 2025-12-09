@@ -92,18 +92,20 @@ export function Sidebar() {
       )}>
         {/* Logo and Toggle */}
         <div className={cn(
-          "mb-6 flex items-center",
-          isCollapsed ? "justify-center" : "justify-between px-2"
+          "mb-6 flex items-center gap-3",
+          isCollapsed ? "justify-center" : "px-2"
         )}>
-          <div className={cn(
-            "rounded-xl bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center cyber-glow",
-            isCollapsed ? "w-12 h-12" : "w-10 h-10"
-          )}>
-            <span className={cn("font-bold text-accent-foreground", isCollapsed ? "text-xl" : "text-lg")}>M</span>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center cyber-glow flex-shrink-0">
+            <span className="text-lg font-bold text-accent-foreground">M</span>
           </div>
-          {!isCollapsed && (
-            <span className="text-lg font-semibold text-foreground">Maverick</span>
-          )}
+          <span 
+            className={cn(
+              "text-lg font-semibold text-foreground whitespace-nowrap transition-all duration-300 ease-out",
+              isCollapsed ? "opacity-0 w-0 -translate-x-2" : "opacity-100 w-auto translate-x-0"
+            )}
+          >
+            Maverick
+          </span>
         </div>
 
         {/* Toggle Button */}
