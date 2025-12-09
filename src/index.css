@@ -36,22 +36,22 @@
 
     --radius: 0.75rem;
 
-    /* Custom cyber-tech colors */
-    --neon-green: 142 76% 45%;
-    --neon-red: 0 84% 60%;
-    --neon-purple: 271 91% 65%;
-    --neon-blue: 217 91% 60%;
-    --neon-orange: 25 95% 53%;
+    /* Custom tech colors - softer tones */
+    --neon-green: 142 60% 40%;
+    --neon-red: 0 70% 55%;
+    --neon-purple: 271 70% 55%;
+    --neon-blue: 217 70% 55%;
+    --neon-orange: 25 80% 50%;
     
-    /* Gradients */
-    --gradient-purple-blue: linear-gradient(135deg, hsl(271 91% 65%) 0%, hsl(217 91% 60%) 100%);
-    --gradient-green-teal: linear-gradient(135deg, hsl(142 76% 45%) 0%, hsl(172 66% 50%) 100%);
+    /* Gradients - softer */
+    --gradient-purple-blue: linear-gradient(135deg, hsl(271 70% 55%) 0%, hsl(217 70% 55%) 100%);
+    --gradient-green-teal: linear-gradient(135deg, hsl(142 60% 40%) 0%, hsl(172 50% 45%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(222 47% 8% / 0.8) 0%, hsl(222 47% 5% / 0.9) 100%);
     
-    /* Glow effects */
-    --glow-green: 0 0 20px hsl(142 76% 45% / 0.3);
-    --glow-purple: 0 0 20px hsl(271 91% 65% / 0.3);
-    --glow-red: 0 0 20px hsl(0 84% 60% / 0.3);
+    /* Glow effects - subtle */
+    --glow-green: 0 0 15px hsl(142 60% 40% / 0.2);
+    --glow-purple: 0 0 15px hsl(271 70% 55% / 0.2);
+    --glow-red: 0 0 15px hsl(0 70% 55% / 0.2);
 
     --sidebar-background: 222 47% 5%;
     --sidebar-foreground: 210 40% 98%;
@@ -63,49 +63,56 @@
     --sidebar-ring: 142 76% 45%;
   }
 
-  /* Light mode theme */
+  /* Light mode theme - warm off-white */
   .light {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 40 20% 96%;
+    --foreground: 222 35% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 40 15% 98%;
+    --card-foreground: 222 35% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 40 15% 98%;
+    --popover-foreground: 222 35% 15%;
 
-    --primary: 142 76% 36%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 142 50% 35%;
+    --primary-foreground: 40 15% 98%;
 
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 40 15% 90%;
+    --secondary-foreground: 222 35% 15%;
 
-    --muted: 214 32% 91%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 40 12% 88%;
+    --muted-foreground: 220 15% 45%;
 
-    --accent: 271 81% 56%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 271 55% 50%;
+    --accent-foreground: 40 15% 98%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 40 15% 98%;
 
-    --border: 214 32% 85%;
-    --input: 214 32% 91%;
-    --ring: 142 76% 36%;
+    --border: 40 15% 85%;
+    --input: 40 15% 90%;
+    --ring: 142 50% 35%;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 142 76% 36%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 32% 95%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 85%;
-    --sidebar-ring: 142 76% 36%;
+    /* Custom tech colors - softer for light mode */
+    --neon-green: 142 50% 35%;
+    --neon-red: 0 60% 50%;
+    --neon-purple: 271 55% 50%;
+    --neon-blue: 217 55% 50%;
+    --neon-orange: 25 70% 48%;
 
-    /* Light mode glows - subtle */
-    --glow-green: 0 0 15px hsl(142 76% 36% / 0.2);
-    --glow-purple: 0 0 15px hsl(271 81% 56% / 0.2);
-    --glow-red: 0 0 15px hsl(0 84% 60% / 0.2);
+    --sidebar-background: 40 15% 97%;
+    --sidebar-foreground: 222 35% 15%;
+    --sidebar-primary: 142 50% 35%;
+    --sidebar-primary-foreground: 40 15% 98%;
+    --sidebar-accent: 40 15% 93%;
+    --sidebar-accent-foreground: 222 35% 15%;
+    --sidebar-border: 40 15% 85%;
+    --sidebar-ring: 142 50% 35%;
+
+    /* Light mode glows - very subtle */
+    --glow-green: 0 0 12px hsl(142 50% 35% / 0.15);
+    --glow-purple: 0 0 12px hsl(271 55% 50% / 0.15);
+    --glow-red: 0 0 12px hsl(0 65% 50% / 0.15);
   }
 
   /* Keep dark as the default and explicit dark class */
@@ -158,17 +165,17 @@
 
   .neon-text-green {
     @apply text-primary;
-    text-shadow: 0 0 10px hsl(var(--neon-green) / 0.5);
+    text-shadow: 0 0 8px hsl(var(--neon-green) / 0.3);
   }
 
   .neon-text-purple {
     @apply text-accent;
-    text-shadow: 0 0 10px hsl(var(--neon-purple) / 0.5);
+    text-shadow: 0 0 8px hsl(var(--neon-purple) / 0.3);
   }
 
   .neon-text-red {
     @apply text-destructive;
-    text-shadow: 0 0 10px hsl(var(--neon-red) / 0.5);
+    text-shadow: 0 0 8px hsl(var(--neon-red) / 0.3);
   }
 
   .gradient-progress {
