@@ -42,7 +42,10 @@ export function Sidebar() {
         variant="ghost"
         size="icon"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="fixed top-4 left-4 z-[60] md:hidden"
+        className={cn(
+          "fixed top-4 z-[60] md:hidden transition-all duration-300",
+          mobileMenuOpen ? "left-24" : "left-4"
+        )}
       >
         {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </Button>
