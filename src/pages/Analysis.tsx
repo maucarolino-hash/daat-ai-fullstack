@@ -1,6 +1,11 @@
+import { useState } from "react";
 import { FeatureMatrix } from "@/components/analysis/FeatureMatrix";
 import { MarketDataCard } from "@/components/analysis/MarketDataCard";
 import { MonitoringRadar } from "@/components/analysis/MonitoringRadar";
+import { ScenarioSimulator } from "@/components/analysis/ScenarioSimulator";
+import { BattleMode } from "@/components/battle/BattleMode";
+import { Button } from "@/components/ui/button";
+import { Swords } from "lucide-react";
 
 const marketData = [
   { company: "Acme Corp", revenue: "$10M", growth: 15, color: "bg-accent/20" },
@@ -10,13 +15,24 @@ const marketData = [
 ];
 
 export default function Analysis() {
+  const [battleModeOpen, setBattleModeOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground mb-1">Competitive Matrix</h1>
-        <p className="text-muted-foreground">Deep-dive analysis of your competitive landscape</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Competitive Matrix</h1>
+          <p className="text-muted-foreground">Deep-dive analysis of your competitive landscape</p>
+        </div>
+        <Button onClick={() => setBattleModeOpen(true)} variant="neon" className="gap-2">
+          <Swords className="w-4 h-4" />
+          Battle Mode
+        </Button>
       </div>
+
+      {/* Scenario Simulator */}
+      <ScenarioSimulator />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Feature Matrix */}
@@ -37,6 +53,9 @@ export default function Analysis() {
           <MonitoringRadar />
         </div>
       </div>
+
+      {/* Battle Mode Overlay */}
+      <BattleMode isOpen={battleModeOpen} onClose={() => setBattleModeOpen(false)} />
     </div>
   );
 }

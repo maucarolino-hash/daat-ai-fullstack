@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { User, Key, Bell, CreditCard, Save } from "lucide-react";
+import { User, Key, Bell, CreditCard, Save, Webhook } from "lucide-react";
 import { toast } from "sonner";
+import { IntegrationsTab } from "@/components/settings/IntegrationsTab";
 
 export default function Settings() {
   const [darkMode, setDarkMode] = useState(true);
@@ -40,6 +41,10 @@ export default function Settings() {
           <TabsTrigger value="billing" className="data-[state=active]:bg-background gap-2">
             <CreditCard className="w-4 h-4" />
             Billing
+          </TabsTrigger>
+          <TabsTrigger value="integrations" className="data-[state=active]:bg-background gap-2">
+            <Webhook className="w-4 h-4" />
+            Integrations
           </TabsTrigger>
         </TabsList>
 
@@ -180,6 +185,10 @@ export default function Settings() {
               <p className="text-xs text-muted-foreground">Resets on January 1, 2025</p>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="integrations">
+          <IntegrationsTab />
         </TabsContent>
       </Tabs>
     </div>
