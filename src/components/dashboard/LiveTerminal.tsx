@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback, memo } from "react";
 import { Terminal, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useNotificationSound } from "@/hooks/useNotificationSound";
 
 const logLines = [
   { text: "$ inicializando_motor_de_mercado...", delay: 0 },
@@ -61,6 +63,7 @@ export function LiveTerminal() {
   const [showInsight, setShowInsight] = useState(false);
   const [displayedInsight, setDisplayedInsight] = useState("");
   const [isTypingLine, setIsTypingLine] = useState(false);
+  const { playBeep } = useNotificationSound();
 
   // Start the animation
   useEffect(() => {
@@ -89,6 +92,8 @@ export function LiveTerminal() {
           setIsTypingLine(true);
           return nextIndex;
         } else {
+          // Play notification sound when analysis completes
+          playBeep();
           setTimeout(() => setShowInsight(true), 500);
           return prev;
         }
@@ -124,14 +129,26 @@ export function LiveTerminal() {
     ? logLines[currentLineIndex] 
     : null;
 
+  const isScanning = currentLineIndex >= 0 && currentLineIndex < logLines.length;
+
   return (
-    <div className="glass-card overflow-hidden">
+    <div className="glass-card overflow-hidden relative">
+      {/* Scanning overlay effect */}
+      {isScanning && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-scan" />
+        </div>
+      )}
+      
       {/* Terminal Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-secondary/30">
-        <Terminal className="w-4 h-4 text-primary" />
+        <Terminal className={cn("w-4 h-4", isScanning ? "text-primary animate-pulse" : "text-primary")} />
         <span className="text-sm font-medium text-foreground">Terminal de Análise em Tempo Real</span>
+        {isScanning && (
+          <span className="ml-2 text-xs text-primary animate-pulse font-mono">[SCANNING]</span>
+        )}
         <div className="ml-auto flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-destructive/70" />
+          <div className={cn("w-3 h-3 rounded-full", isScanning ? "bg-primary animate-pulse" : "bg-destructive/70")} />
           <div className="w-3 h-3 rounded-full bg-neon-orange/70" />
           <div className="w-3 h-3 rounded-full bg-primary/70" />
         </div>

@@ -1,5 +1,11 @@
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface StatCardProps {
   title: string;
@@ -9,6 +15,7 @@ interface StatCardProps {
   icon?: LucideIcon;
   children?: React.ReactNode;
   className?: string;
+  tooltip?: string;
 }
 
 export function StatCard({
@@ -19,11 +26,26 @@ export function StatCard({
   icon: Icon,
   children,
   className,
+  tooltip,
 }: StatCardProps) {
   return (
     <div className={cn("glass-card p-5", className)}>
       <div className="flex items-start justify-between mb-3">
-        <span className="text-sm text-muted-foreground font-medium">{title}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm text-muted-foreground font-medium">{title}</span>
+          {tooltip && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="w-3.5 h-3.5 text-muted-foreground/60 cursor-help hover:text-muted-foreground transition-colors" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[200px]">
+                  <p className="text-xs">{tooltip}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
         {Icon && (
           <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
             <Icon className="w-4 h-4 text-accent" />

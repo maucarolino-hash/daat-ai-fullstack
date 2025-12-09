@@ -97,10 +97,17 @@ export default function AnalysisReport() {
       </div>
 
       {/* Document Container */}
-      <div className="bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-card border border-border rounded-lg shadow-lg overflow-hidden relative">
+        
+        {/* Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+          <div className="text-[120px] font-bold text-foreground/[0.02] rotate-[-30deg] select-none whitespace-nowrap tracking-widest">
+            CONFIDENCIAL
+          </div>
+        </div>
         
         {/* Document Header - Institutional */}
-        <div className="bg-secondary/30 border-b border-border px-8 py-6">
+        <div className="bg-secondary/30 border-b border-border px-8 py-6 relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center">
@@ -137,8 +144,42 @@ export default function AnalysisReport() {
           </div>
         </div>
 
+        {/* Executive Summary */}
+        <div className="px-8 py-6 border-b border-border bg-primary/5 relative z-10">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider mb-3">
+            <span className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">★</span>
+            Sumário Executivo
+          </div>
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2 text-sm">
+              <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+              <span className="text-foreground">
+                Score de viabilidade: <strong className={getScoreColor(scoreBreakdown.totalScore)}>{scoreBreakdown.totalScore}/100</strong> — {scoreBreakdown.classification}
+              </span>
+            </li>
+            <li className="flex items-start gap-2 text-sm">
+              <TrendingUp className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+              <span className="text-foreground">
+                Mercado total de <strong>{marketData.tam}</strong> com crescimento anual de <strong>{marketData.growthRate}%</strong>
+              </span>
+            </li>
+            <li className="flex items-start gap-2 text-sm">
+              <AlertTriangle className="w-4 h-4 text-neon-orange flex-shrink-0 mt-0.5" />
+              <span className="text-foreground">
+                {riskAssessment.risks.length} riscos identificados, sendo {riskAssessment.risks.filter(r => r.severity === 'critical' || r.severity === 'high').length} de alta prioridade
+              </span>
+            </li>
+            <li className="flex items-start gap-2 text-sm">
+              <FileText className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+              <span className="text-foreground">
+                Plano de ação: {strategicAdvice.roadmap.length} ações distribuídas em 90 dias
+              </span>
+            </li>
+          </ul>
+        </div>
+
         {/* Score Verdict Section */}
-        <div className="px-8 py-6 border-b border-border">
+        <div className="px-8 py-6 border-b border-border relative z-10">
           <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider mb-4">
             <span className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-foreground font-bold text-xs">§</span>
             Parecer Final
@@ -194,7 +235,7 @@ export default function AnalysisReport() {
         </div>
 
         {/* Section 1: Market Data */}
-        <div className="px-8 py-6 border-b border-border">
+        <div className="px-8 py-6 border-b border-border relative z-10">
           <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider mb-4">
             <span className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-foreground font-bold text-xs">1</span>
             Dados de Mercado
@@ -264,7 +305,7 @@ export default function AnalysisReport() {
         </div>
 
         {/* Section 2: Audit */}
-        <div className="px-8 py-6 border-b border-border">
+        <div className="px-8 py-6 border-b border-border relative z-10">
           <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider mb-4">
             <span className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-foreground font-bold text-xs">2</span>
             Análise de Risco
@@ -312,7 +353,7 @@ export default function AnalysisReport() {
         </div>
 
         {/* Section 3: Strategic Roadmap */}
-        <div className="px-8 py-6 border-b border-border">
+        <div className="px-8 py-6 border-b border-border relative z-10">
           <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider mb-4">
             <span className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-foreground font-bold text-xs">3</span>
             Plano de Ação (90 Dias)
@@ -351,7 +392,7 @@ export default function AnalysisReport() {
         </div>
 
         {/* Section 4: Validations & Quick Wins */}
-        <div className="px-8 py-6 border-b border-border">
+        <div className="px-8 py-6 border-b border-border relative z-10">
           <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider mb-4">
             <span className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-foreground font-bold text-xs">4</span>
             Recomendações
@@ -384,7 +425,7 @@ export default function AnalysisReport() {
         </div>
 
         {/* Document Footer */}
-        <div className="bg-secondary/20 px-8 py-4">
+        <div className="bg-secondary/20 px-8 py-4 relative z-10">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <FileText className="w-3.5 h-3.5" />
