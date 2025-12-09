@@ -90,7 +90,7 @@ export function AskTheDataChatbot() {
         onClick={() => setIsOpen(true)}
         className={cn(
           "fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 group",
-          "bg-gradient-to-br from-accent to-neon-blue shadow-lg hover:shadow-xl",
+          "bg-gradient-to-br from-neon-blue to-accent shadow-lg hover:shadow-xl",
           "hover:scale-110 cyber-glow",
           isOpen && "scale-0 opacity-0"
         )}
@@ -111,7 +111,7 @@ export function AskTheDataChatbot() {
       >
         {/* Header */}
         <div className="flex items-center gap-3 p-4 border-b border-border bg-secondary/30">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-neon-blue flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
