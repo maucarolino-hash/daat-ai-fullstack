@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, List, Settings, User, Menu, X, LogOut, Sun, Moon, Eye, Activity, Grid3X3 } from "lucide-react";
+import { Home, List, Settings, User, Menu, X, LogOut, Sun, Moon, Eye, Activity, Grid3X3, LayoutDashboard } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import {
 
 const navItems = [
   { icon: Home, label: "Painel", path: "/" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: List, label: "Histórico", path: "/history" },
   { icon: Eye, label: "Visão Geral", path: "/analysis/overview" },
   { icon: Activity, label: "Simulador", path: "/analysis/simulator" },

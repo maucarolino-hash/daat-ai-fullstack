@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { CompetitorList } from "@/components/dashboard/CompetitorList";
 import { RiskCard } from "@/components/dashboard/RiskCard";
@@ -10,9 +10,11 @@ import { useDaatEngine } from "@/lib/daat-engine/context";
 
 export default function Index() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { state, startAnalysis, resetAnalysis } = useDaatEngine();
   const { result, isAnalyzing, logs } = state;
 
+  const isDashboardRoute = location.pathname === "/dashboard";
   const hasActiveAnalysis = isAnalyzing || logs.length > 0;
 
   const marketShare = result?.scoreBreakdown.totalScore 
@@ -28,8 +30,8 @@ export default function Index() {
 
   return (
     <div className="space-y-6">
-      {/* Chat-Style Hero Input - Shows when no analysis is active */}
-      {!hasActiveAnalysis && (
+      {/* Chat-Style Hero Input - Shows when no analysis is active and not on /dashboard */}
+      {!hasActiveAnalysis && !isDashboardRoute && (
         <div className="py-12">
           <ChatHeroInput 
             onStartAnalysis={handleStartAnalysis} 
@@ -38,8 +40,8 @@ export default function Index() {
         </div>
       )}
 
-      {/* Analysis in Progress or Complete */}
-      {hasActiveAnalysis && (
+      {/* Dashboard View - Shows when analysis active OR when directly accessing /dashboard */}
+      {(hasActiveAnalysis || isDashboardRoute) && (
         <>
           {/* Header */}
           <div className="flex items-center justify-between">
