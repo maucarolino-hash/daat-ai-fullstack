@@ -2,16 +2,16 @@ import { useEffect, useState, useCallback, memo } from "react";
 import { Terminal, Sparkles } from "lucide-react";
 
 const logLines = [
-  { text: "$ initializing_market_engine...", delay: 0 },
-  { text: "[INFO] Loading competitor datasets...", delay: 800 },
-  { text: "[INFO] Fetching market intelligence data...", delay: 1600 },
-  { text: "[CALC] calculating_tam... $4.2B", delay: 2400 },
-  { text: "[CALC] market_growth_rate... 12.5% YoY", delay: 3200 },
-  { text: "[AI] Running competitive analysis...", delay: 4000 },
-  { text: "[SUCCESS] Analysis complete ✓", delay: 4800 },
+  { text: "$ inicializando_motor_de_mercado...", delay: 0 },
+  { text: "[INFO] Carregando datasets de concorrentes...", delay: 800 },
+  { text: "[INFO] Buscando dados de inteligência de mercado...", delay: 1600 },
+  { text: "[CALC] calculando_tam... R$21B", delay: 2400 },
+  { text: "[CALC] taxa_crescimento_mercado... 12,5% ao ano", delay: 3200 },
+  { text: "[AI] Executando análise competitiva...", delay: 4000 },
+  { text: "[SUCESSO] Análise concluída ✓", delay: 4800 },
 ];
 
-const aiInsight = "Based on current market trends, your competitive position has strengthened by 15% this quarter. Key opportunity: Expand into the enterprise segment where Acme Corp shows vulnerability in customer satisfaction scores.";
+const aiInsight = "Com base nas tendências atuais do mercado, sua posição competitiva se fortaleceu em 15% neste trimestre. Oportunidade chave: Expandir para o segmento enterprise onde a Acme Corp demonstra vulnerabilidade nas pontuações de satisfação do cliente.";
 
 interface TypedLineProps {
   text: string;
@@ -113,7 +113,7 @@ export function LiveTerminal() {
   }, [showInsight]);
 
   const getLineColor = (text: string) => {
-    if (text.includes("[SUCCESS]")) return "text-primary";
+    if (text.includes("[SUCESSO]")) return "text-primary";
     if (text.includes("[AI]")) return "text-accent";
     if (text.includes("[CALC]")) return "text-neon-blue";
     if (text.includes("[INFO]")) return "text-muted-foreground";
@@ -129,7 +129,7 @@ export function LiveTerminal() {
       {/* Terminal Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-secondary/30">
         <Terminal className="w-4 h-4 text-primary" />
-        <span className="text-sm font-medium text-foreground">Live Analysis Terminal</span>
+        <span className="text-sm font-medium text-foreground">Terminal de Análise em Tempo Real</span>
         <div className="ml-auto flex gap-1.5">
           <div className="w-3 h-3 rounded-full bg-destructive/70" />
           <div className="w-3 h-3 rounded-full bg-neon-orange/70" />
@@ -168,7 +168,7 @@ export function LiveTerminal() {
         <div className="m-4 p-4 rounded-lg bg-accent/10 border border-accent/30 animate-fade-in">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-xs font-semibold text-accent uppercase tracking-wider">AI Insight</span>
+            <span className="text-xs font-semibold text-accent uppercase tracking-wider">Insight de IA</span>
           </div>
           <p className="text-sm text-foreground/90 leading-relaxed">
             {displayedInsight}

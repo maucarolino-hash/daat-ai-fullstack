@@ -15,16 +15,16 @@ interface WizardModalProps {
 }
 
 const steps = [
-  { id: 1, title: "Scope", description: "Define your analysis" },
-  { id: 2, title: "Data Sources", description: "Select data providers" },
-  { id: 3, title: "Review", description: "Confirm & launch" },
+  { id: 1, title: "Escopo", description: "Defina sua análise" },
+  { id: 2, title: "Fontes de Dados", description: "Selecione provedores" },
+  { id: 3, title: "Revisão", description: "Confirme e inicie" },
 ];
 
 const dataSources = [
-  { id: "crunchbase", name: "Crunchbase", description: "Company data & funding" },
-  { id: "semrush", name: "SEMRush", description: "SEO & marketing data" },
-  { id: "linkedin", name: "LinkedIn", description: "Employee & hiring data" },
-  { id: "g2", name: "G2 Reviews", description: "Customer feedback" },
+  { id: "crunchbase", name: "Crunchbase", description: "Dados de empresas e investimentos" },
+  { id: "semrush", name: "SEMRush", description: "Dados de SEO e marketing" },
+  { id: "linkedin", name: "LinkedIn", description: "Dados de funcionários e contratações" },
+  { id: "g2", name: "G2 Reviews", description: "Feedback de clientes" },
 ];
 
 export function WizardModal({ open, onOpenChange }: WizardModalProps) {
@@ -50,8 +50,8 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setLoading(false);
     onOpenChange(false);
-    toast.success("Analysis Started!", {
-      description: "Your competitive analysis is now running. We'll notify you when it's complete.",
+    toast.success("Análise Iniciada!", {
+      description: "Sua análise competitiva está em andamento. Notificaremos você quando estiver concluída.",
     });
     // Reset
     setCurrentStep(1);
@@ -75,7 +75,7 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-accent" />
-            New Analysis
+            Nova Análise
           </DialogTitle>
         </DialogHeader>
 
@@ -114,10 +114,10 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
             <div className="space-y-4 animate-fade-in">
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Market Segment
+                  Segmento de Mercado
                 </label>
                 <Input
-                  placeholder="e.g., SaaS B2B, Fintech Mobile"
+                  placeholder="ex: SaaS B2B, Fintech Mobile"
                   value={segment}
                   onChange={(e) => setSegment(e.target.value)}
                   className="bg-secondary border-border"
@@ -125,7 +125,7 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Competitors (one per line)
+                  Concorrentes (um por linha)
                 </label>
                 <Textarea
                   placeholder="Acme Corp&#10;Globex Inc&#10;Umbrella Corp"
@@ -136,8 +136,8 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
                 <div>
-                  <span className="text-sm font-medium text-foreground">Deep Dive Analysis</span>
-                  <p className="text-xs text-muted-foreground">Extended data collection (+10 credits)</p>
+                  <span className="text-sm font-medium text-foreground">Análise Aprofundada</span>
+                  <p className="text-xs text-muted-foreground">Coleta de dados estendida (+10 créditos)</p>
                 </div>
                 <Switch checked={deepDive} onCheckedChange={setDeepDive} />
               </div>
@@ -147,7 +147,7 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
           {currentStep === 2 && (
             <div className="space-y-3 animate-fade-in">
               <p className="text-sm text-muted-foreground mb-4">
-                Select data sources for your analysis
+                Selecione as fontes de dados para sua análise
               </p>
               {dataSources.map((source) => (
                 <label
@@ -176,31 +176,31 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
             <div className="space-y-4 animate-fade-in">
               <div className="p-4 rounded-lg bg-secondary space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Segment</span>
-                  <span className="text-foreground">{segment || "Not specified"}</span>
+                  <span className="text-muted-foreground">Segmento</span>
+                  <span className="text-foreground">{segment || "Não especificado"}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Competitors</span>
+                  <span className="text-muted-foreground">Concorrentes</span>
                   <span className="text-foreground">
-                    {competitors.split("\n").filter(Boolean).length} companies
+                    {competitors.split("\n").filter(Boolean).length} empresas
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Deep Dive</span>
+                  <span className="text-muted-foreground">Análise Aprofundada</span>
                   <span className={deepDive ? "text-primary" : "text-muted-foreground"}>
-                    {deepDive ? "Enabled" : "Disabled"}
+                    {deepDive ? "Ativada" : "Desativada"}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Data Sources</span>
-                  <span className="text-foreground">{selectedSources.length} selected</span>
+                  <span className="text-muted-foreground">Fontes de Dados</span>
+                  <span className="text-foreground">{selectedSources.length} selecionadas</span>
                 </div>
               </div>
 
               <div className="p-4 rounded-lg bg-accent/10 border border-accent/30">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">Estimated Cost</span>
-                  <span className="text-2xl font-bold neon-text-purple">{creditCost} Credits</span>
+                  <span className="text-sm font-medium text-foreground">Custo Estimado</span>
+                  <span className="text-2xl font-bold neon-text-purple">{creditCost} Créditos</span>
                 </div>
               </div>
             </div>
@@ -216,12 +216,12 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
             className="gap-1"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back
+            Voltar
           </Button>
 
           {currentStep < 3 ? (
             <Button onClick={handleNext} variant="cyber" className="gap-1">
-              Next
+              Próximo
               <ChevronRight className="w-4 h-4" />
             </Button>
           ) : (
@@ -229,10 +229,10 @@ export function WizardModal({ open, onOpenChange }: WizardModalProps) {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Processing...
+                  Processando...
                 </>
               ) : (
-                "Start Analysis"
+                "Iniciar Análise"
               )}
             </Button>
           )}

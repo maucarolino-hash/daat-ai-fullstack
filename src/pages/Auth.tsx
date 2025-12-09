@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, LogIn, UserPlus, Loader2 } from "lucide-react";
 
-const emailSchema = z.string().trim().email("Invalid email address").max(255);
-const passwordSchema = z.string().min(6, "Password must be at least 6 characters").max(72);
+const emailSchema = z.string().trim().email("Endereço de e-mail inválido").max(255);
+const passwordSchema = z.string().min(6, "A senha deve ter pelo menos 6 caracteres").max(72);
 const nameSchema = z.string().trim().max(100).optional();
 
 export default function Auth() {
@@ -76,29 +76,29 @@ export default function Auth() {
         const { error } = await signIn(email, password);
         if (error) {
           if (error.message.includes("Invalid login credentials")) {
-            toast.error("Invalid email or password");
+            toast.error("E-mail ou senha inválidos");
           } else {
             toast.error(error.message);
           }
         } else {
-          toast.success("Welcome back!");
+          toast.success("Bem-vindo de volta!");
           navigate("/");
         }
       } else {
         const { error } = await signUp(email, password, fullName);
         if (error) {
           if (error.message.includes("already registered")) {
-            toast.error("This email is already registered. Try logging in.");
+            toast.error("Este e-mail já está cadastrado. Tente fazer login.");
           } else {
             toast.error(error.message);
           }
         } else {
-          toast.success("Account created successfully!");
+          toast.success("Conta criada com sucesso!");
           navigate("/");
         }
       }
     } catch (err) {
-      toast.error("An unexpected error occurred");
+      toast.error("Ocorreu um erro inesperado");
     } finally {
       setIsSubmitting(false);
     }
@@ -120,9 +120,9 @@ export default function Auth() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-neon-blue flex items-center justify-center cyber-glow mx-auto mb-4">
             <span className="text-2xl font-bold text-accent-foreground">M</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Market Intelligence</h1>
+          <h1 className="text-2xl font-bold text-foreground">Inteligência de Mercado</h1>
           <p className="text-muted-foreground mt-1">
-            {isLogin ? "Sign in to your account" : "Create your account"}
+            {isLogin ? "Acesse sua conta" : "Crie sua conta"}
           </p>
         </div>
 
@@ -131,11 +131,11 @@ export default function Auth() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">Nome Completo</Label>
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="João Silva"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="bg-secondary border-border"
@@ -148,11 +148,11 @@ export default function Auth() {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="voce@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-secondary border-border"
@@ -165,7 +165,7 @@ export default function Auth() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -203,7 +203,7 @@ export default function Auth() {
               ) : (
                 <UserPlus className="w-4 h-4 mr-2" />
               )}
-              {isLogin ? "Sign In" : "Create Account"}
+              {isLogin ? "Entrar" : "Criar Conta"}
             </Button>
           </form>
           
@@ -217,9 +217,9 @@ export default function Auth() {
               className="text-sm text-muted-foreground hover:text-accent transition-colors"
             >
               {isLogin ? (
-                <>Don't have an account? <span className="text-accent">Sign up</span></>
+                <>Não tem uma conta? <span className="text-accent">Cadastre-se</span></>
               ) : (
-                <>Already have an account? <span className="text-accent">Sign in</span></>
+                <>Já tem uma conta? <span className="text-accent">Entrar</span></>
               )}
             </button>
           </div>

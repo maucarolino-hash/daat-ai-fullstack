@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
-  { icon: Home, label: "Dashboard", path: "/" },
-  { icon: List, label: "History", path: "/history" },
-  { icon: BarChart3, label: "Analysis", path: "/analysis" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: Home, label: "Painel", path: "/" },
+  { icon: List, label: "Histórico", path: "/history" },
+  { icon: BarChart3, label: "Análise", path: "/analysis" },
+  { icon: Settings, label: "Configurações", path: "/settings" },
 ];
 
 export function Sidebar() {
@@ -28,9 +28,9 @@ export function Sidebar() {
   const handleSignOut = async () => {
     const { error } = await signOut();
     if (error) {
-      toast.error("Failed to sign out");
+      toast.error("Falha ao sair");
     } else {
-      toast.success("Signed out successfully");
+      toast.success("Você saiu com sucesso");
       navigate("/auth");
     }
   };
@@ -114,14 +114,14 @@ export function Sidebar() {
             <DropdownMenuContent side="right" align="end" className="w-48">
               <div className="px-2 py-1.5">
                 <p className="text-sm font-medium text-foreground truncate">
-                  {user?.email || "User"}
+                  {user?.email || "Usuário"}
                 </p>
-                <p className="text-xs text-muted-foreground">Account</p>
+                <p className="text-xs text-muted-foreground">Conta</p>
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
+                Sair
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

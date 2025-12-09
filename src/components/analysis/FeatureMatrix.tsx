@@ -2,16 +2,16 @@ import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const features = [
-  { name: "SaaS Model", us: true, acme: true, globex: true, umbrella: false },
-  { name: "AI Integration", us: true, acme: false, globex: true, umbrella: false },
-  { name: "24/7 Support", us: true, acme: true, globex: false, umbrella: true },
-  { name: "API Access", us: true, acme: true, globex: true, umbrella: true },
-  { name: "Custom Reports", us: true, acme: false, globex: false, umbrella: false },
-  { name: "Real-time Data", us: true, acme: true, globex: false, umbrella: false },
+  { name: "Modelo SaaS", us: true, acme: true, globex: true, umbrella: false },
+  { name: "Integração com IA", us: true, acme: false, globex: true, umbrella: false },
+  { name: "Suporte 24/7", us: true, acme: true, globex: false, umbrella: true },
+  { name: "Acesso à API", us: true, acme: true, globex: true, umbrella: true },
+  { name: "Relatórios Personalizados", us: true, acme: false, globex: false, umbrella: false },
+  { name: "Dados em Tempo Real", us: true, acme: true, globex: false, umbrella: false },
 ];
 
 const columns = [
-  { key: "us", label: "Our AI", highlight: true },
+  { key: "us", label: "Nossa IA", highlight: true },
   { key: "acme", label: "Acme" },
   { key: "globex", label: "Globex" },
   { key: "umbrella", label: "Umbrella" },
@@ -21,14 +21,14 @@ export function FeatureMatrix() {
   return (
     <div className="glass-card overflow-hidden">
       <div className="p-4 border-b border-border">
-        <h3 className="font-semibold text-foreground">Feature Comparison Matrix</h3>
+        <h3 className="font-semibold text-foreground">Matriz de Comparação de Recursos</h3>
       </div>
       
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left text-sm font-medium text-muted-foreground p-4">Feature</th>
+              <th className="text-left text-sm font-medium text-muted-foreground p-4">Recurso</th>
               {columns.map((col) => (
                 <th
                   key={col.key}

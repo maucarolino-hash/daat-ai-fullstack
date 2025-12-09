@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Swords } from "lucide-react";
 
 const marketData = [
-  { company: "Acme Corp", revenue: "$10M", growth: 15, color: "bg-accent/20" },
-  { company: "Globex", revenue: "$8.5M", growth: 8, color: "bg-primary/20" },
-  { company: "Soylent", revenue: "$6.2M", growth: -3, color: "bg-neon-orange/20" },
-  { company: "Umbrella", revenue: "$4.8M", growth: 22, color: "bg-neon-blue/20" },
+  { company: "Acme Corp", revenue: "R$50M", growth: 15, color: "bg-accent/20" },
+  { company: "Globex", revenue: "R$42,5M", growth: 8, color: "bg-primary/20" },
+  { company: "Soylent", revenue: "R$31M", growth: -3, color: "bg-neon-orange/20" },
+  { company: "Umbrella", revenue: "R$24M", growth: 22, color: "bg-neon-blue/20" },
 ];
 
 export default function Analysis() {
@@ -22,12 +22,12 @@ export default function Analysis() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground mb-1">Competitive Matrix</h1>
-          <p className="text-muted-foreground">Deep-dive analysis of your competitive landscape</p>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Matriz Competitiva</h1>
+          <p className="text-muted-foreground">Análise aprofundada do seu cenário competitivo</p>
         </div>
         <Button onClick={() => setBattleModeOpen(true)} variant="neon" className="gap-2">
           <Swords className="w-4 h-4" />
-          Battle Mode
+          Modo Batalha
         </Button>
       </div>
 

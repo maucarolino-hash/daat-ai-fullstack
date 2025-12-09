@@ -22,7 +22,7 @@ export function MarketDataCard({ company, revenue, growth, color }: MarketDataCa
       
       <div className="space-y-2">
         <div>
-          <span className="text-xs text-muted-foreground">Revenue</span>
+          <span className="text-xs text-muted-foreground">Receita</span>
           <p className="text-xl font-bold text-foreground">{revenue}</p>
         </div>
         <div className="flex items-center gap-1">
@@ -32,7 +32,7 @@ export function MarketDataCard({ company, revenue, growth, color }: MarketDataCa
             <TrendingDown className="w-4 h-4 text-destructive" />
           )}
           <span className={cn("text-sm font-medium", isPositive ? "text-primary" : "text-destructive")}>
-            {isPositive ? "+" : ""}{growth}% YoY
+            {isPositive ? "+" : ""}{growth}% ao ano
           </span>
         </div>
       </div>
