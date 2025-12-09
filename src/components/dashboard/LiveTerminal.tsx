@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { Terminal, Sparkles } from "lucide-react";
 
 const logLines = [
@@ -15,73 +15,88 @@ const aiInsight = "Based on current market trends, your competitive position has
 
 interface TypedLineProps {
   text: string;
-  onComplete?: () => void;
+  onComplete: () => void;
   speed?: number;
 }
 
-function TypedLine({ text, onComplete, speed = 30 }: TypedLineProps) {
+const TypedLine = memo(function TypedLine({ text, onComplete, speed = 25 }: TypedLineProps) {
   const [displayedText, setDisplayedText] = useState("");
-  const indexRef = useRef(0);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    indexRef.current = 0;
+    let index = 0;
     setDisplayedText("");
+    setIsComplete(false);
     
     const interval = setInterval(() => {
-      if (indexRef.current < text.length) {
-        setDisplayedText(text.slice(0, indexRef.current + 1));
-        indexRef.current++;
+      if (index < text.length) {
+        setDisplayedText(text.slice(0, index + 1));
+        index++;
       } else {
         clearInterval(interval);
-        onComplete?.();
+        setIsComplete(true);
       }
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, onComplete, speed]);
+  }, [text, speed]);
+
+  useEffect(() => {
+    if (isComplete) {
+      onComplete();
+    }
+  }, [isComplete, onComplete]);
 
   return (
     <span>
       {displayedText}
-      {displayedText.length < text.length && (
-        <span className="animate-pulse text-primary">▋</span>
-      )}
+      {!isComplete && <span className="animate-pulse text-primary">▋</span>}
     </span>
   );
-}
+});
 
 export function LiveTerminal() {
-  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [currentLineIndex, setCurrentLineIndex] = useState(-1);
   const [completedLines, setCompletedLines] = useState<string[]>([]);
   const [showInsight, setShowInsight] = useState(false);
   const [displayedInsight, setDisplayedInsight] = useState("");
+  const [isTypingLine, setIsTypingLine] = useState(false);
 
+  // Start the animation
   useEffect(() => {
-    if (currentLineIndex > 0 && currentLineIndex <= logLines.length) {
-      setCompletedLines(logLines.slice(0, currentLineIndex - 1).map(l => l.text));
-    }
-  }, [currentLineIndex]);
-
-  useEffect(() => {
-    // Start the first line after a short delay
     const timer = setTimeout(() => {
-      setCurrentLineIndex(1);
+      setCurrentLineIndex(0);
+      setIsTypingLine(true);
     }, 500);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLineComplete = () => {
-    if (currentLineIndex < logLines.length) {
-      setTimeout(() => {
-        setCompletedLines(prev => [...prev, logLines[currentLineIndex - 1].text]);
-        setCurrentLineIndex(prev => prev + 1);
-      }, 300);
-    } else {
-      setCompletedLines(prev => [...prev, logLines[currentLineIndex - 1].text]);
-      setTimeout(() => setShowInsight(true), 500);
-    }
-  };
+  const handleLineComplete = useCallback(() => {
+    setIsTypingLine(false);
+    
+    setTimeout(() => {
+      setCompletedLines(prev => {
+        const currentText = logLines[prev.length]?.text;
+        if (currentText && !prev.includes(currentText)) {
+          return [...prev, currentText];
+        }
+        return prev;
+      });
+      
+      setCurrentLineIndex(prev => {
+        const nextIndex = prev + 1;
+        if (nextIndex < logLines.length) {
+          setIsTypingLine(true);
+          return nextIndex;
+        } else {
+          setTimeout(() => setShowInsight(true), 500);
+          return prev;
+        }
+      });
+    }, 300);
+  }, []);
 
+  // AI Insight typing effect
   useEffect(() => {
     if (showInsight) {
       let currentIndex = 0;
@@ -104,6 +119,10 @@ export function LiveTerminal() {
     if (text.includes("[INFO]")) return "text-muted-foreground";
     return "text-foreground";
   };
+
+  const currentLine = currentLineIndex >= 0 && currentLineIndex < logLines.length 
+    ? logLines[currentLineIndex] 
+    : null;
 
   return (
     <div className="glass-card overflow-hidden">
@@ -128,18 +147,18 @@ export function LiveTerminal() {
         ))}
         
         {/* Currently typing line */}
-        {currentLineIndex > 0 && currentLineIndex <= logLines.length && (
-          <div className={getLineColor(logLines[currentLineIndex - 1].text)}>
+        {isTypingLine && currentLine && (
+          <div className={getLineColor(currentLine.text)}>
             <TypedLine 
-              text={logLines[currentLineIndex - 1].text} 
+              text={currentLine.text} 
               onComplete={handleLineComplete}
               speed={25}
             />
           </div>
         )}
         
-        {/* Waiting cursor */}
-        {currentLineIndex === 0 && (
+        {/* Waiting cursor before animation starts */}
+        {currentLineIndex === -1 && (
           <div className="text-muted-foreground cursor-blink">_</div>
         )}
       </div>
