@@ -5,12 +5,12 @@ import { RiskCard } from "@/components/dashboard/RiskCard";
 import { DaatTerminal } from "@/components/dashboard/DaatTerminal";
 import { ChatHeroInput } from "@/components/dashboard/ChatHeroInput";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Users, AlertTriangle, Target, FileText } from "lucide-react";
+import { TrendingUp, Users, AlertTriangle, Target, FileText, RotateCcw } from "lucide-react";
 import { useDaatEngine } from "@/lib/daat-engine/context";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { state, startAnalysis } = useDaatEngine();
+  const { state, startAnalysis, resetAnalysis } = useDaatEngine();
   const { result, isAnalyzing, logs } = state;
 
   const hasActiveAnalysis = isAnalyzing || logs.length > 0;
@@ -47,12 +47,18 @@ export default function Index() {
               <h1 className="text-2xl font-bold text-foreground mb-1">Dashboard de Crescimento</h1>
               <p className="text-muted-foreground">Visão geral da sua posição de mercado e inteligência competitiva</p>
             </div>
-            {result && !isAnalyzing && (
-              <Button onClick={() => navigate('/report')} variant="neon" className="gap-2">
-                <FileText className="w-4 h-4" />
-                Ver Relatório Completo
+            <div className="flex gap-3">
+              <Button onClick={resetAnalysis} variant="outline" className="gap-2">
+                <RotateCcw className="w-4 h-4" />
+                Nova Análise
               </Button>
-            )}
+              {result && !isAnalyzing && (
+                <Button onClick={() => navigate('/report')} variant="neon" className="gap-2">
+                  <FileText className="w-4 h-4" />
+                  Ver Relatório Completo
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Stats Grid */}
