@@ -25,17 +25,17 @@ interface WebhookConfig {
 }
 
 const eventTypes = [
-  { id: "price_change", label: "Price Changes", desc: "Alert when competitors change pricing" },
-  { id: "feature_launch", label: "Feature Launches", desc: "New product features detected" },
-  { id: "market_shift", label: "Market Shifts", desc: "Significant market share changes" },
-  { id: "risk_alert", label: "Risk Alerts", desc: "New risks identified in analysis" },
+  { id: "price_change", label: "Mudanças de Preço", desc: "Alerta quando concorrentes alteram preços" },
+  { id: "feature_launch", label: "Lançamento de Recursos", desc: "Novos recursos de produto detectados" },
+  { id: "market_shift", label: "Mudanças de Mercado", desc: "Alterações significativas de participação" },
+  { id: "risk_alert", label: "Alertas de Risco", desc: "Novos riscos identificados na análise" },
 ];
 
 export function IntegrationsTab() {
   const [webhooks, setWebhooks] = useState<WebhookConfig[]>([
     {
       id: "1",
-      name: "Team Notifications",
+      name: "Notificações da Equipe",
       url: "https://hooks.slack.com/services/xxx",
       platform: "slack",
       enabled: true,
@@ -55,7 +55,7 @@ export function IntegrationsTab() {
 
   const handleAddWebhook = () => {
     if (!newWebhook.name || !newWebhook.url) {
-      toast.error("Please fill in all fields");
+      toast.error("Por favor, preencha todos os campos");
       return;
     }
 
@@ -69,12 +69,12 @@ export function IntegrationsTab() {
     setWebhooks((prev) => [...prev, webhook]);
     setNewWebhook({ name: "", url: "", platform: "slack" });
     setShowAddForm(false);
-    toast.success("Webhook added successfully");
+    toast.success("Webhook adicionado com sucesso");
   };
 
   const handleRemoveWebhook = (id: string) => {
     setWebhooks((prev) => prev.filter((w) => w.id !== id));
-    toast.success("Webhook removed");
+    toast.success("Webhook removido");
   };
 
   const handleToggleWebhook = (id: string) => {
@@ -99,9 +99,9 @@ export function IntegrationsTab() {
     toast.promise(
       new Promise((resolve) => setTimeout(resolve, 1500)),
       {
-        loading: "Testing webhook...",
-        success: "Webhook test successful!",
-        error: "Failed to send test message",
+        loading: "Testando webhook...",
+        success: "Teste do webhook bem-sucedido!",
+        error: "Falha ao enviar mensagem de teste",
       }
     );
   };
@@ -115,9 +115,9 @@ export function IntegrationsTab() {
               <Webhook className="w-5 h-5 text-accent" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Webhook Integrations</h2>
+              <h2 className="text-lg font-semibold text-foreground">Integrações de Webhook</h2>
               <p className="text-sm text-muted-foreground">
-                Connect Slack or Discord for real-time competitor alerts
+                Conecte Slack ou Discord para alertas de concorrentes em tempo real
               </p>
             </div>
           </div>
@@ -127,27 +127,27 @@ export function IntegrationsTab() {
             className="gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add Webhook
+            Adicionar Webhook
           </Button>
         </div>
 
         {/* Add Webhook Form */}
         {showAddForm && (
           <div className="p-4 rounded-lg bg-secondary/50 border border-border space-y-4 animate-fade-in">
-            <h3 className="text-sm font-medium text-foreground">New Webhook</h3>
+            <h3 className="text-sm font-medium text-foreground">Novo Webhook</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="webhook-name">Name</Label>
+                <Label htmlFor="webhook-name">Nome</Label>
                 <Input
                   id="webhook-name"
-                  placeholder="e.g., Team Alerts"
+                  placeholder="ex: Alertas da Equipe"
                   value={newWebhook.name}
                   onChange={(e) => setNewWebhook((prev) => ({ ...prev, name: e.target.value }))}
                   className="bg-background border-border"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="webhook-platform">Platform</Label>
+                <Label htmlFor="webhook-platform">Plataforma</Label>
                 <select
                   id="webhook-platform"
                   value={newWebhook.platform}
@@ -161,11 +161,11 @@ export function IntegrationsTab() {
                 >
                   <option value="slack">Slack</option>
                   <option value="discord">Discord</option>
-                  <option value="custom">Custom Webhook</option>
+                  <option value="custom">Webhook Personalizado</option>
                 </select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="webhook-url">Webhook URL</Label>
+                <Label htmlFor="webhook-url">URL do Webhook</Label>
                 <Input
                   id="webhook-url"
                   placeholder="https://hooks.slack.com/..."
@@ -177,10 +177,10 @@ export function IntegrationsTab() {
             </div>
             <div className="flex gap-2">
               <Button onClick={handleAddWebhook} variant="default">
-                Add Webhook
+                Adicionar Webhook
               </Button>
               <Button onClick={() => setShowAddForm(false)} variant="outline">
-                Cancel
+                Cancelar
               </Button>
             </div>
           </div>
@@ -292,8 +292,8 @@ export function IntegrationsTab() {
           {webhooks.length === 0 && !showAddForm && (
             <div className="text-center py-8 text-muted-foreground">
               <Webhook className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p>No webhooks configured</p>
-              <p className="text-sm">Add a webhook to receive real-time alerts</p>
+              <p>Nenhum webhook configurado</p>
+              <p className="text-sm">Adicione um webhook para receber alertas em tempo real</p>
             </div>
           )}
         </div>

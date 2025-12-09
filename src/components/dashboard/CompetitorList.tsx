@@ -10,7 +10,7 @@ const competitors = [
 export function CompetitorList() {
   return (
     <div className="glass-card p-5">
-      <h3 className="text-sm text-muted-foreground font-medium mb-4">Competitors</h3>
+      <h3 className="text-sm text-muted-foreground font-medium mb-4">Concorrentes</h3>
       <div className="space-y-4">
         {competitors.map((competitor) => (
           <div key={competitor.name} className="space-y-2">

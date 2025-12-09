@@ -11,15 +11,15 @@ interface ReportCardProps {
 
 export function ReportCard({ title, date, status, score, riskLevel }: ReportCardProps) {
   const statusConfig = {
-    complete: { label: "Complete", color: "bg-primary/20 text-primary border-primary/30" },
-    failed: { label: "Failed", color: "bg-destructive/20 text-destructive border-destructive/30" },
-    processing: { label: "Processing", color: "bg-accent/20 text-accent border-accent/30" },
+    complete: { label: "Concluído", color: "bg-primary/20 text-primary border-primary/30" },
+    failed: { label: "Falhou", color: "bg-destructive/20 text-destructive border-destructive/30" },
+    processing: { label: "Processando", color: "bg-accent/20 text-accent border-accent/30" },
   };
 
   const riskConfig = {
-    low: { label: "Low Risk", color: "text-primary" },
-    medium: { label: "Medium Risk", color: "text-neon-orange" },
-    high: { label: "High Risk", color: "text-destructive" },
+    low: { label: "Risco Baixo", color: "text-primary" },
+    medium: { label: "Risco Médio", color: "text-neon-orange" },
+    high: { label: "Risco Alto", color: "text-destructive" },
   };
 
   return (
@@ -47,7 +47,7 @@ export function ReportCard({ title, date, status, score, riskLevel }: ReportCard
       <div className="flex items-center justify-between pt-3 border-t border-border">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-accent" />
-          <span className="text-sm font-medium">Score: <span className="text-foreground">{score}</span>/100</span>
+          <span className="text-sm font-medium">Pontuação: <span className="text-foreground">{score}</span>/100</span>
         </div>
         <div className="flex items-center gap-1.5">
           <AlertCircle className={cn("w-4 h-4", riskConfig[riskLevel].color)} />

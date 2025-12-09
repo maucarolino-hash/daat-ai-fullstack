@@ -8,14 +8,13 @@ export function MonitoringRadar() {
 
   const handleActivate = () => {
     setActive(true);
-    toast.success("Monitoring Radar Activated", {
-      description: "You'll receive real-time alerts for competitor movements.",
+    toast.success("Radar de Monitoramento Ativado", {
+      description: "Você receberá alertas em tempo real sobre movimentações dos concorrentes.",
     });
   };
 
   return (
     <div className="glass-card p-5 relative overflow-hidden">
-      {/* Animated background */}
       {active && (
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-transparent animate-pulse-glow" />
@@ -28,9 +27,9 @@ export function MonitoringRadar() {
             <Radar className={`w-5 h-5 ${active ? 'text-accent animate-pulse' : 'text-muted-foreground'}`} />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">Monitoring Radar</h3>
+            <h3 className="font-semibold text-foreground">Radar de Monitoramento</h3>
             <p className="text-xs text-muted-foreground">
-              {active ? "Actively scanning..." : "Real-time competitor tracking"}
+              {active ? "Escaneando ativamente..." : "Rastreamento de concorrentes em tempo real"}
             </p>
           </div>
         </div>
@@ -38,12 +37,12 @@ export function MonitoringRadar() {
         {!active ? (
           <Button onClick={handleActivate} variant="neon" className="w-full">
             <Zap className="w-4 h-4" />
-            Activate Radar
+            Ativar Radar
           </Button>
         ) : (
           <div className="flex items-center gap-2 text-sm text-accent">
             <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span>Monitoring 4 competitors</span>
+            <span>Monitorando 4 concorrentes</span>
           </div>
         )}
       </div>
