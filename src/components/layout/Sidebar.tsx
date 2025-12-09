@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Home, List, BarChart3, Settings, User, Menu, X, LogOut } from "lucide-react";
+import { Home, List, BarChart3, Settings, User, Menu, X, LogOut, Sun, Moon } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { usePreferences } from "@/hooks/usePreferences";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -12,6 +13,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navItems = [
   { icon: Home, label: "Painel", path: "/" },
@@ -23,6 +30,7 @@ const navItems = [
 export function Sidebar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isDarkMode, toggleTheme } = usePreferences();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -102,6 +110,27 @@ export function Sidebar() {
             </NavLink>
           ))}
         </nav>
+
+        {/* Theme Toggle */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={toggleTheme}
+                className="w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary group mb-2"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         {/* User Avatar with Dropdown */}
         <div className="mt-auto">

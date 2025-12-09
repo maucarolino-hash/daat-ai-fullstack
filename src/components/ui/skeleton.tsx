@@ -1,7 +1,22 @@
 import { cn } from "@/lib/utils";
 
-function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("animate-pulse rounded-md bg-muted", className)} {...props} />;
+interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "cyber";
+}
+
+function Skeleton({ className, variant = "default", ...props }: SkeletonProps) {
+  return (
+    <div 
+      className={cn(
+        "rounded-md",
+        variant === "cyber" 
+          ? "skeleton-cyber" 
+          : "animate-pulse bg-muted",
+        className
+      )} 
+      {...props} 
+    />
+  );
 }
 
 export { Skeleton };
