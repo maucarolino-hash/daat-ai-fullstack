@@ -66,7 +66,7 @@ export function Sidebar() {
       )}>
         {/* Logo */}
         <div className="mb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-neon-blue flex items-center justify-center cyber-glow">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center cyber-glow">
             <span className="text-xl font-bold text-accent-foreground">M</span>
           </div>
         </div>

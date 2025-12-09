@@ -117,7 +117,7 @@ export default function Auth() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-neon-blue flex items-center justify-center cyber-glow mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center cyber-glow mx-auto mb-4">
             <span className="text-2xl font-bold text-accent-foreground">M</span>
           </div>
           <h1 className="text-2xl font-bold text-foreground">Inteligência de Mercado</h1>
