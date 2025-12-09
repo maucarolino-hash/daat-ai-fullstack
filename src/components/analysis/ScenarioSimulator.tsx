@@ -24,16 +24,14 @@ export function ScenarioSimulator() {
   const [pricing, setPricing] = useState(0);
   const [marketing, setMarketing] = useState(0);
 
-  // Calculate projected market share based on sliders
   const projectedShare = useMemo(() => {
-    // Simple simulation: marketing increases share, higher prices decrease it
-    const marketingEffect = marketing * 0.08; // +0.08% per 1% marketing increase
-    const pricingEffect = pricing * -0.05; // -0.05% per 1% price increase
+    const marketingEffect = marketing * 0.08;
+    const pricingEffect = pricing * -0.05;
     return Math.max(0, Math.min(100, baseMarketShare + marketingEffect + pricingEffect));
   }, [pricing, marketing]);
 
   const projectionData = useMemo(() => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
     return months.map((month, i) => {
       const growth = (projectedShare - baseMarketShare) / 6 * (i + 1);
       return {
@@ -53,8 +51,8 @@ export function ScenarioSimulator() {
           <BarChart3 className="w-5 h-5 text-accent" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Scenario Simulator</h3>
-          <p className="text-sm text-muted-foreground">What-if analysis for market share prediction</p>
+          <h3 className="text-lg font-semibold text-foreground">Simulador de Cenários</h3>
+          <p className="text-sm text-muted-foreground">Análise "e se" para previsão de participação de mercado</p>
         </div>
       </div>
 
@@ -63,7 +61,7 @@ export function ScenarioSimulator() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-neon-orange" />
-            <span className="text-sm font-medium text-foreground">Pricing Adjustment</span>
+            <span className="text-sm font-medium text-foreground">Ajuste de Preço</span>
             <span className={`ml-auto text-sm font-mono ${pricing >= 0 ? "text-destructive" : "text-primary"}`}>
               {pricing >= 0 ? "+" : ""}{pricing}%
             </span>
@@ -77,14 +75,14 @@ export function ScenarioSimulator() {
             className="[&_[role=slider]]:bg-neon-orange [&_[role=slider]]:border-neon-orange"
           />
           <p className="text-xs text-muted-foreground">
-            Lower prices attract more customers but reduce margins
+            Preços mais baixos atraem mais clientes mas reduzem margens
           </p>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Megaphone className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-foreground">Marketing Budget</span>
+            <span className="text-sm font-medium text-foreground">Orçamento de Marketing</span>
             <span className={`ml-auto text-sm font-mono ${marketing > 0 ? "text-primary" : "text-muted-foreground"}`}>
               {marketing >= 0 ? "+" : ""}{marketing}%
             </span>
@@ -98,7 +96,7 @@ export function ScenarioSimulator() {
             className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-accent"
           />
           <p className="text-xs text-muted-foreground">
-            Increased marketing spend improves brand awareness
+            Maior investimento em marketing melhora o reconhecimento da marca
           </p>
         </div>
       </div>
@@ -106,15 +104,15 @@ export function ScenarioSimulator() {
       {/* Prediction Result */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-4 rounded-lg bg-secondary/50 border border-border">
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">Current Share</span>
+          <span className="text-xs text-muted-foreground uppercase tracking-wider">Participação Atual</span>
           <div className="text-2xl font-bold text-foreground mt-1">{baseMarketShare}%</div>
         </div>
         <div className="p-4 rounded-lg bg-accent/10 border border-accent/30">
-          <span className="text-xs text-accent uppercase tracking-wider">Projected Share</span>
+          <span className="text-xs text-accent uppercase tracking-wider">Participação Projetada</span>
           <div className="text-2xl font-bold neon-text-purple mt-1">{projectedShare.toFixed(1)}%</div>
         </div>
         <div className={`p-4 rounded-lg border ${shareChange >= 0 ? "bg-primary/10 border-primary/30" : "bg-destructive/10 border-destructive/30"}`}>
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">Change</span>
+          <span className="text-xs text-muted-foreground uppercase tracking-wider">Variação</span>
           <div className={`text-2xl font-bold mt-1 flex items-center gap-2 ${shareChange >= 0 ? "neon-text-green" : "neon-text-red"}`}>
             <TrendingUp className={`w-5 h-5 ${shareChange < 0 ? "rotate-180" : ""}`} />
             {shareChange >= 0 ? "+" : ""}{shareChange.toFixed(1)}%
@@ -163,7 +161,7 @@ export function ScenarioSimulator() {
               stroke="hsl(217, 33%, 40%)"
               fillOpacity={1}
               fill="url(#currentGradient)"
-              name="Current"
+              name="Atual"
             />
             <Area
               type="monotone"
@@ -171,7 +169,7 @@ export function ScenarioSimulator() {
               stroke="hsl(271, 91%, 65%)"
               fillOpacity={1}
               fill="url(#projectedGradient)"
-              name="Projected"
+              name="Projetado"
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -179,9 +177,9 @@ export function ScenarioSimulator() {
 
       {/* Competitor Impact */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">Competitor Ranking (Projected)</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">Ranking de Concorrentes (Projetado)</h4>
         <div className="space-y-2">
-          {[...competitors, { name: "Our AI", share: projectedShare }]
+          {[...competitors, { name: "Nossa IA", share: projectedShare }]
             .sort((a, b) => b.share - a.share)
             .map((c, i) => (
               <div key={c.name} className="flex items-center gap-3">
@@ -189,12 +187,12 @@ export function ScenarioSimulator() {
                 <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      c.name === "Our AI" ? "gradient-progress" : "bg-muted-foreground/30"
+                      c.name === "Nossa IA" ? "gradient-progress" : "bg-muted-foreground/30"
                     }`}
                     style={{ width: `${(c.share / 30) * 100}%` }}
                   />
                 </div>
-                <span className={`text-sm font-medium ${c.name === "Our AI" ? "text-accent" : "text-foreground"}`}>
+                <span className={`text-sm font-medium ${c.name === "Nossa IA" ? "text-accent" : "text-foreground"}`}>
                   {c.name}
                 </span>
                 <span className="text-sm text-muted-foreground w-12 text-right">

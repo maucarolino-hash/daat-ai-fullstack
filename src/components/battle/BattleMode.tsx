@@ -24,7 +24,7 @@ interface CompetitorData {
 
 const competitors: Record<string, CompetitorData> = {
   "our-ai": {
-    name: "Our AI",
+    name: "Nossa IA",
     color: "accent",
     stats: { pricing: 85, ux: 92, features: 88, support: 95, innovation: 90 },
   },
@@ -51,11 +51,11 @@ const competitors: Record<string, CompetitorData> = {
 };
 
 const categories = [
-  { key: "pricing", label: "Pricing", icon: DollarSign },
-  { key: "ux", label: "User Experience", icon: Star },
-  { key: "features", label: "Features", icon: Zap },
-  { key: "support", label: "Support", icon: Shield },
-  { key: "innovation", label: "Innovation", icon: Users },
+  { key: "pricing", label: "Preço", icon: DollarSign },
+  { key: "ux", label: "Experiência do Usuário", icon: Star },
+  { key: "features", label: "Recursos", icon: Zap },
+  { key: "support", label: "Suporte", icon: Shield },
+  { key: "innovation", label: "Inovação", icon: Users },
 ] as const;
 
 interface BattleModeProps {
@@ -112,17 +112,17 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center justify-center gap-3">
             <Swords className="w-8 h-8 text-accent" />
-            Battle Mode
+            Modo Batalha
             <Swords className="w-8 h-8 text-accent transform scale-x-[-1]" />
           </h2>
-          <p className="text-muted-foreground">Head-to-head competitive analysis</p>
+          <p className="text-muted-foreground">Análise competitiva frente a frente</p>
         </div>
 
         {/* Competitor Selector */}
         <div className="flex justify-center mb-8">
           <Select value={selectedCompetitor} onValueChange={setSelectedCompetitor}>
             <SelectTrigger className="w-48 bg-secondary border-border">
-              <SelectValue placeholder="Select competitor" />
+              <SelectValue placeholder="Selecione o concorrente" />
             </SelectTrigger>
             <SelectContent>
               {Object.entries(competitors)
@@ -248,15 +248,15 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
               )} />
               <div className="text-2xl font-bold">
                 {overallWinner === "us" ? (
-                  <span className="neon-text-purple">Victory! {ourData.name} Wins</span>
+                  <span className="neon-text-purple">Vitória! {ourData.name} Vence</span>
                 ) : overallWinner === "them" ? (
-                  <span className="text-neon-blue">{theirData.name} Wins</span>
+                  <span className="text-neon-blue">{theirData.name} Vence</span>
                 ) : (
-                  <span className="text-muted-foreground">It's a Tie!</span>
+                  <span className="text-muted-foreground">Empate!</span>
                 )}
               </div>
               <p className="text-muted-foreground mt-2">
-                {totalWins.us} - {totalWins.them} in category wins
+                {totalWins.us} - {totalWins.them} em vitórias por categoria
               </p>
             </div>
           </div>

@@ -13,19 +13,19 @@ interface Message {
 }
 
 const sampleResponses: Record<string, string> = {
-  "churn": "Based on the current data, **Soylent** has the highest churn rate at 18.5% monthly, followed by Umbrella at 12.3%. Your churn rate sits at a healthy 4.2%, which is significantly below the industry average of 8%.",
-  "acme": "**Acme Corp Weaknesses:**\n• Customer support response time: 48hrs (industry avg: 12hrs)\n• Limited mobile app functionality\n• No AI-powered features\n• Higher pricing tier with fewer features\n• Recent negative reviews about onboarding experience",
-  "market": "The total addressable market (TAM) is currently valued at **$4.2B** with a 12.5% YoY growth rate. Your market share is 12.5%, ranking 5th among competitors.",
-  "risk": "Current risk assessment shows **Moderate** level:\n• High CAC detected ($245 vs industry $180)\n• Customer retention showing slight decline (-2%)\n• New competitor entry in Q3 2024",
-  "default": "I can help you analyze your competitive data. Try asking about:\n• Competitor weaknesses (e.g., 'What are Acme's weak points?')\n• Churn rates\n• Market share trends\n• Risk factors"
+  "churn": "Com base nos dados atuais, a **Soylent** tem a maior taxa de churn em 18,5% mensal, seguida pela Umbrella com 12,3%. Sua taxa de churn está em um saudável 4,2%, significativamente abaixo da média do setor de 8%.",
+  "acme": "**Pontos Fracos da Acme Corp:**\n• Tempo de resposta do suporte: 48h (média do setor: 12h)\n• Funcionalidade limitada do app mobile\n• Sem recursos alimentados por IA\n• Preço mais alto com menos recursos\n• Avaliações negativas recentes sobre experiência de onboarding",
+  "mercado": "O mercado endereçável total (TAM) está atualmente avaliado em **R$21B** com uma taxa de crescimento de 12,5% ao ano. Sua participação de mercado é de 12,5%, ocupando a 5ª posição entre os concorrentes.",
+  "risco": "A avaliação de risco atual mostra nível **Moderado**:\n• CAC alto detectado (R$1.225 vs média do setor R$900)\n• Retenção de clientes mostrando leve declínio (-2%)\n• Nova entrada de concorrente no T3 2024",
+  "default": "Posso ajudá-lo a analisar seus dados competitivos. Tente perguntar sobre:\n• Fraquezas dos concorrentes (ex: 'Quais são os pontos fracos da Acme?')\n• Taxas de churn\n• Tendências de participação de mercado\n• Fatores de risco"
 };
 
 function getResponse(query: string): string {
   const q = query.toLowerCase();
   if (q.includes("churn")) return sampleResponses.churn;
-  if (q.includes("acme") || q.includes("weak")) return sampleResponses.acme;
-  if (q.includes("market") || q.includes("share") || q.includes("tam")) return sampleResponses.market;
-  if (q.includes("risk")) return sampleResponses.risk;
+  if (q.includes("acme") || q.includes("fraco") || q.includes("fraqueza")) return sampleResponses.acme;
+  if (q.includes("mercado") || q.includes("participação") || q.includes("tam")) return sampleResponses.mercado;
+  if (q.includes("risco")) return sampleResponses.risco;
   return sampleResponses.default;
 }
 
@@ -35,7 +35,7 @@ export function AskTheDataChatbot() {
     {
       id: "1",
       role: "assistant",
-      content: "Hello! I'm your AI data analyst. Ask me anything about your competitive intelligence data. For example:\n• 'Which competitor has the highest churn?'\n• 'Summarize Acme Corp's weaknesses'\n• 'What's our market position?'",
+      content: "Olá! Sou seu analista de dados com IA. Pergunte-me qualquer coisa sobre seus dados de inteligência competitiva. Por exemplo:\n• 'Qual concorrente tem o maior churn?'\n• 'Resuma os pontos fracos da Acme Corp'\n• 'Qual é nossa posição no mercado?'",
       timestamp: new Date(),
     },
   ]);
@@ -63,7 +63,6 @@ export function AskTheDataChatbot() {
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response delay
     setTimeout(() => {
       const response = getResponse(input);
       const assistantMessage: Message = {
@@ -95,7 +94,7 @@ export function AskTheDataChatbot() {
           "hover:scale-110 cyber-glow",
           isOpen && "scale-0 opacity-0"
         )}
-        aria-label="Ask the Data"
+        aria-label="Pergunte aos Dados"
       >
         <MessageCircle className="w-6 h-6 text-white" />
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
@@ -116,8 +115,8 @@ export function AskTheDataChatbot() {
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-foreground">Ask the Data</h3>
-            <p className="text-xs text-muted-foreground">AI-powered insights</p>
+            <h3 className="text-sm font-semibold text-foreground">Pergunte aos Dados</h3>
+            <p className="text-xs text-muted-foreground">Insights com IA</p>
           </div>
           <Button
             variant="ghost"
@@ -190,7 +189,7 @@ export function AskTheDataChatbot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about your data..."
+              placeholder="Pergunte sobre seus dados..."
               className="flex-1 bg-background border-border focus:border-accent"
             />
             <Button
