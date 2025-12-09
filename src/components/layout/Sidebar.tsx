@@ -1,8 +1,17 @@
 import { useState } from "react";
-import { Home, List, BarChart3, Settings, User, Menu, X } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Home, List, BarChart3, Settings, User, Menu, X, LogOut } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { icon: Home, label: "Dashboard", path: "/" },
@@ -13,6 +22,18 @@ const navItems = [
 
 export function Sidebar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast.error("Failed to sign out");
+    } else {
+      toast.success("Signed out successfully");
+      navigate("/auth");
+    }
+  };
 
   return (
     <>
@@ -79,11 +100,28 @@ export function Sidebar() {
           ))}
         </nav>
 
-        {/* User Avatar */}
+        {/* User Avatar with Dropdown */}
         <div className="mt-auto">
-          <button className="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary/50 transition-colors duration-200">
-            <User className="w-5 h-5 text-muted-foreground" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary/50 transition-colors duration-200">
+                <User className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right" align="end" className="w-48">
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium text-foreground truncate">
+                  {user?.email || "User"}
+                </p>
+                <p className="text-xs text-muted-foreground">Account</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </aside>
     </>
