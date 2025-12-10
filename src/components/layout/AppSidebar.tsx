@@ -57,7 +57,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       {/* Header */}
-      <SidebarHeader className={cn("p-4", isCollapsed && "px-2")}>
+      <SidebarHeader className={cn("p-4", isCollapsed && "flex justify-center")}>
         <DaatLogo isCollapsed={isCollapsed} />
       </SidebarHeader>
 
