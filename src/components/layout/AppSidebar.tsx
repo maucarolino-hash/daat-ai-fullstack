@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { usePreferences } from "@/hooks/usePreferences";
 import { toast } from "sonner";
-import logo from "@/assets/logo.png";
+import { DaatLogo } from "./DaatLogo";
 import {
   Sidebar,
   SidebarContent,
@@ -58,17 +58,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       {/* Header */}
       <SidebarHeader className="p-4 overflow-hidden">
-        <div className="flex items-center justify-center group-data-[state=expanded]:justify-start">
-          <img 
-            src={logo} 
-            alt="Daat.AI" 
-            className={cn(
-              "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
-              "group-data-[state=collapsed]:w-8 group-data-[state=collapsed]:h-8",
-              "group-data-[state=expanded]:h-10 group-data-[state=expanded]:w-auto"
-            )}
-          />
-        </div>
+        <DaatLogo isCollapsed={isCollapsed} />
       </SidebarHeader>
 
       {/* Navigation */}
