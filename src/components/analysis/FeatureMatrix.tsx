@@ -20,20 +20,20 @@ const columns = [
 export function FeatureMatrix() {
   return (
     <div className="glass-card overflow-hidden">
-      <div className="p-4 border-b border-border">
-        <h3 className="font-semibold text-foreground">Matriz de Comparação de Recursos</h3>
+      <div className="p-3 sm:p-4 border-b border-border">
+        <h3 className="font-semibold text-sm sm:text-base text-foreground">Matriz de Comparação de Recursos</h3>
       </div>
       
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[400px]">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left text-sm font-medium text-muted-foreground p-4">Recurso</th>
+              <th className="text-left text-xs sm:text-sm font-medium text-muted-foreground p-3 sm:p-4 sticky left-0 bg-card z-10">Recurso</th>
               {columns.map((col) => (
                 <th
                   key={col.key}
                   className={cn(
-                    "text-center text-sm font-medium p-4",
+                    "text-center text-xs sm:text-sm font-medium p-3 sm:p-4 whitespace-nowrap",
                     col.highlight ? "text-primary bg-primary/5" : "text-muted-foreground"
                   )}
                 >
@@ -51,18 +51,18 @@ export function FeatureMatrix() {
                   index === features.length - 1 && "border-b-0"
                 )}
               >
-                <td className="p-4 text-sm text-foreground">{feature.name}</td>
+                <td className="p-3 sm:p-4 text-xs sm:text-sm text-foreground sticky left-0 bg-card z-10">{feature.name}</td>
                 {columns.map((col) => {
                   const hasFeature = feature[col.key as keyof typeof feature];
                   return (
                     <td
                       key={col.key}
-                      className={cn("text-center p-4", col.highlight && "bg-primary/5")}
+                      className={cn("text-center p-3 sm:p-4", col.highlight && "bg-primary/5")}
                     >
                       {hasFeature ? (
-                        <Check className="w-5 h-5 text-primary mx-auto" />
+                        <Check className="w-4 h-4 sm:w-5 sm:h-5 text-primary mx-auto" />
                       ) : (
-                        <X className="w-5 h-5 text-muted-foreground/50 mx-auto" />
+                        <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground/50 mx-auto" />
                       )}
                     </td>
                   );
