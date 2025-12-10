@@ -56,8 +56,8 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       {/* Header */}
-      <SidebarHeader className="p-4">
-        <div className="flex items-center">
+      <SidebarHeader className="p-4 overflow-hidden">
+        <div className="flex items-center justify-center group-data-[state=expanded]:justify-start">
           {/* Logo container - relative positioning for the slide effect */}
           <div className="relative flex items-center">
             {/* D letter - always visible, on top */}
