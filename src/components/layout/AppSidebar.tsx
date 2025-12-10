@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { usePreferences } from "@/hooks/usePreferences";
 import { toast } from "sonner";
+import logo from "@/assets/logo.png";
 import {
   Sidebar,
   SidebarContent,
@@ -58,35 +59,15 @@ export function AppSidebar() {
       {/* Header */}
       <SidebarHeader className="p-4 overflow-hidden">
         <div className="flex items-center justify-center group-data-[state=expanded]:justify-start">
-          {/* Mobile: show full logo without animation */}
-          <div className="flex md:hidden items-center">
-            <span className="text-xl font-bold text-neon-blue whitespace-nowrap">
-              D<span className="text-sidebar-foreground">aat</span> <span className="text-neon-blue">IA</span>
-            </span>
-          </div>
-
-          {/* Desktop: animated logo with slide effect */}
-          <div className="hidden md:flex relative items-center">
-            {/* D letter - always visible, on top */}
-            <span className="text-xl font-bold text-neon-blue z-20 relative">D</span>
-            
-            {/* "aat IA" positioned to slide out from behind the D */}
-            <div className={cn(
-              "absolute left-0 flex items-center z-10",
+          <img 
+            src={logo} 
+            alt="Daat.AI" 
+            className={cn(
               "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
-              "group-data-[collapsible=icon]:translate-x-0",
-              "group-data-[state=expanded]:translate-x-[0.85rem]"
-            )}>
-              <span className={cn(
-                "text-xl font-bold whitespace-nowrap",
-                "transition-opacity duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
-                "group-data-[collapsible=icon]:opacity-0",
-                "group-data-[state=expanded]:opacity-100"
-              )}>
-                <span className="text-sidebar-foreground">aat</span> <span className="text-neon-blue">IA</span>
-              </span>
-            </div>
-          </div>
+              "group-data-[state=collapsed]:w-8 group-data-[state=collapsed]:h-8",
+              "group-data-[state=expanded]:h-10 group-data-[state=expanded]:w-auto"
+            )}
+          />
         </div>
       </SidebarHeader>
 
