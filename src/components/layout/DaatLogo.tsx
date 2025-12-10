@@ -10,42 +10,41 @@ export function DaatLogo({ isCollapsed = false, className }: DaatLogoProps) {
     <div className={cn("flex items-center overflow-hidden", className)}>
       {/* Icon - always visible */}
       <svg
-        viewBox="0 0 280 280"
+        viewBox="0 0 100 120"
         className={cn(
           "flex-shrink-0 transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
-          isCollapsed ? "w-8 h-8" : "w-10 h-10"
+          isCollapsed ? "w-8 h-10" : "w-9 h-11"
         )}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
           className="fill-sidebar-primary transition-colors duration-300"
-          d="M140,10c-71.8,4.5-130.2,62.7-135,134.4c-5.6,83.5,59.8,153,141.7,154.5v150.7h12.2V297.4
-          c75.4-4.9,135.1-67.6,135.1-144.3C294,70.1,224.2,4.4,140,10z M146.7,288.5c-72.9-1.4-131.6-60.8-131.6-134.1
-          S73.7,20.6,147.4,20.1v48.8l42.9-42.9l5,5l-47.9,47.9v42.5l75.2-75.2l5,5l-80.2,80.2v39.7l95.7-95.7l5,5l-100.7,100.7v40.4
-          l112.8-112.8l5,5l-117.8,117.8v41l123.9-122l6.2,6.1l-120.8,119c-6-5.9-13.4-10.2-21.5-12.4"
-          transform="translate(-5, -10) scale(0.95)"
+          d="M50,2c-26.8,1.7-48.6,23.4-50.4,50.2c-2.1,31.2,22.3,57.1,52.9,57.7v56.3h4.6v-56.6
+          c28.2-1.8,50.4-25.2,50.4-53.9C107.5,24.1,81.4,0.5,50,2z M52.5,106c-27.2-0.5-49.1-22.7-49.1-50.1
+          S27.5,5.6,55,5.4v18.2l16-16l1.9,1.9l-17.9,17.9v15.9l28.1-28.1l1.9,1.9l-30,30v14.8l35.7-35.7l1.9,1.9l-37.6,37.6v15.1
+          l42.1-42.1l1.9,1.9l-44,44v15.3l46.3-45.6l2.3,2.3l-45.1,44.4c-2.2-2.2-5-3.8-8-4.6"
         />
       </svg>
 
       {/* Text - hidden when collapsed */}
       <svg
-        viewBox="0 0 200 60"
+        viewBox="0 0 120 40"
         className={cn(
           "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
           isCollapsed 
             ? "w-0 opacity-0 ml-0" 
-            : "w-28 opacity-100 ml-1"
+            : "w-24 opacity-100 ml-1"
         )}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <text
           x="0"
-          y="42"
+          y="28"
           className="fill-sidebar-foreground transition-colors duration-300"
           style={{ 
-            fontSize: '38px', 
+            fontSize: '26px', 
             fontFamily: 'system-ui, -apple-system, sans-serif',
             fontWeight: 600
           }}
@@ -53,11 +52,11 @@ export function DaatLogo({ isCollapsed = false, className }: DaatLogoProps) {
           Daat
         </text>
         <text
-          x="108"
-          y="42"
+          x="68"
+          y="28"
           className="fill-sidebar-primary transition-colors duration-300"
           style={{ 
-            fontSize: '30px', 
+            fontSize: '22px', 
             fontFamily: 'system-ui, -apple-system, sans-serif',
             fontWeight: 500
           }}
