@@ -7,7 +7,7 @@ interface DaatLogoProps {
 
 export function DaatLogo({ isCollapsed = false, className }: DaatLogoProps) {
   return (
-    <div className={cn("flex items-center overflow-hidden", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       {/* Icon - always visible */}
       <svg
         viewBox="0 0 100 140"
@@ -15,6 +15,7 @@ export function DaatLogo({ isCollapsed = false, className }: DaatLogoProps) {
           "flex-shrink-0 transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
           isCollapsed ? "w-6 h-8" : "w-7 h-10"
         )}
+        style={{ overflow: 'visible' }}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -28,42 +29,17 @@ export function DaatLogo({ isCollapsed = false, className }: DaatLogoProps) {
       </svg>
 
       {/* Text - hidden when collapsed */}
-      <svg
-        viewBox="0 0 95 30"
+      <span
         className={cn(
-          "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
+          "flex items-center transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] whitespace-nowrap",
           isCollapsed 
-            ? "w-0 opacity-0 ml-0" 
-            : "w-20 opacity-100 ml-2"
+            ? "w-0 opacity-0 overflow-hidden" 
+            : "opacity-100"
         )}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
       >
-        <text
-          x="0"
-          y="22"
-          className="fill-sidebar-foreground transition-colors duration-300"
-          style={{ 
-            fontSize: '22px', 
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            fontWeight: 600
-          }}
-        >
-          Daat
-        </text>
-        <text
-          x="52"
-          y="22"
-          className="fill-sidebar-primary transition-colors duration-300"
-          style={{ 
-            fontSize: '18px', 
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            fontWeight: 500
-          }}
-        >
-          .AI
-        </text>
-      </svg>
+        <span className="text-lg font-semibold text-sidebar-foreground">Daat</span>
+        <span className="text-base font-medium text-sidebar-primary">.AI</span>
+      </span>
     </div>
   );
 }
