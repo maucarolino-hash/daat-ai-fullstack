@@ -98,24 +98,26 @@ export function ChatHeroInput({ onStartAnalysis, isAnalyzing }: ChatHeroInputPro
       </div>
 
       {/* Suggestion Chips */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-        <span className="text-sm text-muted-foreground mr-2">Experimente:</span>
-        {suggestionChips.map((chip) => (
-          <button
-            key={chip.label}
-            onClick={() => setInput(chip.label)}
-            disabled={isAnalyzing}
-            className={cn(
-              "inline-flex items-center gap-2 px-4 py-2 rounded-full",
-              "bg-secondary/50 border border-border hover:border-accent/30 hover:bg-secondary",
-              "text-sm text-foreground transition-all duration-200",
-              "disabled:opacity-50 disabled:cursor-not-allowed"
-            )}
-          >
-            <chip.icon className="w-4 h-4 text-accent" />
-            {chip.label}
-          </button>
-        ))}
+      <div className="flex flex-col items-center gap-3 mt-6 px-4">
+        <span className="text-sm text-muted-foreground">Experimente:</span>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {suggestionChips.map((chip) => (
+            <button
+              key={chip.label}
+              onClick={() => setInput(chip.label)}
+              disabled={isAnalyzing}
+              className={cn(
+                "inline-flex items-center gap-2 px-3 py-2 rounded-full",
+                "bg-secondary/50 border border-border hover:border-accent/30 hover:bg-secondary",
+                "text-xs sm:text-sm text-foreground transition-all duration-200",
+                "disabled:opacity-50 disabled:cursor-not-allowed"
+              )}
+            >
+              <chip.icon className="w-3 h-3 sm:w-4 sm:h-4 text-accent" />
+              {chip.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
