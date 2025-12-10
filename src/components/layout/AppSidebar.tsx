@@ -58,8 +58,18 @@ export function AppSidebar() {
       {/* Header */}
       <SidebarHeader className="p-4 overflow-hidden">
         <div className="flex items-center justify-center group-data-[state=expanded]:justify-start">
-          {/* Logo container - relative positioning for the slide effect */}
-          <div className="relative flex items-center">
+          {/* Mobile: show full logo without animation */}
+          <div className="flex md:hidden items-center gap-1">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center flex-shrink-0">
+              <span className="text-base font-bold text-accent-foreground">D</span>
+            </div>
+            <span className="text-lg font-bold text-sidebar-foreground whitespace-nowrap">
+              aat <span className="text-neon-blue">IA</span>
+            </span>
+          </div>
+
+          {/* Desktop: animated logo with slide effect */}
+          <div className="hidden md:flex relative items-center">
             {/* D letter - always visible, on top */}
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center flex-shrink-0 z-20 relative">
               <span className="text-base font-bold text-accent-foreground">D</span>
