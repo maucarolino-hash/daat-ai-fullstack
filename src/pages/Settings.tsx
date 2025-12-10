@@ -50,41 +50,41 @@ export default function Settings() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-4 sm:space-y-6 max-w-4xl px-1 sm:px-0">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground mb-1">Configurações</h1>
-        <p className="text-muted-foreground">Gerencie sua conta e preferências</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">Configurações</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Gerencie sua conta e preferências</p>
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="glass-card p-1 bg-secondary/50">
-          <TabsTrigger value="general" className="data-[state=active]:bg-background gap-2">
+        <TabsList className="glass-card p-1 bg-secondary/50 flex flex-wrap h-auto gap-1">
+          <TabsTrigger value="general" className="data-[state=active]:bg-background gap-2 text-xs sm:text-sm px-2 sm:px-3">
             <User className="w-4 h-4" />
-            Geral
+            <span className="hidden xs:inline">Geral</span>
           </TabsTrigger>
-          <TabsTrigger value="api" className="data-[state=active]:bg-background gap-2">
+          <TabsTrigger value="api" className="data-[state=active]:bg-background gap-2 text-xs sm:text-sm px-2 sm:px-3">
             <Key className="w-4 h-4" />
-            API
+            <span className="hidden xs:inline">API</span>
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="data-[state=active]:bg-background gap-2">
+          <TabsTrigger value="notifications" className="data-[state=active]:bg-background gap-2 text-xs sm:text-sm px-2 sm:px-3">
             <Bell className="w-4 h-4" />
-            Notificações
+            <span className="hidden sm:inline">Notificações</span>
           </TabsTrigger>
-          <TabsTrigger value="billing" className="data-[state=active]:bg-background gap-2">
+          <TabsTrigger value="billing" className="data-[state=active]:bg-background gap-2 text-xs sm:text-sm px-2 sm:px-3">
             <CreditCard className="w-4 h-4" />
-            Faturamento
+            <span className="hidden sm:inline">Faturamento</span>
           </TabsTrigger>
-          <TabsTrigger value="integrations" className="data-[state=active]:bg-background gap-2">
+          <TabsTrigger value="integrations" className="data-[state=active]:bg-background gap-2 text-xs sm:text-sm px-2 sm:px-3">
             <Webhook className="w-4 h-4" />
-            Integrações
+            <span className="hidden sm:inline">Integrações</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-6">
           {/* User Profile */}
-          <div className="glass-card p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">Perfil do Usuário</h2>
+          <div className="glass-card p-4 sm:p-6 space-y-4">
+            <h2 className="text-base sm:text-lg font-semibold text-foreground">Perfil do Usuário</h2>
             {profileLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
@@ -136,8 +136,8 @@ export default function Settings() {
           </div>
 
           {/* Interface Preferences */}
-          <div className="glass-card p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">Preferências de Interface</h2>
+          <div className="glass-card p-4 sm:p-6 space-y-4">
+            <h2 className="text-base sm:text-lg font-semibold text-foreground">Preferências de Interface</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
                 <div className="flex items-center gap-3">
@@ -178,20 +178,20 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="api" className="space-y-6">
-          <div className="glass-card p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">Configuração de API</h2>
+          <div className="glass-card p-4 sm:p-6 space-y-4">
+            <h2 className="text-base sm:text-lg font-semibold text-foreground">Configuração de API</h2>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="api-key">Chave de API</Label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     id="api-key"
                     type="password"
                     value="sk-xxxx-xxxx-xxxx-xxxx"
-                    className="bg-secondary border-border font-mono"
+                    className="bg-secondary border-border font-mono text-xs sm:text-sm"
                     readOnly
                   />
-                  <Button variant="outline">Regenerar</Button>
+                  <Button variant="outline" className="w-full sm:w-auto">Regenerar</Button>
                 </div>
                 <p className="text-xs text-muted-foreground">Sua chave secreta de API para acesso programático</p>
               </div>
@@ -208,8 +208,8 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">
-          <div className="glass-card p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">Configurações de Notificações</h2>
+          <div className="glass-card p-4 sm:p-6 space-y-4">
+            <h2 className="text-base sm:text-lg font-semibold text-foreground">Configurações de Notificações</h2>
             <div className="space-y-4">
               {[
                 { label: "Análise Concluída", desc: "Receba notificação quando sua análise estiver pronta" },
@@ -230,20 +230,20 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="billing" className="space-y-6">
-          <div className="glass-card p-6 space-y-4">
+          <div className="glass-card p-4 sm:p-6 space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Plano Atual</h2>
-            <div className="p-4 rounded-lg bg-accent/10 border border-accent/30">
-              <div className="flex items-center justify-between">
+            <div className="p-3 sm:p-4 rounded-lg bg-accent/10 border border-accent/30">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <span className="text-lg font-bold text-foreground">Plano Pro</span>
-                  <p className="text-sm text-muted-foreground">500 créditos / mês</p>
+                  <span className="text-base sm:text-lg font-bold text-foreground">Plano Pro</span>
+                  <p className="text-xs sm:text-sm text-muted-foreground">500 créditos / mês</p>
                 </div>
-                <span className="text-2xl font-bold neon-text-purple">R$499/mês</span>
+                <span className="text-xl sm:text-2xl font-bold neon-text-purple">R$499/mês</span>
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button variant="outline">Ver Faturas</Button>
-              <Button variant="cyber">Upgrade do Plano</Button>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <Button variant="outline" className="w-full sm:w-auto">Ver Faturas</Button>
+              <Button variant="cyber" className="w-full sm:w-auto">Upgrade do Plano</Button>
             </div>
           </div>
 
