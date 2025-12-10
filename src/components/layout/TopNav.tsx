@@ -1,4 +1,3 @@
-import { ChevronRight } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 const pathNames: Record<string, string> = {
@@ -19,8 +18,6 @@ export function TopNav() {
 
   return (
     <nav className="flex items-center gap-2 text-sm">
-      <span className="text-muted-foreground">Inteligência de Mercado</span>
-      <ChevronRight className="w-4 h-4 text-muted-foreground" />
       <span className="text-foreground font-medium">{currentPath}</span>
     </nav>
   );
