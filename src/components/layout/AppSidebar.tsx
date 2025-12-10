@@ -57,25 +57,26 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       {/* Header */}
       <SidebarHeader className="p-4">
-        <div className="flex items-center overflow-hidden">
-          {/* Logo container with animated text */}
-          <div className="flex items-center">
-            {/* D letter - always visible */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center flex-shrink-0 z-10 relative">
+        <div className="flex items-center">
+          {/* Logo container - relative positioning for the slide effect */}
+          <div className="relative flex items-center">
+            {/* D letter - always visible, on top */}
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center flex-shrink-0 z-20 relative">
               <span className="text-base font-bold text-accent-foreground">D</span>
             </div>
             
-            {/* "aat IA" slides out from behind */}
+            {/* "aat IA" positioned to slide out from behind the D */}
             <div className={cn(
-              "overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
-              "group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0",
-              "group-data-[state=expanded]:w-auto group-data-[state=expanded]:opacity-100"
+              "absolute left-0 flex items-center h-8 z-10",
+              "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
+              "group-data-[collapsible=icon]:translate-x-0",
+              "group-data-[state=expanded]:translate-x-8"
             )}>
               <span className={cn(
-                "text-lg font-bold text-sidebar-foreground whitespace-nowrap pl-0.5",
-                "transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
-                "group-data-[collapsible=icon]:translate-x-[-100%]",
-                "group-data-[state=expanded]:translate-x-0"
+                "text-lg font-bold text-sidebar-foreground whitespace-nowrap",
+                "transition-opacity duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
+                "group-data-[collapsible=icon]:opacity-0",
+                "group-data-[state=expanded]:opacity-100"
               )}>
                 aat <span className="text-neon-blue">IA</span>
               </span>
