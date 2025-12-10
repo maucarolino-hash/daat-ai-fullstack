@@ -94,12 +94,12 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
   const overallWinner = totalWins.us > totalWins.them ? "us" : totalWins.them > totalWins.us ? "them" : "tie";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-background/90 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 bg-background/90 backdrop-blur-sm" onClick={onClose} />
 
       {/* Battle Arena */}
-      <div className="relative w-full max-w-5xl mx-4 animate-scale-in">
+      <div className="relative w-full max-w-5xl max-h-[90vh] my-auto animate-scale-in flex flex-col">
         {/* Close Button */}
         <Button
           variant="ghost"
@@ -137,7 +137,7 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
         </div>
 
         {/* Battle Grid */}
-        <div className="glass-card p-6 overflow-hidden">
+        <div className="glass-card p-6 overflow-y-auto flex-1">
           {/* Headers */}
           <div className="grid grid-cols-[1fr_auto_1fr] gap-4 mb-6">
             <div className="text-right">
