@@ -16,7 +16,8 @@ export default function Index() {
   const { result, isAnalyzing, logs } = state;
 
   const isDashboardRoute = location.pathname === "/dashboard";
-  const hasActiveAnalysis = isAnalyzing || logs.length > 0;
+  // Keep showing dashboard if we have logs, result, or are analyzing
+  const hasActiveAnalysis = isAnalyzing || logs.length > 0 || result !== null;
 
   // Reset analysis only when explicitly navigating TO "/" from another route
   // This prevents resetting during the analysis process
