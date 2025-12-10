@@ -23,15 +23,14 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     year: "numeric",
   });
 
+  // Extract only the first line of segment (the name)
+  const segmentName = result.segment.split('\n')[0].trim();
+
   // Helper function to add new page if needed
   const checkPageBreak = (additionalHeight: number) => {
-    if (yPos + additionalHeight > pageHeight - 30) {
+    if (yPos + additionalHeight > pageHeight - 25) {
       pdf.addPage();
-      yPos = 30;
-      // Add separator at top of new page
-      pdf.setDrawColor(200, 60, 60);
-      pdf.setLineWidth(0.5);
-      pdf.line(margin, 20, pageWidth - margin, 20);
+      yPos = 25;
       return true;
     }
     return false;
@@ -42,7 +41,7 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     pdf.setDrawColor(200, 60, 60);
     pdf.setLineWidth(0.5);
     pdf.line(margin, yPos, pageWidth - margin, yPos);
-    yPos += 10;
+    yPos += 8;
   };
 
   // ==================== PAGE 1 - HEADER ====================
@@ -78,8 +77,8 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   pdf.setTextColor(30, 30, 30);
   pdf.setFontSize(16);
   pdf.setFont("helvetica", "bold");
-  pdf.text(result.segment, margin, yPos);
-  yPos += 15;
+  pdf.text(segmentName, margin, yPos);
+  yPos += 12;
 
   // Red separator line
   drawSeparator();
@@ -136,7 +135,7 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     yPos += 6;
   });
 
-  yPos += 15;
+  yPos += 12;
 
   // ==================== 1. DADOS DE MERCADO ====================
   pdf.setTextColor(80, 80, 80);
@@ -145,7 +144,7 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   pdf.text("1. DADOS DE MERCADO", margin, yPos);
   yPos += 10;
 
-  // Market metrics in bold
+  // Market metrics
   pdf.setTextColor(30, 30, 30);
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "bold");
@@ -154,35 +153,30 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   pdf.text(`Concorrentes: ${competitors.length}`, margin + 110, yPos);
   yPos += 12;
 
-  // Competitors table
-  const colWidths = [50, 35, 40, 40];
-  const tableX = margin;
-  
-  // Table header row
+  // Competitors table header
   pdf.setFillColor(245, 245, 245);
-  pdf.rect(tableX, yPos - 4, contentWidth, 8, "F");
+  pdf.rect(margin, yPos - 4, contentWidth, 8, "F");
   pdf.setDrawColor(220, 220, 220);
   pdf.setLineWidth(0.3);
-  pdf.line(tableX, yPos + 4, tableX + contentWidth, yPos + 4);
+  pdf.line(margin, yPos + 4, pageWidth - margin, yPos + 4);
   
   pdf.setTextColor(100, 100, 100);
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
-  pdf.text("Empresa", tableX + 3, yPos + 1);
-  pdf.text("Receita", tableX + colWidths[0] + 3, yPos + 1);
-  pdf.text("Market Share", tableX + colWidths[0] + colWidths[1] + 3, yPos + 1);
-  pdf.text("Crescimento", tableX + colWidths[0] + colWidths[1] + colWidths[2] + 3, yPos + 1);
+  pdf.text("Empresa", margin + 3, yPos + 1);
+  pdf.text("Receita", margin + 55, yPos + 1);
+  pdf.text("Market Share", margin + 95, yPos + 1);
+  pdf.text("Crescimento", margin + 140, yPos + 1);
   yPos += 8;
 
   // Table rows
   pdf.setTextColor(40, 40, 40);
-  pdf.setFontSize(9);
   competitors.slice(0, 5).forEach((comp) => {
     yPos += 6;
-    pdf.text(comp.name.substring(0, 18), tableX + 3, yPos);
-    pdf.text(comp.revenue, tableX + colWidths[0] + 3, yPos);
-    pdf.text(`${comp.marketShare}%`, tableX + colWidths[0] + colWidths[1] + 3, yPos);
-    pdf.text(`${comp.growth}%`, tableX + colWidths[0] + colWidths[1] + colWidths[2] + 3, yPos);
+    pdf.text(comp.name.substring(0, 18), margin + 3, yPos);
+    pdf.text(comp.revenue, margin + 55, yPos);
+    pdf.text(`${comp.marketShare}%`, margin + 95, yPos);
+    pdf.text(`${comp.growth}%`, margin + 140, yPos);
   });
 
   // ==================== PAGE 2 ====================
@@ -195,7 +189,7 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   pdf.text("2. ANÁLISE DE RISCO", margin, yPos);
-  yPos += 12;
+  yPos += 10;
 
   // Forças Identificadas
   pdf.setTextColor(34, 197, 94);
@@ -211,19 +205,17 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     pdf.text(`• ${strength.title}`, margin + 5, yPos);
     yPos += 6;
   });
-  yPos += 8;
+  yPos += 6;
 
   // Riscos Detectados
   pdf.setTextColor(34, 197, 94);
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.text("Riscos Detectados:", margin, yPos);
-  yPos += 8;
+  yPos += 7;
 
   pdf.setFontSize(10);
   riskAssessment.risks.forEach((risk) => {
-    checkPageBreak(16);
-    
     const severityLabel = risk.severity === 'high' ? '[HIGH]' : 
                           risk.severity === 'medium' ? '[MEDIUM]' : '[LOW]';
     
@@ -237,11 +229,11 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     pdf.setFontSize(9);
     const descLines = pdf.splitTextToSize(risk.description, contentWidth - 15);
     pdf.text(descLines, margin + 10, yPos);
-    yPos += descLines.length * 4.5 + 5;
+    yPos += descLines.length * 4 + 5;
     pdf.setFontSize(10);
   });
 
-  yPos += 8;
+  yPos += 6;
   drawSeparator();
 
   // ==================== 3. PLANO DE AÇÃO (90 DIAS) ====================
@@ -249,23 +241,33 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   pdf.text("3. PLANO DE AÇÃO (90 DIAS)", margin, yPos);
-  yPos += 12;
+  yPos += 10;
 
   [1, 2, 3].forEach((month) => {
     const actions = strategicAdvice.roadmap.filter((a) => a.month === month);
     if (actions.length === 0) return;
     
-    checkPageBreak(30);
+    // Check if we need a new page - but only if there's very little space
+    if (yPos > pageHeight - 50) {
+      pdf.addPage();
+      yPos = 20;
+      drawSeparator();
+    }
     
     // Month header in green
     pdf.setTextColor(34, 197, 94);
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "bold");
     pdf.text(`Mês ${month}`, margin, yPos);
-    yPos += 8;
+    yPos += 7;
 
     actions.forEach((action) => {
-      checkPageBreak(16);
+      // Check for page break within month
+      if (yPos > pageHeight - 30) {
+        pdf.addPage();
+        yPos = 20;
+        drawSeparator();
+      }
       
       pdf.setTextColor(40, 40, 40);
       pdf.setFont("helvetica", "bold");
@@ -278,56 +280,65 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
       pdf.setFontSize(9);
       const descLines = pdf.splitTextToSize(action.description, contentWidth - 15);
       pdf.text(descLines, margin + 10, yPos);
-      yPos += descLines.length * 4.5 + 6;
+      yPos += descLines.length * 4 + 5;
     });
     yPos += 4;
   });
 
-  // ==================== PAGE 3 ====================
-  pdf.addPage();
-  yPos = 20;
+  // ==================== 4. RECOMENDAÇÕES ====================
+  // Check if we need a new page
+  if (yPos > pageHeight - 80) {
+    pdf.addPage();
+    yPos = 20;
+  }
+  
   drawSeparator();
 
-  // ==================== 4. RECOMENDAÇÕES ====================
   pdf.setTextColor(80, 80, 80);
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   pdf.text("4. RECOMENDAÇÕES", margin, yPos);
-  yPos += 12;
+  yPos += 10;
 
   // Validações Prioritárias
   pdf.setTextColor(34, 197, 94);
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.text("Validações Prioritárias:", margin, yPos);
-  yPos += 8;
+  yPos += 7;
 
   pdf.setTextColor(40, 40, 40);
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   strategicAdvice.priorityValidations.forEach((validation, index) => {
-    checkPageBreak(12);
+    if (yPos > pageHeight - 25) {
+      pdf.addPage();
+      yPos = 25;
+    }
     const validationLines = pdf.splitTextToSize(`${index + 1}. ${validation}`, contentWidth - 10);
     pdf.text(validationLines, margin + 5, yPos);
-    yPos += validationLines.length * 5 + 3;
+    yPos += validationLines.length * 5 + 2;
   });
-  yPos += 8;
+  yPos += 6;
 
   // Quick Wins
   pdf.setTextColor(34, 197, 94);
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.text("Quick Wins:", margin, yPos);
-  yPos += 8;
+  yPos += 7;
 
   pdf.setTextColor(40, 40, 40);
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   strategicAdvice.quickWins.forEach((win) => {
-    checkPageBreak(12);
+    if (yPos > pageHeight - 25) {
+      pdf.addPage();
+      yPos = 25;
+    }
     const winLines = pdf.splitTextToSize(`• ${win}`, contentWidth - 10);
     pdf.text(winLines, margin + 5, yPos);
-    yPos += winLines.length * 5 + 3;
+    yPos += winLines.length * 5 + 2;
   });
 
   // ==================== ADD FOOTERS TO ALL PAGES ====================
@@ -345,7 +356,7 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     );
   }
 
-  // Save
-  const fileName = `DAAT-ANALYSIS-${result.segment.replace(/\s+/g, "-")}`;
-  pdf.save(`${fileName}.pdf`);
+  // Save - use only the first part of segment name for filename
+  const fileSegment = segmentName.replace(/[^a-zA-Z0-9À-ÿ\s-]/g, '').replace(/\s+/g, '-');
+  pdf.save(`DAAT-ANALYSIS-${fileSegment}.pdf`);
 }
