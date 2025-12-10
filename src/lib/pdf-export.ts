@@ -27,7 +27,11 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   const checkPageBreak = (additionalHeight: number) => {
     if (yPos + additionalHeight > pageHeight - 30) {
       pdf.addPage();
-      yPos = 25;
+      yPos = 30;
+      // Add separator at top of new page
+      pdf.setDrawColor(200, 60, 60);
+      pdf.setLineWidth(0.5);
+      pdf.line(margin, 20, pageWidth - margin, 20);
       return true;
     }
     return false;
@@ -35,185 +39,190 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
 
   // Draw horizontal separator line
   const drawSeparator = () => {
-    pdf.setDrawColor(220, 50, 50);
+    pdf.setDrawColor(200, 60, 60);
     pdf.setLineWidth(0.5);
     pdf.line(margin, yPos, pageWidth - margin, yPos);
-    yPos += 8;
+    yPos += 10;
   };
 
   // ==================== PAGE 1 - HEADER ====================
   
   // Dark header background
-  pdf.setFillColor(35, 35, 45);
-  pdf.rect(0, 0, pageWidth, 50, "F");
+  pdf.setFillColor(40, 40, 50);
+  pdf.rect(0, 0, pageWidth, 48, "F");
   
   // Title
   pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(22);
+  pdf.setFontSize(20);
   pdf.setFont("helvetica", "bold");
-  pdf.text("LAUDO DE ANÁLISE COMPETITIVA", margin, 28);
+  pdf.text("LAUDO DE ANÁLISE COMPETITIVA", margin, 22);
   
   // Subtitle
-  pdf.setFontSize(11);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
-  pdf.text("Daat AI Engine • Relatório Automatizado", margin, 38);
+  pdf.text("Daat AI Engine • Relatório Automatizado", margin, 32);
   
   // Report ID and Date
-  pdf.setFontSize(10);
-  pdf.text(`${reportId} | ${formattedDate}`, margin, 46);
+  pdf.setFontSize(9);
+  pdf.text(`${reportId} | ${formattedDate}`, margin, 42);
 
-  yPos = 65;
+  yPos = 60;
 
   // ==================== OBJETO DE ANÁLISE ====================
-  pdf.setTextColor(120, 120, 120);
-  pdf.setFontSize(10);
+  pdf.setTextColor(130, 130, 130);
+  pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
   pdf.text("OBJETO DE ANÁLISE", margin, yPos);
-  yPos += 7;
+  yPos += 6;
   
   pdf.setTextColor(30, 30, 30);
-  pdf.setFontSize(18);
+  pdf.setFontSize(16);
   pdf.setFont("helvetica", "bold");
   pdf.text(result.segment, margin, yPos);
   yPos += 15;
 
   // Red separator line
   drawSeparator();
-  yPos += 5;
 
   // ==================== PARECER FINAL ====================
   pdf.setTextColor(30, 30, 30);
-  pdf.setFontSize(11);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "bold");
   pdf.text("PARECER FINAL", margin, yPos);
-  yPos += 10;
+  yPos += 8;
 
   // Green score box
-  const scoreBoxSize = 35;
+  const scoreBoxWidth = 50;
+  const scoreBoxHeight = 45;
   pdf.setFillColor(34, 197, 94);
-  pdf.roundedRect(margin, yPos, scoreBoxSize, scoreBoxSize, 3, 3, "F");
+  pdf.roundedRect(margin, yPos, scoreBoxWidth, scoreBoxHeight, 4, 4, "F");
   
-  // Score number
+  // Score number centered in box
   pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(28);
+  pdf.setFontSize(32);
   pdf.setFont("helvetica", "bold");
   const scoreText = String(scoreBreakdown.totalScore);
-  const scoreWidth = pdf.getTextWidth(scoreText);
-  pdf.text(scoreText, margin + (scoreBoxSize - scoreWidth) / 2, yPos + 23);
+  const scoreTextWidth = pdf.getTextWidth(scoreText);
+  pdf.text(scoreText, margin + (scoreBoxWidth - scoreTextWidth) / 2, yPos + 30);
   
-  // Classification text
+  // Classification text next to box
+  const textX = margin + scoreBoxWidth + 12;
   pdf.setTextColor(30, 30, 30);
-  pdf.setFontSize(16);
+  pdf.setFontSize(15);
   pdf.setFont("helvetica", "bold");
-  pdf.text(scoreBreakdown.classification, margin + scoreBoxSize + 10, yPos + 15);
+  pdf.text(scoreBreakdown.classification, textX, yPos + 18);
   
-  pdf.setTextColor(120, 120, 120);
+  pdf.setTextColor(100, 100, 100);
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
-  pdf.text("Índice de Viabilidade Daat", margin + scoreBoxSize + 10, yPos + 23);
+  pdf.text("Índice de Viabilidade Daat", textX, yPos + 28);
   
-  yPos += scoreBoxSize + 15;
+  yPos += scoreBoxHeight + 12;
 
-  // Score breakdown table
+  // Score breakdown - aligned list
   const breakdownItems = [
-    { label: "Oportunidade de Mercado", value: `${scoreBreakdown.marketOpportunity}/30` },
-    { label: "Posição Competitiva", value: `${scoreBreakdown.competitivePosition}/30` },
-    { label: "Viabilidade de Execução", value: `${scoreBreakdown.executionViability}/25` },
-    { label: "Ajuste de Risco", value: String(scoreBreakdown.riskAdjustment) },
+    { label: "Oportunidade de Mercado:", value: `${scoreBreakdown.marketOpportunity}/30` },
+    { label: "Posição Competitiva:", value: `${scoreBreakdown.competitivePosition}/30` },
+    { label: "Viabilidade de Execução:", value: `${scoreBreakdown.executionViability}/25` },
+    { label: "Ajuste de Risco:", value: String(scoreBreakdown.riskAdjustment) },
   ];
 
   pdf.setFontSize(10);
   breakdownItems.forEach((item) => {
     pdf.setTextColor(60, 60, 60);
+    pdf.setFont("helvetica", "normal");
     pdf.text(item.label, margin, yPos);
     pdf.text(item.value, pageWidth - margin, yPos, { align: "right" });
-    yPos += 7;
+    yPos += 6;
   });
 
-  yPos += 12;
-
-  // ==================== 1. DADOS DE MERCADO ====================
-  pdf.setTextColor(100, 100, 100);
-  pdf.setFontSize(11);
-  pdf.setFont("helvetica", "normal");
-  pdf.text("1. DADOS DE MERCADO", margin, yPos);
-  yPos += 12;
-
-  // Market metrics
-  pdf.setTextColor(30, 30, 30);
-  pdf.setFontSize(11);
-  pdf.setFont("helvetica", "bold");
-  pdf.text(`TAM: ${marketData.tam}`, margin, yPos);
-  pdf.text(`Crescimento: ${marketData.growthRate}%`, margin + 55, yPos);
-  pdf.text(`Concorrentes: ${competitors.length}`, margin + 115, yPos);
   yPos += 15;
 
-  // Competitors table header
-  pdf.setFillColor(248, 248, 248);
-  pdf.rect(margin, yPos - 4, contentWidth, 8, "F");
-  pdf.setDrawColor(230, 230, 230);
+  // ==================== 1. DADOS DE MERCADO ====================
+  pdf.setTextColor(80, 80, 80);
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "normal");
+  pdf.text("1. DADOS DE MERCADO", margin, yPos);
+  yPos += 10;
+
+  // Market metrics in bold
+  pdf.setTextColor(30, 30, 30);
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "bold");
+  pdf.text(`TAM: ${marketData.tam}`, margin, yPos);
+  pdf.text(`Crescimento: ${marketData.growthRate}%`, margin + 50, yPos);
+  pdf.text(`Concorrentes: ${competitors.length}`, margin + 110, yPos);
+  yPos += 12;
+
+  // Competitors table
+  const colWidths = [50, 35, 40, 40];
+  const tableX = margin;
+  
+  // Table header row
+  pdf.setFillColor(245, 245, 245);
+  pdf.rect(tableX, yPos - 4, contentWidth, 8, "F");
+  pdf.setDrawColor(220, 220, 220);
   pdf.setLineWidth(0.3);
-  pdf.line(margin, yPos + 4, pageWidth - margin, yPos + 4);
+  pdf.line(tableX, yPos + 4, tableX + contentWidth, yPos + 4);
   
   pdf.setTextColor(100, 100, 100);
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
-  pdf.text("Empresa", margin + 2, yPos + 1);
-  pdf.text("Receita", margin + 55, yPos + 1);
-  pdf.text("Market Share", margin + 95, yPos + 1);
-  pdf.text("Crescimento", margin + 140, yPos + 1);
-  yPos += 10;
+  pdf.text("Empresa", tableX + 3, yPos + 1);
+  pdf.text("Receita", tableX + colWidths[0] + 3, yPos + 1);
+  pdf.text("Market Share", tableX + colWidths[0] + colWidths[1] + 3, yPos + 1);
+  pdf.text("Crescimento", tableX + colWidths[0] + colWidths[1] + colWidths[2] + 3, yPos + 1);
+  yPos += 8;
 
-  // Competitors table rows
+  // Table rows
   pdf.setTextColor(40, 40, 40);
+  pdf.setFontSize(9);
   competitors.slice(0, 5).forEach((comp) => {
-    pdf.text(comp.name.substring(0, 18), margin + 2, yPos);
-    pdf.text(comp.revenue, margin + 55, yPos);
-    pdf.text(`${comp.marketShare}%`, margin + 95, yPos);
-    pdf.text(`${comp.growth}%`, margin + 140, yPos);
-    yPos += 8;
+    yPos += 6;
+    pdf.text(comp.name.substring(0, 18), tableX + 3, yPos);
+    pdf.text(comp.revenue, tableX + colWidths[0] + 3, yPos);
+    pdf.text(`${comp.marketShare}%`, tableX + colWidths[0] + colWidths[1] + 3, yPos);
+    pdf.text(`${comp.growth}%`, tableX + colWidths[0] + colWidths[1] + colWidths[2] + 3, yPos);
   });
 
   // ==================== PAGE 2 ====================
   pdf.addPage();
-  yPos = 25;
-
-  // Red separator
+  yPos = 20;
   drawSeparator();
 
   // ==================== 2. ANÁLISE DE RISCO ====================
-  pdf.setTextColor(100, 100, 100);
-  pdf.setFontSize(11);
+  pdf.setTextColor(80, 80, 80);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   pdf.text("2. ANÁLISE DE RISCO", margin, yPos);
   yPos += 12;
 
   // Forças Identificadas
   pdf.setTextColor(34, 197, 94);
-  pdf.setFontSize(12);
+  pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.text("Forças Identificadas:", margin, yPos);
-  yPos += 8;
+  yPos += 7;
 
   pdf.setTextColor(40, 40, 40);
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   riskAssessment.strengths.forEach((strength) => {
     pdf.text(`• ${strength.title}`, margin + 5, yPos);
-    yPos += 7;
+    yPos += 6;
   });
   yPos += 8;
 
   // Riscos Detectados
-  pdf.setTextColor(239, 68, 68);
-  pdf.setFontSize(12);
+  pdf.setTextColor(34, 197, 94);
+  pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.text("Riscos Detectados:", margin, yPos);
   yPos += 8;
 
   pdf.setFontSize(10);
   riskAssessment.risks.forEach((risk) => {
-    checkPageBreak(20);
+    checkPageBreak(16);
     
     const severityLabel = risk.severity === 'high' ? '[HIGH]' : 
                           risk.severity === 'medium' ? '[MEDIUM]' : '[LOW]';
@@ -221,22 +230,23 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     pdf.setTextColor(40, 40, 40);
     pdf.setFont("helvetica", "bold");
     pdf.text(`• ${severityLabel} ${risk.title}`, margin + 5, yPos);
-    yPos += 6;
+    yPos += 5;
     
     pdf.setTextColor(100, 100, 100);
     pdf.setFont("helvetica", "normal");
-    pdf.text(`   ${risk.description}`, margin + 5, yPos);
-    yPos += 10;
+    pdf.setFontSize(9);
+    const descLines = pdf.splitTextToSize(risk.description, contentWidth - 15);
+    pdf.text(descLines, margin + 10, yPos);
+    yPos += descLines.length * 4.5 + 5;
+    pdf.setFontSize(10);
   });
 
-  yPos += 10;
-
-  // Red separator
+  yPos += 8;
   drawSeparator();
 
   // ==================== 3. PLANO DE AÇÃO (90 DIAS) ====================
-  pdf.setTextColor(100, 100, 100);
-  pdf.setFontSize(11);
+  pdf.setTextColor(80, 80, 80);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   pdf.text("3. PLANO DE AÇÃO (90 DIAS)", margin, yPos);
   yPos += 12;
@@ -245,49 +255,49 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     const actions = strategicAdvice.roadmap.filter((a) => a.month === month);
     if (actions.length === 0) return;
     
-    checkPageBreak(35);
+    checkPageBreak(30);
     
     // Month header in green
     pdf.setTextColor(34, 197, 94);
-    pdf.setFontSize(12);
+    pdf.setFontSize(11);
     pdf.setFont("helvetica", "bold");
     pdf.text(`Mês ${month}`, margin, yPos);
     yPos += 8;
 
     actions.forEach((action) => {
-      checkPageBreak(18);
+      checkPageBreak(16);
       
       pdf.setTextColor(40, 40, 40);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(10);
       pdf.text(`• ${action.title}`, margin + 5, yPos);
-      yPos += 6;
+      yPos += 5;
       
       pdf.setTextColor(100, 100, 100);
       pdf.setFont("helvetica", "normal");
-      pdf.text(`   ${action.description}`, margin + 5, yPos);
-      yPos += 10;
+      pdf.setFontSize(9);
+      const descLines = pdf.splitTextToSize(action.description, contentWidth - 15);
+      pdf.text(descLines, margin + 10, yPos);
+      yPos += descLines.length * 4.5 + 6;
     });
-    yPos += 5;
+    yPos += 4;
   });
 
   // ==================== PAGE 3 ====================
   pdf.addPage();
-  yPos = 25;
-
-  // Red separator
+  yPos = 20;
   drawSeparator();
 
   // ==================== 4. RECOMENDAÇÕES ====================
-  pdf.setTextColor(100, 100, 100);
-  pdf.setFontSize(11);
+  pdf.setTextColor(80, 80, 80);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   pdf.text("4. RECOMENDAÇÕES", margin, yPos);
   yPos += 12;
 
   // Validações Prioritárias
   pdf.setTextColor(34, 197, 94);
-  pdf.setFontSize(12);
+  pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.text("Validações Prioritárias:", margin, yPos);
   yPos += 8;
@@ -296,15 +306,16 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   strategicAdvice.priorityValidations.forEach((validation, index) => {
-    checkPageBreak(10);
-    pdf.text(`${index + 1}. ${validation}`, margin + 5, yPos);
-    yPos += 7;
+    checkPageBreak(12);
+    const validationLines = pdf.splitTextToSize(`${index + 1}. ${validation}`, contentWidth - 10);
+    pdf.text(validationLines, margin + 5, yPos);
+    yPos += validationLines.length * 5 + 3;
   });
-  yPos += 10;
+  yPos += 8;
 
   // Quick Wins
   pdf.setTextColor(34, 197, 94);
-  pdf.setFontSize(12);
+  pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.text("Quick Wins:", margin, yPos);
   yPos += 8;
@@ -313,9 +324,10 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
   strategicAdvice.quickWins.forEach((win) => {
-    checkPageBreak(10);
-    pdf.text(`• ${win}`, margin + 5, yPos);
-    yPos += 7;
+    checkPageBreak(12);
+    const winLines = pdf.splitTextToSize(`• ${win}`, contentWidth - 10);
+    pdf.text(winLines, margin + 5, yPos);
+    yPos += winLines.length * 5 + 3;
   });
 
   // ==================== ADD FOOTERS TO ALL PAGES ====================
@@ -323,12 +335,12 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   for (let i = 1; i <= totalPages; i++) {
     pdf.setPage(i);
     pdf.setTextColor(130, 130, 130);
-    pdf.setFontSize(9);
+    pdf.setFontSize(8);
     pdf.setFont("helvetica", "normal");
     pdf.text(
       `Página ${i} de ${totalPages} | ${reportId} | Documento confidencial gerado por Daat AI Engine`,
       pageWidth / 2,
-      pageHeight - 12,
+      pageHeight - 10,
       { align: "center" }
     );
   }
