@@ -99,7 +99,7 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
       <div className="fixed inset-0 bg-background/90 backdrop-blur-sm" onClick={onClose} />
 
       {/* Battle Arena */}
-      <div className="relative w-full max-w-5xl max-h-[90vh] my-auto animate-scale-in flex flex-col">
+      <div className="relative w-full max-w-3xl max-h-[85vh] my-auto animate-scale-in flex flex-col">
         {/* Close Button */}
         <Button
           variant="ghost"
