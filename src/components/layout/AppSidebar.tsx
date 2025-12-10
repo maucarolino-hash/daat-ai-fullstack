@@ -59,36 +59,31 @@ export function AppSidebar() {
       <SidebarHeader className="p-4 overflow-hidden">
         <div className="flex items-center justify-center group-data-[state=expanded]:justify-start">
           {/* Mobile: show full logo without animation */}
-          <div className="flex md:hidden items-center gap-1">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center flex-shrink-0">
-              <span className="text-base font-bold text-accent-foreground">D</span>
-            </div>
-            <span className="text-lg font-bold text-sidebar-foreground whitespace-nowrap">
-              aat <span className="text-neon-blue">IA</span>
+          <div className="flex md:hidden items-center">
+            <span className="text-xl font-bold text-neon-blue whitespace-nowrap">
+              D<span className="text-sidebar-foreground">aat</span> <span className="text-neon-blue">IA</span>
             </span>
           </div>
 
           {/* Desktop: animated logo with slide effect */}
           <div className="hidden md:flex relative items-center">
             {/* D letter - always visible, on top */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-accent flex items-center justify-center flex-shrink-0 z-20 relative">
-              <span className="text-base font-bold text-accent-foreground">D</span>
-            </div>
+            <span className="text-xl font-bold text-neon-blue z-20 relative">D</span>
             
             {/* "aat IA" positioned to slide out from behind the D */}
             <div className={cn(
-              "absolute left-0 flex items-center h-8 z-10",
+              "absolute left-0 flex items-center z-10",
               "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
               "group-data-[collapsible=icon]:translate-x-0",
-              "group-data-[state=expanded]:translate-x-8"
+              "group-data-[state=expanded]:translate-x-[0.85rem]"
             )}>
               <span className={cn(
-                "text-lg font-bold text-sidebar-foreground whitespace-nowrap",
+                "text-xl font-bold whitespace-nowrap",
                 "transition-opacity duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
                 "group-data-[collapsible=icon]:opacity-0",
                 "group-data-[state=expanded]:opacity-100"
               )}>
-                aat <span className="text-neon-blue">IA</span>
+                <span className="text-sidebar-foreground">aat</span> <span className="text-neon-blue">IA</span>
               </span>
             </div>
           </div>
