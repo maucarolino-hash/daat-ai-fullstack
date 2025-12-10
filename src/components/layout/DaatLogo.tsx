@@ -34,7 +34,7 @@ export function DaatLogo({ isCollapsed = false, className }: DaatLogoProps) {
           "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
           isCollapsed 
             ? "w-0 opacity-0 ml-0" 
-            : "w-20 opacity-100 ml-1"
+            : "w-20 opacity-100 ml-2"
         )}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
