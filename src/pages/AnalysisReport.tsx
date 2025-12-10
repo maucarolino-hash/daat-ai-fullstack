@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDaatEngine } from "@/lib/daat-engine/context";
 import { Button } from "@/components/ui/button";
@@ -15,13 +16,32 @@ import {
   Clock,
   Building2,
   Hash,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { exportReportToPdf } from "@/lib/pdf-export";
+import { toast } from "sonner";
 
 export default function AnalysisReport() {
   const navigate = useNavigate();
   const { state } = useDaatEngine();
   const { result } = state;
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPdf = async () => {
+    if (!result) return;
+    
+    setIsExporting(true);
+    try {
+      await exportReportToPdf(result);
+      toast.success("PDF exportado com sucesso!");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      toast.error("Erro ao exportar PDF");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (!result) {
     return (
@@ -90,9 +110,18 @@ export default function AnalysisReport() {
           <ArrowLeft className="w-4 h-4" />
           Voltar ao Dashboard
         </Button>
-        <Button variant="neon" className="gap-2">
-          <Download className="w-4 h-4" />
-          Exportar PDF Oficial
+        <Button 
+          variant="neon" 
+          className="gap-2" 
+          onClick={handleExportPdf}
+          disabled={isExporting}
+        >
+          {isExporting ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
+          {isExporting ? "Gerando PDF..." : "Exportar PDF Oficial"}
         </Button>
       </div>
 

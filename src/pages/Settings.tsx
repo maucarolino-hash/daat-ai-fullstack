@@ -1,18 +1,52 @@
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { User, Key, Bell, CreditCard, Save, Webhook, Sun, Moon } from "lucide-react";
+import { User, Key, Bell, CreditCard, Save, Webhook, Sun, Moon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { IntegrationsTab } from "@/components/settings/IntegrationsTab";
 import { usePreferences } from "@/hooks/usePreferences";
+import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Settings() {
   const { isDarkMode, reducedMotion, toggleTheme, setReducedMotion } = usePreferences();
+  const { profile, loading: profileLoading, updateProfile } = useProfile();
+  const { user } = useAuth();
+  
+  const [fullName, setFullName] = useState("");
+  const [company, setCompany] = useState("");
+  const [role, setRole] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    toast.success("Configurações salvas com sucesso");
+  // Populate form when profile loads
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name || "");
+      setCompany(profile.company || "");
+      setRole(profile.role || "");
+    }
+  }, [profile]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    
+    const { error } = await updateProfile({
+      full_name: fullName || null,
+      company: company || null,
+      role: role || null,
+    });
+
+    if (error) {
+      toast.error("Erro ao salvar configurações");
+      console.error(error);
+    } else {
+      toast.success("Configurações salvas com sucesso");
+    }
+    
+    setIsSaving(false);
   };
 
   return (
@@ -51,24 +85,54 @@ export default function Settings() {
           {/* User Profile */}
           <div className="glass-card p-6 space-y-4">
             <h2 className="text-lg font-semibold text-foreground">Perfil do Usuário</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome Completo</Label>
-                <Input id="name" placeholder="João Silva" className="bg-secondary border-border" />
+            {profileLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input id="email" type="email" placeholder="joao@exemplo.com" className="bg-secondary border-border" />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome Completo</Label>
+                  <Input
+                    id="name"
+                    placeholder="João Silva"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="bg-secondary border-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={user?.email || ""}
+                    className="bg-secondary border-border"
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company">Empresa</Label>
+                  <Input
+                    id="company"
+                    placeholder="Acme Inc"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    className="bg-secondary border-border"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role">Cargo</Label>
+                  <Input
+                    id="role"
+                    placeholder="Gerente de Produto"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="bg-secondary border-border"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="company">Empresa</Label>
-                <Input id="company" placeholder="Acme Inc" className="bg-secondary border-border" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Cargo</Label>
-                <Input id="role" placeholder="Gerente de Produto" className="bg-secondary border-border" />
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Interface Preferences */}
@@ -103,8 +167,12 @@ export default function Settings() {
             </div>
           </div>
 
-          <Button onClick={handleSave} variant="default">
-            <Save className="w-4 h-4 mr-2" />
+          <Button onClick={handleSave} variant="default" disabled={isSaving || profileLoading}>
+            {isSaving ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4 mr-2" />
+            )}
             Salvar Alterações
           </Button>
         </TabsContent>
