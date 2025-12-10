@@ -239,6 +239,52 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
     yPos += 5;
   });
 
+  // Section 4: Recommendations
+  checkPageBreak(60);
+  pdf.setDrawColor(200, 200, 200);
+  pdf.line(margin, yPos, pageWidth - margin, yPos);
+  yPos += 10;
+
+  pdf.setTextColor(100, 100, 100);
+  pdf.setFontSize(9);
+  pdf.text("4. RECOMENDAÇÕES", margin, yPos);
+  yPos += 10;
+
+  // Priority Validations
+  pdf.setTextColor(168, 85, 247);
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Validações Prioritárias:", margin, yPos);
+  yPos += 7;
+
+  pdf.setTextColor(40, 40, 40);
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(9);
+  strategicAdvice.priorityValidations.forEach((validation, index) => {
+    checkPageBreak(8);
+    pdf.text(`${index + 1}. ${validation}`, margin + 3, yPos);
+    yPos += 6;
+  });
+  yPos += 5;
+
+  // Quick Wins
+  checkPageBreak(30);
+  pdf.setTextColor(34, 197, 94);
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Quick Wins:", margin, yPos);
+  yPos += 7;
+
+  pdf.setTextColor(40, 40, 40);
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(9);
+  strategicAdvice.quickWins.forEach((win) => {
+    checkPageBreak(8);
+    pdf.text(`• ${win}`, margin + 3, yPos);
+    yPos += 6;
+  });
+  yPos += 10;
+
   // Footer
   const totalPages = pdf.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
