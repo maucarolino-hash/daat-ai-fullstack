@@ -43,7 +43,7 @@ services:
     image: node:22-alpine
     working_dir: /app
     volumes:
-      - ./daat:/app
+      - ./daat-ui:/app
       - /app/node_modules
       - /app/dist
     # Para produção, o ideal é fazer o build e servir com Nginx.
