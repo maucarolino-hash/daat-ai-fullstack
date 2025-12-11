@@ -40,7 +40,7 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/0
 
   frontend:
-    image: node:18-alpine
+    image: node:22-alpine
     working_dir: /app
     volumes:
       - ./daat:/app
