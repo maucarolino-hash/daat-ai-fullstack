@@ -8,6 +8,7 @@ class Diagnostic(models.Model):
     value_proposition = models.TextField()
     score = models.IntegerField()
     feedback = models.TextField()
+    result = models.JSONField(null=True, blank=True) # Full structured analysis
     created_at = models.DateTimeField(auto_now_add=True)
 
     # --- NOVO: Campos para categorização futura (Data Tagging) ---

@@ -1,0 +1,29 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.0, pytest-9.0.1, pluggy-1.6.0
+django: version: 5.2.8, settings: daat_backend.settings (from ini)
+rootdir: C:\Users\mau-3\OneDrive\Desktop\project Daat\daat_backend
+configfile: pytest.ini
+plugins: anyio-4.11.0, django-4.11.1
+collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+__________ ERROR collecting diagnostic/tests/test_market_research.py __________
+ImportError while importing test module 'C:\Users\mau-3\OneDrive\Desktop\project Daat\daat_backend\diagnostic\tests\test_market_research.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+daat_backend\diagnostic\tests\test_market_research.py:2: in <module>
+    from diagnostic.services.market_research import Phase1MarketResearch
+daat_backend\diagnostic\services\__init__.py:1: in <module>
+    from .analysis_engine import analyze_idea
+daat_backend\diagnostic\services\analysis_engine.py:2: in <module>
+    from ..utils.openai_client import OpenAIClient
+daat_backend\diagnostic\utils\__init__.py:1: in <module>
+    from .tavily_client import DaatTavilyClient
+E   ImportError: cannot import name 'DaatTavilyClient' from 'diagnostic.utils.tavily_client' (C:\Users\mau-3\OneDrive\Desktop\project Daat\daat_backend\diagnostic\utils\tavily_client.py)
+=========================== short test summary info ===========================
+ERROR daat_backend\diagnostic\tests\test_market_research.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 0.57s ===============================

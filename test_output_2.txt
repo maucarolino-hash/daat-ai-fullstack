@@ -1,0 +1,11 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.0, pytest-9.0.1, pluggy-1.6.0
+django: version: 5.2.8, settings: daat_backend.settings (from ini)
+rootdir: C:\Users\mau-3\OneDrive\Desktop\project Daat\daat_backend
+configfile: pytest.ini
+plugins: anyio-4.11.0, django-4.11.1
+collected 2 items
+
+daat_backend\diagnostic\tests\test_market_research.py ..                 [100%]
+
+============================= 2 passed in 49.09s ==============================

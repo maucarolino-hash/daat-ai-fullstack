@@ -111,7 +111,8 @@ def check_status(request, task_id):
                 "status": "completed", 
                 "data": {
                     "score": diagnostic.score,
-                    "feedback": diagnostic.feedback
+                    "feedback": diagnostic.feedback,
+                    "result": diagnostic.result
                 }
             })
         except Diagnostic.DoesNotExist:
@@ -131,6 +132,7 @@ def check_status(request, task_id):
 @permission_classes([IsAuthenticated])
 def get_history(request):
     try:
+        print(f"DEBUG: History Request from User ID: {request.user.id} | Name: {request.user.username}")
         diagnostics = Diagnostic.objects.filter(user=request.user).order_by('-created_at')
         history_list = []
         for item in diagnostics:

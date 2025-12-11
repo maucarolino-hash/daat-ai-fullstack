@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: daat_db
+      POSTGRES_USER: daat_user
+      POSTGRES_PASSWORD: super_secure_password
+
+  redis:
+    image: redis:alpine
+
+  backend:
+    build: ./daat_backend
+    command: gunicorn daat_backend.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./daat_backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: postgres://daat_user:super_secure_password@db:5432/daat_db
+      CELERY_BROKER_URL: redis://redis:6379/0
+      DEBUG: 'False'
+      ALLOWED_HOSTS: 'SEU_IP_AQUI,seu-dominio.com'
+
+  celery:
+    build: ./daat_backend
+    command: celery -A daat_backend worker -l info
+    depends_on:
+      - backend
+      - redis
+    environment:
+      DATABASE_URL: postgres://daat_user:super_secure_password@db:5432/daat_db
+      CELERY_BROKER_URL: redis://redis:6379/0
+
+  frontend:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./package.json:/app/package.json
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./index.html:/app/index.html
+    # Para produção, o ideal é fazer o build e servir com Nginx.
+    # Para simplificar aqui, vamos usar o preview do Vite ou instalar um servidor estático.
+    command: sh -c "npm install && npm run build && npx serve -s dist -l 3000"
+    ports:
+      - "80:3000"
+
+volumes:
+  postgres_data:
