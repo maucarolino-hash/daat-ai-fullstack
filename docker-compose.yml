@@ -43,11 +43,9 @@ services:
     image: node:18-alpine
     working_dir: /app
     volumes:
-      - ./daat/src:/app/src
-      - ./daat/public:/app/public
-      - ./daat/package.json:/app/package.json
-      - ./daat/vite.config.ts:/app/vite.config.ts
-      - ./daat/index.html:/app/index.html
+      - ./daat:/app
+      - /app/node_modules
+      - /app/dist
     # Para produção, o ideal é fazer o build e servir com Nginx.
     # Para simplificar aqui, vamos usar o preview do Vite ou instalar um servidor estático.
     command: sh -c "npm install && npm run build && npx serve -s dist -l 3000"
