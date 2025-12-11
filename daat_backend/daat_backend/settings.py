@@ -209,7 +209,14 @@ REST_AUTH = {
 
 # Para o MVP, simplificamos o registro (não pede confirmação de email agora)
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email' 
+ACCOUNT_USERNAME_REQUIRED = False # Permite login apenas com email
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # CELERY SETTINGS
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')

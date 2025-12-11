@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDaatEngine } from "@/lib/daat-engine/context";
+import { useEffect, useState } from "react";
+import api from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -24,13 +25,61 @@ import { toast } from "sonner";
 
 export default function AnalysisReport() {
   const navigate = useNavigate();
-  const { state } = useDaatEngine();
+  const [searchParams] = useSearchParams();
+  const reportIdParam = searchParams.get("id");
+  const { state, setResult } = useDaatEngine(); // Updated to use setResult
   const { result } = state;
   const [isExporting, setIsExporting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch report if ID is present and result is empty or different
+  useEffect(() => {
+    const fetchReport = async () => {
+      if (!reportIdParam) return;
+
+      try {
+        setIsLoading(true);
+        // Call check_status endpoint which handles db_task_ format
+        const response = await api.get(`/api/status/${reportIdParam}/`);
+
+        if (response.data.status === "completed" && response.data.data) {
+          let parsedResult = null;
+
+          if (response.data.data.result) {
+            parsedResult = response.data.data.result;
+          } else {
+            try {
+              const feedbackData = typeof response.data.data.feedback === 'string'
+                ? JSON.parse(response.data.data.feedback)
+                : response.data.data.feedback;
+              parsedResult = feedbackData;
+            } catch (e) {
+              console.log("Feedback is not JSON", e);
+            }
+          }
+
+          // Validate and fix types
+          if (parsedResult && parsedResult.marketData) {
+            if (typeof parsedResult.createdAt === 'string') {
+              parsedResult.createdAt = new Date(parsedResult.createdAt);
+            }
+            setResult(parsedResult);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load report", error);
+        toast.error("Erro ao carregar relatório.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReport();
+  }, [reportIdParam, setResult]);
 
   const handleExportPdf = async () => {
     if (!result) return;
-    
+
     setIsExporting(true);
     try {
       await exportReportToPdf(result);
@@ -42,6 +91,15 @@ export default function AnalysisReport() {
       setIsExporting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <Loader2 className="w-16 h-16 animate-spin text-primary" />
+        <p className="text-muted-foreground">Carregando análise...</p>
+      </div>
+    );
+  }
 
   if (!result) {
     return (
@@ -110,9 +168,9 @@ export default function AnalysisReport() {
           <ArrowLeft className="w-4 h-4" />
           Voltar ao Dashboard
         </Button>
-        <Button 
-          variant="neon" 
-          className="gap-2" 
+        <Button
+          variant="neon"
+          className="gap-2"
           onClick={handleExportPdf}
           disabled={isExporting}
         >
@@ -127,14 +185,14 @@ export default function AnalysisReport() {
 
       {/* Document Container */}
       <div className="bg-card border border-border rounded-lg shadow-lg overflow-hidden relative">
-        
+
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
           <div className="text-[120px] font-bold text-foreground/[0.02] rotate-[-30deg] select-none whitespace-nowrap tracking-widest">
             CONFIDENCIAL
           </div>
         </div>
-        
+
         {/* Document Header - Institutional */}
         <div className="bg-secondary/30 border-b border-border px-8 py-6 relative z-10">
           <div className="flex items-start justify-between">
@@ -213,14 +271,14 @@ export default function AnalysisReport() {
             <span className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-foreground font-bold text-xs">§</span>
             Parecer Final
           </div>
-          
+
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             {/* Score Display */}
             <div className="flex items-center gap-4">
               <div className={cn(
                 "w-20 h-20 rounded-lg flex flex-col items-center justify-center border-2",
-                scoreBreakdown.totalScore >= 70 ? "border-primary bg-primary/5" : 
-                scoreBreakdown.totalScore >= 50 ? "border-accent bg-accent/5" : "border-destructive bg-destructive/5"
+                scoreBreakdown.totalScore >= 70 ? "border-primary bg-primary/5" :
+                  scoreBreakdown.totalScore >= 50 ? "border-accent bg-accent/5" : "border-destructive bg-destructive/5"
               )}>
                 <span className={cn("text-3xl font-bold", getScoreColor(scoreBreakdown.totalScore))}>
                   {scoreBreakdown.totalScore}
@@ -392,7 +450,7 @@ export default function AnalysisReport() {
             {[1, 2, 3].map((month) => {
               const monthActions = strategicAdvice.roadmap.filter(action => action.month === month);
               if (monthActions.length === 0) return null;
-              
+
               return (
                 <div key={month} className="border border-border rounded-lg overflow-hidden">
                   <div className="bg-secondary/30 px-4 py-2 border-b border-border">

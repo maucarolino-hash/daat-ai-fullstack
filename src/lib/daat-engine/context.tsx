@@ -16,6 +16,7 @@ interface DaatEngineContextType {
   resetAnalysis: () => void;
   getCompetitors: () => typeof mockCompetitors;
   getBaseScore: () => number;
+  setResult: (result: AnalysisResult | null) => void;
 }
 
 const DaatEngineContext = createContext<DaatEngineContextType | null>(null);
@@ -33,7 +34,7 @@ export function DaatEngineProvider({ children }: { children: ReactNode }) {
 
   const startAnalysis = useCallback((segment: string, competitors: string[]) => {
     const allLogs = generateTerminalLogs(segment);
-    
+
     setState({
       isAnalyzing: true,
       currentPhase: 1,
@@ -60,7 +61,7 @@ export function DaatEngineProvider({ children }: { children: ReactNode }) {
       }
 
       const log = allLogs[logIndex];
-      
+
       // Update phase if needed
       if (log.phase > currentPhase) {
         currentPhase = log.phase as AnalysisPhase;
@@ -73,13 +74,13 @@ export function DaatEngineProvider({ children }: { children: ReactNode }) {
       }));
 
       logIndex++;
-      
+
       // Variable timing for realistic effect
-      const delay = log.type === 'command' ? 400 : 
-                   log.type === 'calc' ? 300 :
-                   log.type === 'ai' ? 600 :
-                   log.type === 'success' ? 500 : 250;
-      
+      const delay = log.type === 'command' ? 400 :
+        log.type === 'calc' ? 300 :
+          log.type === 'ai' ? 600 :
+            log.type === 'success' ? 500 : 250;
+
       setTimeout(processNextLog, delay);
     };
 
@@ -99,13 +100,18 @@ export function DaatEngineProvider({ children }: { children: ReactNode }) {
     return state.result?.scoreBreakdown.totalScore || 72;
   }, [state.result]);
 
+  const setResult = useCallback((result: AnalysisResult | null) => {
+    setState(prev => ({ ...prev, result }));
+  }, []);
+
   return (
-    <DaatEngineContext.Provider value={{ 
-      state, 
-      startAnalysis, 
+    <DaatEngineContext.Provider value={{
+      state,
+      startAnalysis,
       resetAnalysis,
       getCompetitors,
       getBaseScore,
+      setResult,
     }}>
       {children}
     </DaatEngineContext.Provider>

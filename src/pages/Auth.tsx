@@ -18,7 +18,7 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -33,7 +33,7 @@ export default function Auth() {
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string; name?: string } = {};
-    
+
     try {
       emailSchema.parse(email);
     } catch (e) {
@@ -41,7 +41,7 @@ export default function Auth() {
         newErrors.email = e.errors[0].message;
       }
     }
-    
+
     try {
       passwordSchema.parse(password);
     } catch (e) {
@@ -49,7 +49,7 @@ export default function Auth() {
         newErrors.password = e.errors[0].message;
       }
     }
-    
+
     if (!isLogin && fullName) {
       try {
         nameSchema.parse(fullName);
@@ -59,27 +59,23 @@ export default function Auth() {
         }
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast.error("E-mail ou senha inválidos");
-          } else {
-            toast.error(error.message);
-          }
+          toast.error(error.message || "E-mail ou senha inválidos");
         } else {
           toast.success("Bem-vindo de volta!");
           navigate("/");
@@ -87,14 +83,10 @@ export default function Auth() {
       } else {
         const { error } = await signUp(email, password, fullName);
         if (error) {
-          if (error.message.includes("already registered")) {
-            toast.error("Este e-mail já está cadastrado. Tente fazer login.");
-          } else {
-            toast.error(error.message);
-          }
+          toast.error(error.message || "Erro ao criar conta");
         } else {
-          toast.success("Conta criada com sucesso!");
-          navigate("/");
+          toast.success("Conta criada! Por favor faça login.");
+          setIsLogin(true); // Switch to login tab
         }
       }
     } catch (err) {
@@ -146,7 +138,7 @@ export default function Auth() {
                 )}
               </div>
             )}
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
@@ -163,7 +155,7 @@ export default function Auth() {
                 <p className="text-sm text-destructive">{errors.email}</p>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
               <div className="relative">
@@ -189,7 +181,7 @@ export default function Auth() {
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
             </div>
-            
+
             <Button
               type="submit"
               variant="cyber"
@@ -206,7 +198,7 @@ export default function Auth() {
               {isLogin ? "Entrar" : "Criar Conta"}
             </Button>
           </form>
-          
+
           <div className="mt-6 text-center">
             <button
               type="button"

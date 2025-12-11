@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Filter, SlidersHorizontal, X, ChevronDown } from "lucide-react";
+import { Search, Filter, SlidersHorizontal, X, ChevronDown, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ReportCard } from "@/components/history/ReportCard";
@@ -12,15 +12,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import api from "@/services/api";
 
-const reports = [
-  { id: 1, title: "Análise de Mercado SaaS B2B", date: "5 Dez, 2024", status: "complete" as const, score: 87, riskLevel: "low" as const },
-  { id: 2, title: "Varredura Competitiva Fintech Mobile", date: "3 Dez, 2024", status: "complete" as const, score: 72, riskLevel: "medium" as const },
-  { id: 3, title: "Análise de Plataforma E-commerce", date: "1 Dez, 2024", status: "processing" as const, score: 0, riskLevel: "low" as const },
-  { id: 4, title: "Análise Aprofundada SaaS Saúde", date: "28 Nov, 2024", status: "complete" as const, score: 93, riskLevel: "low" as const },
-  { id: 5, title: "Análise de Entrada no Mercado EdTech", date: "25 Nov, 2024", status: "failed" as const, score: 0, riskLevel: "high" as const },
-  { id: 6, title: "Comparação de Software Logística", date: "20 Nov, 2024", status: "complete" as const, score: 68, riskLevel: "medium" as const },
-];
+// Types matching Backend Data
+interface HistoryItem {
+  id: number;
+  title: string; // derived from customer_segment
+  date: string;  // derived from created_at
+  status: "complete" | "processing" | "failed";
+  score: number;
+  riskLevel: "low" | "medium" | "high";
+}
 
 type SortOption = "date-desc" | "date-asc" | "score-desc" | "score-asc" | "name-asc" | "name-desc";
 type StatusFilter = "all" | "complete" | "processing" | "failed";
@@ -51,10 +53,52 @@ const riskLabels: Record<RiskFilter, string> = {
 
 export default function History() {
   const navigate = useNavigate();
+  const [reports, setReports] = useState<HistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("date-desc");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [riskFilter, setRiskFilter] = useState<RiskFilter>("all");
+
+  // Fetch Data from Backend
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get('/api/history/');
+
+        // Map Backend Data to Frontend Model
+        const mappedReports: HistoryItem[] = response.data.history.map((item: any) => {
+          // Status Logic
+          let status: "complete" | "processing" | "failed" = "complete";
+          if (item.feedback && item.feedback.startsWith("Processando")) status = "processing";
+          if (item.score === 0 && status !== "processing") status = "failed"; // Assume failed if 0 score and not processing
+
+          // Risk Logic
+          let risk: "low" | "medium" | "high" = "medium";
+          if (item.score >= 70) risk = "low";
+          else if (item.score <= 40) risk = "high";
+
+          return {
+            id: item.id,
+            title: item.customer_segment || "Análise Sem Título",
+            date: new Date(item.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+            status: status,
+            score: item.score,
+            riskLevel: risk,
+          };
+        });
+
+        setReports(mappedReports);
+      } catch (error) {
+        console.error("Failed to fetch history:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
 
   const filteredAndSortedReports = useMemo(() => {
     let filtered = reports.filter((report) =>
@@ -75,9 +119,14 @@ export default function History() {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "date-desc":
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
+          // Simple parsing assuming DD MMM, YYYY format or just relying on load order if date string is tricky
+          // Better: keep ISO date in object for sorting? 
+          // For now, let's rely on ID descending as proxy for date desc since it's auto-increment, or parse the date string carefully.
+          // Since we formatted it to pt-BR, parsing back is annoying. 
+          // Quick fix: Sort by ID for now as it correlates with Date.
+          return b.id - a.id;
         case "date-asc":
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
+          return a.id - b.id;
         case "score-desc":
           return b.score - a.score;
         case "score-asc":
@@ -90,7 +139,7 @@ export default function History() {
           return 0;
       }
     });
-  }, [searchQuery, sortBy, statusFilter, riskFilter]);
+  }, [reports, searchQuery, sortBy, statusFilter, riskFilter]);
 
   const hasActiveFilters = statusFilter !== "all" || riskFilter !== "all";
 
@@ -100,8 +149,8 @@ export default function History() {
   };
 
   const handleReportClick = (reportId: number) => {
-    // Navigate to report - in a real app this would load the specific report
-    navigate("/report");
+    // Navigate to report with ID query param
+    navigate(`/report?id=db_task_${reportId}`);
   };
 
   return (
@@ -123,7 +172,7 @@ export default function History() {
             className="pl-10 bg-secondary border-border"
           />
         </div>
-        
+
         {/* Filter Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -218,15 +267,21 @@ export default function History() {
       )}
 
       {/* Reports Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredAndSortedReports.map((report) => (
-          <div key={report.id} onClick={() => handleReportClick(report.id)}>
-            <ReportCard {...report} />
-          </div>
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredAndSortedReports.map((report) => (
+            <div key={report.id} onClick={() => handleReportClick(report.id)}>
+              <ReportCard {...report} />
+            </div>
+          ))}
+        </div>
+      )}
 
-      {filteredAndSortedReports.length === 0 && (
+      {!isLoading && filteredAndSortedReports.length === 0 && (
         <div className="text-center py-12 glass-card">
           <p className="text-muted-foreground">Nenhum relatório encontrado para sua busca.</p>
           {hasActiveFilters && (
