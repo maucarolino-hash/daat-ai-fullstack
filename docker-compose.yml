@@ -50,7 +50,7 @@ services:
     # Para simplificar aqui, vamos usar o preview do Vite ou instalar um servidor estático.
     command: sh -c "npm install && npm run build && npx serve -s dist -l 3000"
     ports:
-      - "80:3000"
+      - "8080:3000"
 
 volumes:
   postgres_data:
