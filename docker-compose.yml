@@ -27,7 +27,7 @@ services:
       DATABASE_URL: postgres://daat_user:super_secure_password@db:5432/daat_db
       CELERY_BROKER_URL: redis://redis:6379/0
       DEBUG: 'False'
-      ALLOWED_HOSTS: 'SEU_IP_AQUI,seu-dominio.com'
+      ALLOWED_HOSTS: '92.113.39.141,localhost,127.0.0.1'
 
   celery:
     build: ./daat_backend
