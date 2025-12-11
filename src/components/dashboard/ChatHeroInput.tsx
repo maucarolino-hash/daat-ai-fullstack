@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Sparkles, ArrowUp, Zap, Target, BarChart3, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ const suggestionChips = [
   { icon: Shield, label: "HealthTech telemedicina" },
 ];
 
-export function ChatHeroInput({ onStartAnalysis, isAnalyzing }: ChatHeroInputProps) {
+export const ChatHeroInput = forwardRef<HTMLDivElement, ChatHeroInputProps>(({ onStartAnalysis, isAnalyzing }, ref) => {
   const [input, setInput] = useState("");
 
   const handleSubmit = () => {
@@ -32,7 +32,7 @@ export function ChatHeroInput({ onStartAnalysis, isAnalyzing }: ChatHeroInputPro
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div ref={ref} className="w-full max-w-3xl mx-auto">
       {/* Hero Title */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-4">
@@ -121,4 +121,6 @@ export function ChatHeroInput({ onStartAnalysis, isAnalyzing }: ChatHeroInputPro
       </div>
     </div>
   );
-}
+});
+
+ChatHeroInput.displayName = "ChatHeroInput";

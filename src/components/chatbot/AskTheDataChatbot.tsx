@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -29,7 +29,7 @@ function getResponse(query: string): string {
   return sampleResponses.default;
 }
 
-export function AskTheDataChatbot() {
+export const AskTheDataChatbot = forwardRef<HTMLDivElement, object>((_, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -84,7 +84,7 @@ export function AskTheDataChatbot() {
   };
 
   return (
-    <>
+    <div ref={ref}>
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
@@ -202,6 +202,8 @@ export function AskTheDataChatbot() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
-}
+});
+
+AskTheDataChatbot.displayName = "AskTheDataChatbot";
