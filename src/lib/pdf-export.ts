@@ -1,5 +1,28 @@
 import jsPDF from "jspdf";
 import { AnalysisResult } from "./daat-engine/types";
+import logoImage from "@/assets/logo.png";
+
+// Helper function to load image as base64
+const loadImageAsBase64 = (src: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      } else {
+        reject(new Error("Could not get canvas context"));
+      }
+    };
+    img.onerror = reject;
+    img.src = src;
+  });
+};
 
 export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   const { marketData, competitors, riskAssessment, scoreBreakdown, strategicAdvice } = result;
@@ -49,6 +72,16 @@ export async function exportReportToPdf(result: AnalysisResult): Promise<void> {
   // Dark header background
   pdf.setFillColor(40, 40, 50);
   pdf.rect(0, 0, pageWidth, 48, "F");
+
+  // Add logo to header (right side)
+  try {
+    const logoBase64 = await loadImageAsBase64(logoImage);
+    const logoWidth = 28;
+    const logoHeight = 10;
+    pdf.addImage(logoBase64, "PNG", pageWidth - margin - logoWidth, 8, logoWidth, logoHeight);
+  } catch (error) {
+    console.warn("Could not load logo for PDF:", error);
+  }
   
   // Title
   pdf.setTextColor(255, 255, 255);
