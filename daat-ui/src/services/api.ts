@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000', // Backend Django
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000', // Backend Django
     timeout: 300000, // 5 minutes timeout (AI is slow)
 });
 
