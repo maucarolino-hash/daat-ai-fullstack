@@ -27,7 +27,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS
 # Localhost + Render URL (get from env)
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',') + ['daatia.com', 'www.daatia.com']
 
 
 # Application definition
@@ -170,8 +170,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5176",
     "http://127.0.0.1:5176",
     "https://daat-ai-fullstack.vercel.app", # URL Oficial
-    "http://92.113.39.141",
-    "http://92.113.39.141:8080",
+    "https://daatia.com",
+    "https://www.daatia.com",
+    "http://daatia.com",
+    "http://www.daatia.com",
 ]
 
 # PERMITIR QUALQUER SUBDOMÍNIO DA VERCEL (Previews, Deploys, etc)
@@ -182,7 +184,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 if DEBUG:
     CORS_ALLOWED_ORIGINS += ['http://localhost:5173', 'http://127.0.0.1:5173']
 
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://daat-ai-fullstack.vercel.app", "http://92.113.39.141", "http://92.113.39.141:8080"]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://daat-ai-fullstack.vercel.app", "https://daatia.com", "https://www.daatia.com", "http://daatia.com", "http://www.daatia.com"]
 
 from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
