@@ -44,7 +44,7 @@ services:
     env_file:
       - ./daat_backend/.env
     environment:
-      - VITE_API_URL=http://daatia.com/api/
+      - VITE_API_URL=http://daatai.com/api/
     volumes:
       - ./daat-ui:/app
       - /app/node_modules
