@@ -44,6 +44,8 @@ services:
     working_dir: /app
     env_file:
       - ./daat_backend/.env
+    environment:
+      - VITE_API_URL=http://92.113.39.141:8000
     volumes:
       - ./daat-ui:/app
       - /app/node_modules
