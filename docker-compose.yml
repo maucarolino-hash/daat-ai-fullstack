@@ -42,6 +42,8 @@ services:
   frontend:
     image: node:22-alpine
     working_dir: /app
+    env_file:
+      - ./daat_backend/.env
     volumes:
       - ./daat-ui:/app
       - /app/node_modules
