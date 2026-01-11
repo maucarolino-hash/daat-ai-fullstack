@@ -1,0 +1,374 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Daat AI</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #1a1a2e;
+            line-height: 1.5;
+            font-size: 11px;
+            margin: 0;
+            padding: 1.5cm;
+            background: #fff;
+            padding-bottom: 40px;
+            /* Space for fixed footer */
+        }
+
+        /* ... (styles continue) ... */
+
+        /* Footer - Standard Fixed Position */
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 8px;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            background: #fff;
+        }
+
+        /* Cover Page Branding */
+        .header {
+            background-color: #0f172a;
+            /* Slate 900 */
+            color: #fff;
+            padding: 20px 30px;
+            /* Reduced padding */
+            border-bottom: 4px solid #3b82f6;
+            /* Blue 500 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            /* Soften edges */
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: #3b82f6;
+        }
+
+        .meta-header {
+            text-align: right;
+            font-size: 9px;
+            color: #94a3b8;
+            /* Slate 400 */
+        }
+
+        .container {
+            /* No fixed padding, let page margins handle it */
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #0f172a;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            word-wrap: break-word;
+            /* Prevent long title overflow */
+        }
+
+        h2 {
+            font-size: 14px;
+            color: #3b82f6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            page-break-after: avoid;
+            /* Keep header with content */
+        }
+
+        /* Score Box - Hero */
+        .score-hero {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: none;
+            /* Shadow doesn't print well usually, optional */
+            page-break-inside: avoid;
+            /* Don't split score box */
+        }
+
+        .score-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #0f172a;
+            color: #3b82f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            border: 4px solid #3b82f6;
+            flex-shrink: 0;
+            /* Prevent circle squishing */
+        }
+
+        .score-val {
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 7px;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .score-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #0f172a;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .badge-high {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-med {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .badge-low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Metrics Grid - Flexbox for robustness */
+        .metrics-grid {
+            display: flex;
+            /* WeasyPrint supports flex */
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .metric-card {
+            flex: 1;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-val {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0f172a;
+            display: block;
+        }
+
+        .metric-title {
+            font-size: 9px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        /* Tables & Lists */
+        ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* Two Column Layout */
+        .grid-2 {
+            display: table;
+            /* Fallback to table for consistent 2-col print layout */
+            width: 100%;
+            margin-top: 10px;
+            border-spacing: 10px 0;
+            /* Simulates gap */
+            margin-left: 0;
+            /* Offset spacing */
+            width: 100%;
+        }
+
+        .col-half {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+        }
+
+        .item-box {
+            background: #f8fafc;
+            border-left: 3px solid #cbd5e1;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            page-break-inside: avoid;
+            /* Prevent items from splitting */
+        }
+
+        .item-box.strength {
+            border-color: #3b82f6;
+        }
+
+        .item-box.risk {
+            border-color: #ef4444;
+        }
+
+        .item-desc {
+            color: #475569;
+            font-size: 10px;
+            display: block;
+        }
+
+        /* Advice Box */
+        .advice-box {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #bae6fd;
+            page-break-inside: avoid;
+        }
+
+        .footer {
+            /* Now handled by @page @bottom-center */
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">Daat<span>.AI</span></div>
+        <div class="meta-header">
+            RELATÓRIO DE INTELIGÊNCIA<br>
+            ID: {{ analysis.id|default:"-" }}<br>
+            {{ date|date:"d/m/Y H:i" }}
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="margin-bottom: 30px;">
+            <div
+                style="font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">
+                Objeto de Análise
+            </div>
+            <h1>{{ segment }}</h1>
+        </div>
+
+        <!-- Score Hero -->
+        <div class="score-hero">
+            <div class="score-circle">
+                <span class="score-val">{{ score }}</span>
+                <span class="score-label">Score</span>
+            </div>
+            <div class="score-info">
+                <h3>{{ classification }}</h3>
+                <span
+                    class="badge {% if score >= 70 %}badge-high{% elif score >= 40 %}badge-med{% else %}badge-low{% endif %}">
+                    Viabilidade Confirmada pelo Daat Engine
+                </span>
+            </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-title">TAM</span>
+                <span class="metric-val">{{ market_tam }}</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-title">Crescimento</span>
+                <span class="metric-val">{{ market_growth }}</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-title">Players</span>
+                <span class="metric-val">{{ competitors_count }}</span>
+            </div>
+        </div>
+
+        <!-- Market Dynamic -->
+        <h2>Dinâmica de Mercado</h2>
+        <div>{{ analysis.sections.mercado|safe }}</div>
+
+        <!-- Strengths & Risks -->
+        <div class="grid-2">
+            <div class="col-half">
+                <h2>Forças (Strengths)</h2>
+                {% if analysis.sections.forcas|length > 10 %} <!-- Fallback check -->
+                {{ analysis.sections.forcas|safe }}
+                {% else %}
+                {% for strength in analysis.sections.forcas %}
+                <div class="item-box strength">
+                    <span class="item-desc">{{ strength }}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-half">
+                <h2>Riscos (Risks)</h2>
+                {% if analysis.sections.riscos|length > 10 %}
+                {{ analysis.sections.riscos|safe }}
+                {% else %}
+                {% for risk in analysis.sections.riscos %}
+                <div class="item-box risk">
+                    <span class="item-desc">{{ risk }}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Roadmap -->
+        <h2>Plano de Ação Estratégico</h2>
+        <div class="advice-box">
+            {{ analysis.sections.conselho|safe }}
+        </div>
+
+    </div>
+    <div class="footer">
+        Gerado por <strong>Daat AI Engine</strong> • Documento Confidencial • {{ date|date:"Y" }}
+    </div>
+</body>
+
+</html>

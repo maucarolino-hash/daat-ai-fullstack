@@ -27,7 +27,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS
 # Localhost + Render URL (get from env)
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',') + ['daatai.com', 'www.daatai.com']
 
 
 # Application definition
@@ -62,12 +62,17 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware', # Static Files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'allauth.account.middleware.AccountMiddleware', # Required by allauth
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Confia no header do proxy (Render/Vercel) para saber que é HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 ROOT_URLCONF = 'daat_backend.urls'
 
@@ -131,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -143,7 +148,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -151,25 +156,36 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS CONFIGURATION
-CORS_ALLOW_ALL_ORIGINS = False 
+# CORS CONFIGURATION
+CORS_ALLOW_ALL_ORIGINS = False  # NEVER True in production
 CORS_ALLOW_CREDENTIALS = True
 
-# Lista de origens permitidas (Localhost)
+# Get origins from env (comma separated)
+env_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+env_origins = [o.strip() for o in env_origins if o.strip()]
+
+# Standard allowed origins
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:8080",
     "http://127.0.0.1:5173",
-    "https://daat-ai-fullstack.vercel.app", # URL Oficial
-]
+    "http://127.0.0.1:8080",
+] + env_origins
+
+# In production, add specific domains
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+        "https://daat-ai-fullstack.vercel.app",
+        "https://daatai.com",
+        "https://www.daatai.com",
+    ]
 
 # PERMITIR QUALQUER SUBDOMÍNIO DA VERCEL (Previews, Deploys, etc)
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",
 ]
 
-if DEBUG:
-    CORS_ALLOWED_ORIGINS += ['http://localhost:5173', 'http://127.0.0.1:5173']
-
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://daat-ai-fullstack.vercel.app"] # Adicione a URL oficial aqui também
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://daat-ai-fullstack.vercel.app"]
 
 from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -192,13 +208,30 @@ REST_FRAMEWORK = {
 # Configuração do JWT / Auth
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'daat-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'daat-refresh-token',
+    # 'JWT_AUTH_COOKIE': 'daat-auth',        # DISABLE COOKIES -> Return token in Body
+    # 'JWT_AUTH_REFRESH_COOKIE': 'daat-refresh-token',
+    'USER_DETAILS_SERIALIZER': 'diagnostic.serializers.UserCreditsSerializer',
+}
+
+# Configuração do JWT Explicita
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7), # EXTEND LIFETIME (Dev convenience)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'Rotate_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
 }
 
 # Para o MVP, simplificamos o registro (não pede confirmação de email agora)
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email' 
+ACCOUNT_USERNAME_REQUIRED = False # Permite login apenas com email
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # CELERY SETTINGS
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
@@ -208,3 +241,32 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db' # Salva o resultado no banco de dados normal para facilitar
 CELERY_TASK_ALWAYS_EAGER = True # Modo de desenvolvimento (sem Redis)
 CELERY_TASK_EAGER_PROPAGATES = True
+
+
+# EMAIL CONFIGURATION (Dev)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# --- DAAT INTELLIGENCE CONFIGURATION ---
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+TAVILY_API_KEY = os.getenv('TAVILY_API_KEY')
+
+# Configurações de AI
+AI_SETTINGS = {
+    'model': 'gpt-4-turbo-preview',  # ou 'gpt-3.5-turbo' para economia
+    'temperature': {
+        'market_research': 0.3,
+        'critical_analysis': 0.4,
+        'scoring': 0.2,
+        'strategic_advice': 0.5
+    },
+    'max_tokens': 4000,
+    'timeout': 60  # segundos
+}
+
+# Configurações de Pesquisa
+SEARCH_SETTINGS = {
+    'max_results_per_query': 5,
+    'search_depth': 'advanced',  # 'basic' ou 'advanced'
+    'include_domains': [],  # Lista de domínios prioritários
+    'exclude_domains': ['pinterest.com', 'instagram.com']  # Domínios inúteis
+}

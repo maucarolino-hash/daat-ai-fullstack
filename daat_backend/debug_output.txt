@@ -1,0 +1,30 @@
+Reset password for Mauricio (ID: 2) to 'password123'
+Attempting login to http://localhost:8000/api/auth/login/ with Mauricio...
+Login Status: 200
+Token obtained: eyJhbGciOi...
+
+Requesting History with Bearer...
+History Status (Bearer): 200
+
+Found 13 items in history:
+ - ID: 39 | Title: SaaS LegalTech para PMEs (Universal Seed)
+ - ID: 37 | Title: SaaS LegalTech para PMEs
+ - ID: 36 | Title: SaaS LegalTech para PMEs
+ - ID: 35 | Title: SaaS LegalTech para PMEs
+ - ID: 34 | Title: SaaS LegalTech para PMEs
+ - ID: 32 | Title: CriaHub — Central de Fluxo Criativo
+Setor: Economia criativa / SaaS
+ - ID: 31 | Title: NanoGrid — Energia Descentralizada Local
+Setor: Energia / Infraestrutura
+ - ID: 30 | Title: CriaHub — Central de Fluxo Criativo
+Setor: Economia criativa / SaaS
+ - ID: 29 | Title: Taxly — Impostos Simplificados para Autônomos
+Setor: FinTech / Tributação
+ - ID: 28 | Title: VitaLink — Saúde Integrada de Bairro
+Setor: HealthTech / Comunidades
+ - ID: 27 | Title: UrbBox — Microespaços Modulares Inteligentes
+Setor: Construção / Mobilidade urbana
+ - ID: 26 | Title: UrbBox — Microespaços Modulares Inteligentes
+
+Setor: Construção / Mobilidade urbana
+ - ID: 25 | Title: GreenTrade — Créditos de Sustentabilidade para PMEs
