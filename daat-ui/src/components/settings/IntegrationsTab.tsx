@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { 
-  Webhook, 
-  Plus, 
-  Trash2, 
-  MessageSquare, 
-  Bell, 
+import {
+  Webhook,
+  Plus,
+  Trash2,
+  MessageSquare,
+  Bell,
   CheckCircle2,
   AlertTriangle,
-  ExternalLink 
+  ExternalLink
 } from "lucide-react";
 
 interface WebhookConfig {
@@ -31,17 +32,10 @@ const eventTypes = [
   { id: "risk_alert", label: "Alertas de Risco", desc: "Novos riscos identificados na análise" },
 ];
 
+/* REAL API INTEGRATION */
 export function IntegrationsTab() {
-  const [webhooks, setWebhooks] = useState<WebhookConfig[]>([
-    {
-      id: "1",
-      name: "Notificações da Equipe",
-      url: "https://hooks.slack.com/services/xxx",
-      platform: "slack",
-      enabled: true,
-      events: ["price_change", "risk_alert"],
-    },
-  ]);
+  const [webhooks, setWebhooks] = useState<WebhookConfig[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newWebhook, setNewWebhook] = useState<{
     name: string;
@@ -53,54 +47,142 @@ export function IntegrationsTab() {
     platform: "slack",
   });
 
-  const handleAddWebhook = () => {
+  // Fetch Webhooks on Mount
+  useEffect(() => {
+    fetchWebhooks();
+  }, []);
+
+  const fetchWebhooks = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await api.get('/api/webhooks/');
+
+      // Adapt backend data to frontend interface if needed
+      // Backend returns: snake_case (is_active)
+      // Frontend expects: camelCase (enabled)?
+      // Let's standardize on camelCase for the component state but map from backend.
+
+      const mapped = data.map((w: any) => ({
+        id: w.id.toString(),
+        name: w.name,
+        url: w.url,
+        platform: w.platform,
+        enabled: w.is_active,
+        events: w.events || []
+      }));
+      setWebhooks(mapped);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao carregar integrações.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddWebhook = async () => {
     if (!newWebhook.name || !newWebhook.url) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
 
-    const webhook: WebhookConfig = {
-      id: Date.now().toString(),
-      ...newWebhook,
-      enabled: true,
-      events: [],
-    };
+    try {
+      const payload = {
+        name: newWebhook.name,
+        url: newWebhook.url,
+        platform: newWebhook.platform,
+        is_active: true,
+        events: []
+      };
 
-    setWebhooks((prev) => [...prev, webhook]);
-    setNewWebhook({ name: "", url: "", platform: "slack" });
-    setShowAddForm(false);
-    toast.success("Webhook adicionado com sucesso");
+      const { data } = await api.post('/api/webhooks/', payload);
+
+      const created = {
+        id: data.id.toString(),
+        name: data.name,
+        url: data.url,
+        platform: data.platform,
+        enabled: data.is_active,
+        events: data.events
+      };
+
+      setWebhooks((prev) => [created, ...prev]);
+      setNewWebhook({ name: "", url: "", platform: "slack" });
+      setShowAddForm(false);
+      toast.success("Webhook adicionado com sucesso");
+    } catch (err) {
+      toast.error("Erro ao criar webhook.");
+    }
   };
 
-  const handleRemoveWebhook = (id: string) => {
-    setWebhooks((prev) => prev.filter((w) => w.id !== id));
-    toast.success("Webhook removido");
+  const handleRemoveWebhook = async (id: string) => {
+    try {
+      await api.delete(`/api/webhooks/${id}/`);
+      setWebhooks((prev) => prev.filter((w) => w.id !== id));
+      toast.success("Webhook removido");
+    } catch (err) {
+      toast.error("Erro ao remover webhook.");
+    }
   };
 
-  const handleToggleWebhook = (id: string) => {
+  const handleToggleWebhook = async (id: string) => {
+    const webhook = webhooks.find(w => w.id === id);
+    if (!webhook) return;
+
+    // Optimistic Update
+    const newState = !webhook.enabled;
     setWebhooks((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, enabled: !w.enabled } : w))
+      prev.map((w) => (w.id === id ? { ...w, enabled: newState } : w))
     );
+
+    try {
+      await api.patch(`/api/webhooks/${id}/`, { is_active: newState });
+    } catch (err) {
+      // Revert on error
+      setWebhooks((prev) =>
+        prev.map((w) => (w.id === id ? { ...w, enabled: !newState } : w))
+      );
+      toast.error("Erro ao atualizar status.");
+    }
   };
 
-  const handleToggleEvent = (webhookId: string, eventId: string) => {
+  const handleToggleEvent = async (webhookId: string, eventId: string) => {
+    const webhook = webhooks.find(w => w.id === webhookId);
+    if (!webhook) return;
+
+    let newEvents = webhook.events.includes(eventId)
+      ? webhook.events.filter((e) => e !== eventId)
+      : [...webhook.events, eventId];
+
+    // Optimistic Update
     setWebhooks((prev) =>
       prev.map((w) => {
         if (w.id !== webhookId) return w;
-        const events = w.events.includes(eventId)
-          ? w.events.filter((e) => e !== eventId)
-          : [...w.events, eventId];
-        return { ...w, events };
+        return { ...w, events: newEvents };
       })
     );
+
+    try {
+      await api.patch(`/api/webhooks/${webhookId}/`, { events: newEvents });
+    } catch (err) {
+      // Revert
+      setWebhooks((prev) =>
+        prev.map((w) => {
+          if (w.id !== webhookId) return w;
+          return { ...w, events: webhook.events };
+        })
+      );
+      toast.error("Erro ao salvar eventos.");
+    }
   };
 
   const handleTestWebhook = async (webhook: WebhookConfig) => {
+    // Ideally this would hit a backend endpoint /api/webhooks/{id}/test/
+    // For now we simulate
     toast.promise(
       new Promise((resolve) => setTimeout(resolve, 1500)),
       {
         loading: "Testando webhook...",
-        success: "Teste do webhook bem-sucedido!",
+        success: "Simulação de teste enviada!",
         error: "Falha ao enviar mensagem de teste",
       }
     );
@@ -196,22 +278,20 @@ export function IntegrationsTab() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      webhook.platform === "slack"
-                        ? "bg-[#4A154B]/20"
-                        : webhook.platform === "discord"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center ${webhook.platform === "slack"
+                      ? "bg-[#4A154B]/20"
+                      : webhook.platform === "discord"
                         ? "bg-[#5865F2]/20"
                         : "bg-muted"
-                    }`}
+                      }`}
                   >
                     <MessageSquare
-                      className={`w-4 h-4 ${
-                        webhook.platform === "slack"
-                          ? "text-[#4A154B]"
-                          : webhook.platform === "discord"
+                      className={`w-4 h-4 ${webhook.platform === "slack"
+                        ? "text-[#4A154B]"
+                        : webhook.platform === "discord"
                           ? "text-[#5865F2]"
                           : "text-muted-foreground"
-                      }`}
+                        }`}
                     />
                   </div>
                   <div>
@@ -258,26 +338,23 @@ export function IntegrationsTab() {
                   <button
                     key={event.id}
                     onClick={() => handleToggleEvent(webhook.id, event.id)}
-                    className={`p-3 rounded-lg text-left transition-all ${
-                      webhook.events.includes(event.id)
-                        ? "bg-primary/10 border border-primary/30"
-                        : "bg-background border border-border hover:border-muted-foreground/50"
-                    }`}
+                    className={`p-3 rounded-lg text-left transition-all ${webhook.events.includes(event.id)
+                      ? "bg-primary/10 border border-primary/30"
+                      : "bg-background border border-border hover:border-muted-foreground/50"
+                      }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Bell
-                        className={`w-4 h-4 ${
-                          webhook.events.includes(event.id)
-                            ? "text-primary"
-                            : "text-muted-foreground"
-                        }`}
+                        className={`w-4 h-4 ${webhook.events.includes(event.id)
+                          ? "text-primary"
+                          : "text-muted-foreground"
+                          }`}
                       />
                       <span
-                        className={`text-xs font-medium ${
-                          webhook.events.includes(event.id)
-                            ? "text-primary"
-                            : "text-foreground"
-                        }`}
+                        className={`text-xs font-medium ${webhook.events.includes(event.id)
+                          ? "text-primary"
+                          : "text-foreground"
+                          }`}
                       >
                         {event.label}
                       </span>

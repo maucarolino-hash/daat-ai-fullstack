@@ -4,10 +4,10 @@ from .models import Diagnostic
 from .services import analyze_idea  # Importar a nova lógica
 
 @shared_task
-def analyze_startup_task(segment, problem, proposition, user_id):
+def analyze_startup_task(segment, problem, proposition, user_id, pitch_deck_text=None):
     try:
         # Chamar a engine centralizada em services.py
-        result = analyze_idea(segment, problem, proposition)
+        result = analyze_idea(segment, problem, proposition, pitch_deck_text)
         
         # Salvar no Banco de Dados (Histórico) se tiver usuário
         if user_id:

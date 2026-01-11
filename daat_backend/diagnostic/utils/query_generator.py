@@ -26,12 +26,14 @@ class SearchQueryGenerator:
         # Query 3: Empresas com funding neste espaço
         if sector:
             queries.append(f"{sector} startups funding 2024 Crunchbase")
+            queries.append(f"top {sector} companies Brazil market share") # ADDED: Leaders
         
         # Query 4: Alternativas de mercado
         if solution_type:
             queries.append(f"alternatives to {solution_type}")
+            queries.append(f"biggest players in {sector} Brazil") # ADDED: Giants
         
-        return queries[:4]  # Máximo 4 queries para não sobrecarregar
+        return queries[:6]  # Increased limit to capture giants
     
     @staticmethod
     def generate_market_size_queries(startup_data):
@@ -76,3 +78,16 @@ class SearchQueryGenerator:
             'market_size': SearchQueryGenerator.generate_market_size_queries(startup_data),
             'trends': SearchQueryGenerator.generate_trend_queries(startup_data)
         }
+
+    @staticmethod
+    def generate_deep_dive_queries(competitor_name, sector):
+        """
+        Gera queries específicas para investigar um concorrente a fundo
+        """
+        queries = [
+            f"{competitor_name} revenue 2024",
+            f"{competitor_name} market share {sector}",
+            f"{competitor_name} customer reviews weaknesses complaints",
+            f"{competitor_name} vs competitors features"
+        ]
+        return queries

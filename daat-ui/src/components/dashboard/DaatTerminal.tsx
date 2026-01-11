@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Terminal, Sparkles } from "lucide-react";
+import { Terminal, Sparkles, Loader2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useDaatEngine } from "@/lib/daat-engine/context";
 import { PHASE_NAMES, TerminalLog } from "@/lib/daat-engine/types";
@@ -34,15 +34,18 @@ export function DaatTerminal() {
   const showInsight = result && !isAnalyzing;
 
   return (
-    <div className="glass-card overflow-hidden">
+    <div className={cn(
+      "glass-card overflow-hidden transition-all duration-500",
+      isAnalyzing && "border-primary/50 shadow-[0_0_30px_-5px_rgba(var(--primary-rgb),0.3)] ring-1 ring-primary/20"
+    )}>
       {/* Terminal Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-secondary/30">
-        <Terminal className="w-4 h-4 text-primary" />
+        <Terminal className={cn("w-4 h-4 text-primary", isAnalyzing && "animate-pulse")} />
         <span className="text-sm font-medium text-foreground">Motor Daat AI</span>
         <div className="ml-auto flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-destructive/70" />
-          <div className="w-3 h-3 rounded-full bg-neon-orange/70" />
-          <div className="w-3 h-3 rounded-full bg-primary/70" />
+          <div className={cn("w-3 h-3 rounded-full bg-destructive/70", isAnalyzing && "animate-bounce delay-75")} />
+          <div className={cn("w-3 h-3 rounded-full bg-neon-orange/70", isAnalyzing && "animate-bounce delay-150")} />
+          <div className={cn("w-3 h-3 rounded-full bg-primary/70", isAnalyzing && "animate-bounce delay-300")} />
         </div>
       </div>
 
@@ -58,24 +61,24 @@ export function DaatTerminal() {
             </span>
           </div>
           <Progress value={progressPercent} className="h-2" />
-          
+
           {/* Phase Indicators */}
           <div className="flex justify-between mt-2">
             {[1, 2, 3, 4].map((phase) => (
-              <div 
+              <div
                 key={phase}
                 className={cn(
                   "flex items-center gap-1 text-xs",
                   phase < currentPhase ? "text-primary" :
-                  phase === currentPhase ? "text-accent" :
-                  "text-muted-foreground/50"
+                    phase === currentPhase ? "text-accent" :
+                      "text-muted-foreground/50"
                 )}
               >
                 <div className={cn(
                   "w-2 h-2 rounded-full",
                   phase < currentPhase ? "bg-primary" :
-                  phase === currentPhase ? "bg-accent animate-pulse" :
-                  "bg-muted-foreground/30"
+                    phase === currentPhase ? "bg-accent animate-pulse" :
+                      "bg-muted-foreground/30"
                 )} />
                 <span className="hidden sm:inline">{phase}</span>
               </div>
@@ -85,7 +88,7 @@ export function DaatTerminal() {
       )}
 
       {/* Terminal Body */}
-      <div 
+      <div
         ref={scrollRef}
         className="terminal-bg p-4 min-h-[300px] max-h-[400px] font-mono text-sm space-y-1 overflow-y-auto scrollbar-thin"
       >
@@ -94,10 +97,10 @@ export function DaatTerminal() {
             $ aguardando_analise...
           </div>
         )}
-        
+
         {logs.map((log, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={cn(
               getLogColor(log),
               "animate-fade-in"
@@ -106,9 +109,12 @@ export function DaatTerminal() {
             {log.text}
           </div>
         ))}
-        
+
         {isAnalyzing && (
-          <div className="text-accent animate-pulse">▋</div>
+          <div className="text-accent flex items-center gap-2 mt-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span className="text-xs text-muted-foreground animate-pulse">Processando...</span>
+          </div>
         )}
       </div>
 
@@ -122,7 +128,7 @@ export function DaatTerminal() {
             </span>
           </div>
           <p className="text-sm text-foreground/90 leading-relaxed">
-            Análise completa para <strong>{state.segment}</strong>. 
+            Análise completa para <strong>{state.segment}</strong>.
             Pontuação final: <span className="text-accent font-bold">{result.scoreBreakdown.totalScore}/100</span> ({result.scoreBreakdown.classification}).
             Identificados {result.competitors.length} concorrentes e {result.riskAssessment.risks.length} riscos críticos.
             Roadmap de 90 dias gerado com {result.strategicAdvice.roadmap.length} ações prioritárias.

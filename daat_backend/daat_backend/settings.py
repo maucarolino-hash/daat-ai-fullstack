@@ -136,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -156,35 +156,36 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS CONFIGURATION
-CORS_ALLOW_ALL_ORIGINS = True 
+# CORS CONFIGURATION
+CORS_ALLOW_ALL_ORIGINS = False  # NEVER True in production
 CORS_ALLOW_CREDENTIALS = True
 
-# Lista de origens permitidas (Localhost)
+# Get origins from env (comma separated)
+env_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+env_origins = [o.strip() for o in env_origins if o.strip()]
+
+# Standard allowed origins
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:8080",
     "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174",
-    "http://localhost:5175",
-    "http://127.0.0.1:5175",
-    "http://localhost:5176",
-    "http://127.0.0.1:5176",
-    "https://daat-ai-fullstack.vercel.app", # URL Oficial
-    "https://daatai.com",
-    "https://www.daatai.com",
-    "http://daatai.com",
-    "http://www.daatai.com",
-]
+    "http://127.0.0.1:8080",
+] + env_origins
+
+# In production, add specific domains
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+        "https://daat-ai-fullstack.vercel.app",
+        "https://daatai.com",
+        "https://www.daatai.com",
+    ]
 
 # PERMITIR QUALQUER SUBDOMÍNIO DA VERCEL (Previews, Deploys, etc)
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",
 ]
 
-if DEBUG:
-    CORS_ALLOWED_ORIGINS += ['http://localhost:5173', 'http://127.0.0.1:5173']
-
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://daat-ai-fullstack.vercel.app", "https://daatai.com", "https://www.daatai.com", "http://daatai.com", "http://www.daatai.com"]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://daat-ai-fullstack.vercel.app"]
 
 from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -207,8 +208,18 @@ REST_FRAMEWORK = {
 # Configuração do JWT / Auth
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'daat-auth',
-    'JWT_AUTH_REFRESH_COOKIE': 'daat-refresh-token',
+    # 'JWT_AUTH_COOKIE': 'daat-auth',        # DISABLE COOKIES -> Return token in Body
+    # 'JWT_AUTH_REFRESH_COOKIE': 'daat-refresh-token',
+    'USER_DETAILS_SERIALIZER': 'diagnostic.serializers.UserCreditsSerializer',
+}
+
+# Configuração do JWT Explicita
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7), # EXTEND LIFETIME (Dev convenience)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'Rotate_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
 }
 
 # Para o MVP, simplificamos o registro (não pede confirmação de email agora)

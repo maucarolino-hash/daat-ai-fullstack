@@ -48,7 +48,7 @@ interface BattleModeProps {
 export function BattleMode({ isOpen, onClose }: BattleModeProps) {
   const { getCompetitors } = useDaatEngine();
   const analysisCompetitors = getCompetitors();
-  
+
   // Build competitors from Daat Engine data
   const competitors: Record<string, CompetitorData> = {
     ...defaultCompetitors,
@@ -99,7 +99,7 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
       <div className="fixed inset-0 bg-background/90 backdrop-blur-sm" onClick={onClose} />
 
       {/* Battle Arena */}
-      <div className="relative w-full max-w-3xl max-h-[85vh] my-auto animate-scale-in flex flex-col">
+      <div className="relative w-full max-w-3xl max-h-[80vh] my-auto animate-scale-in flex flex-col">
         {/* Close Button */}
         <Button
           variant="ghost"
@@ -111,7 +111,7 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
         </Button>
 
         {/* VS Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center justify-center gap-3">
             <Swords className="w-8 h-8 text-accent" />
             Modo Batalha
@@ -121,7 +121,7 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
         </div>
 
         {/* Competitor Selector */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-4">
           <Select value={selectedCompetitor} onValueChange={setSelectedCompetitor}>
             <SelectTrigger className="w-48 bg-secondary border-border">
               <SelectValue placeholder="Selecione o concorrente" />
@@ -137,7 +137,7 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
         </div>
 
         {/* Battle Grid */}
-        <div className="glass-card p-6 overflow-y-auto flex-1">
+        <div className="glass-card p-4 overflow-y-auto flex-1">
           {/* Headers */}
           <div className="grid grid-cols-[1fr_auto_1fr] gap-4 mb-6">
             <div className="text-right">
@@ -190,13 +190,13 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
                   <div className={cn(
                     "flex flex-col items-center gap-1 px-4 py-2 rounded-lg min-w-[140px]",
                     winner === "tie" ? "bg-muted/30" :
-                    winner === "us" ? "bg-accent/10 border border-accent/30" :
-                    "bg-neon-blue/10 border border-neon-blue/30"
+                      winner === "us" ? "bg-accent/10 border border-accent/30" :
+                        "bg-neon-blue/10 border border-neon-blue/30"
                   )}>
                     <Icon className={cn(
                       "w-5 h-5",
                       winner === "tie" ? "text-muted-foreground" :
-                      winner === "us" ? "text-accent" : "text-neon-blue"
+                        winner === "us" ? "text-accent" : "text-neon-blue"
                     )} />
                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {category.label}
@@ -237,14 +237,14 @@ export function BattleMode({ isOpen, onClose }: BattleModeProps) {
             <div className={cn(
               "text-center p-6 rounded-xl",
               overallWinner === "us" ? "bg-accent/10 border border-accent/30" :
-              overallWinner === "them" ? "bg-neon-blue/10 border border-neon-blue/30" :
-              "bg-muted/20 border border-border"
+                overallWinner === "them" ? "bg-neon-blue/10 border border-neon-blue/30" :
+                  "bg-muted/20 border border-border"
             )}>
               <Trophy className={cn(
                 "w-12 h-12 mx-auto mb-3",
                 overallWinner === "us" ? "text-accent" :
-                overallWinner === "them" ? "text-neon-blue" :
-                "text-muted-foreground"
+                  overallWinner === "them" ? "text-neon-blue" :
+                    "text-muted-foreground"
               )} />
               <div className="text-2xl font-bold">
                 {overallWinner === "us" ? (

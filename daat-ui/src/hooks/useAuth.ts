@@ -5,6 +5,8 @@ import api from "@/services/api";
 export interface User {
   id: string;
   email?: string;
+  credits?: number; // Added credits
+  is_premium?: boolean;
   user_metadata?: {
     full_name?: string;
   };
@@ -69,16 +71,37 @@ export function useAuth() {
       if (token) {
         localStorage.setItem('daat_token', token);
 
-        // Mock user object since login endpoint might not return user details
-        const mockUser: User = {
-          id: 'dj-user',
-          email: email,
-          user_metadata: { full_name: 'Usuário' }
-        };
-        // Ideally fetch user details here: const userResp = await api.get('/api/auth/user/');
 
-        localStorage.setItem('daat_user', JSON.stringify(mockUser));
-        setUser(mockUser);
+        // Fetch Real User Details to get Credits
+        try {
+          const userResp = await api.get('/api/auth/user/', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const userData = userResp.data;
+
+          // Map backend fields to frontend User interface
+          const realUser: User = {
+            id: userData.pk || userData.id,
+            email: userData.email,
+            credits: userData.credits,
+            is_premium: userData.is_premium,
+            user_metadata: { full_name: `${userData.first_name} ${userData.last_name}`.trim() }
+          };
+
+          localStorage.setItem('daat_user', JSON.stringify(realUser));
+          setUser(realUser);
+        } catch (uErr) {
+          console.error("Failed to fetch user details", uErr);
+          // Fallback to mock if fetch fails
+          const mockUser: User = {
+            id: 'dj-user',
+            email: email,
+            credits: 0,
+            user_metadata: { full_name: 'Usuário' }
+          };
+          setUser(mockUser);
+        }
+
         return { error: null };
       }
       return { error: { message: "Token não recebido" } };

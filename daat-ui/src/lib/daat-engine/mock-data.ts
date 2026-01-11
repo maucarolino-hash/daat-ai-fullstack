@@ -93,12 +93,15 @@ export const createMockAnalysisResult = (segment: string): AnalysisResult => ({
   },
 
   scoreBreakdown: {
-    marketOpportunity: 26, // max 30
-    competitivePosition: 24, // max 30
-    executionViability: 20, // max 25
-    riskAdjustment: -8, // max -15
-    totalScore: 72,
-    classification: 'Viabilidade Moderada',
+    marketOpportunity: 16, // max 20
+    traction: 18, // max 25
+    businessModel: 14, // max 20
+    team: 10, // max 15
+    competitivePosition: 7, // max 10
+    financials: 6, // max 10
+    presentation: 3, // max 5
+    totalScore: 74,
+    classification: 'Promissor',
   },
 
   strategicAdvice: {

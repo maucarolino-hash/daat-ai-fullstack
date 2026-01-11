@@ -15,7 +15,7 @@ export default function Settings() {
   const { isDarkMode, reducedMotion, toggleTheme, setReducedMotion } = usePreferences();
   const { profile, loading: profileLoading, updateProfile } = useProfile();
   const { user } = useAuth();
-  
+
   const [fullName, setFullName] = useState("");
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
@@ -32,7 +32,7 @@ export default function Settings() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    
+
     const { error } = await updateProfile({
       full_name: fullName || null,
       company: company || null,
@@ -45,7 +45,7 @@ export default function Settings() {
     } else {
       toast.success("Configurações salvas com sucesso");
     }
-    
+
     setIsSaving(false);
   };
 
@@ -235,15 +235,24 @@ export default function Settings() {
             <div className="p-3 sm:p-4 rounded-lg bg-accent/10 border border-accent/30">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <span className="text-base sm:text-lg font-bold text-foreground">Plano Pro</span>
-                  <p className="text-xs sm:text-sm text-muted-foreground">500 créditos / mês</p>
+                  <span className="text-base sm:text-lg font-bold text-foreground">
+                    {user?.is_premium ? "Plano Premium" : "Plano Gratuito"}
+                  </span>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    {user?.credits || 0} créditos disponíveis
+                  </p>
                 </div>
-                <span className="text-xl sm:text-2xl font-bold neon-text-purple">R$499/mês</span>
+                <span className="text-xl sm:text-2xl font-bold neon-text-purple">
+                  {user?.is_premium ? "R$49,90/mês" : "R$0,00"}
+                </span>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-              <Button variant="outline" className="w-full sm:w-auto">Ver Faturas</Button>
-              <Button variant="cyber" className="w-full sm:w-auto">Upgrade do Plano</Button>
+              {!user?.is_premium && (
+                <Button variant="cyber" className="w-full sm:w-auto" onClick={() => toast.info("Integração com Stripe em breve!")}>
+                  Fazer Upgrade
+                </Button>
+              )}
             </div>
           </div>
 
@@ -251,16 +260,20 @@ export default function Settings() {
             <h2 className="text-lg font-semibold text-foreground">Uso de Créditos</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Créditos Usados</span>
-                <span className="text-foreground font-medium">347 / 500</span>
+                <span className="text-muted-foreground">Créditos Disponíveis</span>
+                <span className="text-foreground font-medium">{user?.credits || 0}</span>
               </div>
+
+              {/* Progress Bar (Visual Only for now, relative to an arbitrary cap like 10 or 100) */}
               <div className="h-2 bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full gradient-progress"
-                  style={{ width: "69.4%" }}
+                  style={{ width: `${Math.min(((user?.credits || 0) / 10) * 100, 100)}%` }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">Renova em 1 de Janeiro de 2025</p>
+              <p className="text-xs text-muted-foreground">
+                Dica: Cada análise consome 1 crédito.
+              </p>
             </div>
           </div>
         </TabsContent>

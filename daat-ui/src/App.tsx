@@ -14,6 +14,8 @@ import AnalysisOverview from "./pages/AnalysisOverview";
 import AnalysisSimulator from "./pages/AnalysisSimulator";
 import AnalysisFeatures from "./pages/AnalysisFeatures";
 import AnalysisReport from "./pages/AnalysisReport";
+import PitchGenerator from "./pages/PitchGenerator";
+import VCDashboard from "./pages/VCDashboard";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -26,7 +28,7 @@ const App = () => (
       <DaatEngineProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route
@@ -43,6 +45,7 @@ const App = () => (
                       <Route path="/analysis/simulator" element={<AnalysisSimulator />} />
                       <Route path="/analysis/features" element={<AnalysisFeatures />} />
                       <Route path="/report" element={<AnalysisReport />} />
+                      <Route path="/generator" element={<PitchGenerator />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

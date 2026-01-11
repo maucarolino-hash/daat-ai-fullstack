@@ -42,43 +42,46 @@ Para cada premissa-chave que a startup declara, pesquise se há dados que confir
 - Se startup diz "crescimento de Y% ao ano" → confirme com fontes
 
 FORMATO DE OUTPUT (JSON):
-{
+{{
   "competitors": [
-    {
+    {{
       "name": "Nome da Empresa",
       "location": "País",
       "founded": "Ano",
       "funding": "Valor captado ou 'Não disponível'",
       "differentiation": "O que eles fazem diferente",
       "source_url": "URL onde encontrou"
-    }
+    }}
   ],
-  "market_data": {
+  "market_data": {{
     "market_size": "Valor com unidade",
     "market_size_source": "URL da fonte",
     "potential_customers": "Número de potenciais clientes",
     "potential_customers_source": "URL da fonte",
     "growth_rate": "% ou 'Não disponível'",
     "investment_trends": "Descrição de tendências com números"
-  },
+  }},
   "premise_validation": [
-    {
+    {{
       "premise": "Premissa declarada pela startup",
       "validation": "Confirmada/Contradita/Inconclusiva",
       "evidence": "Dados encontrados",
       "source": "URL"
-    }
+    }}
   ],
   "search_queries_used": ["Lista das queries que você usou"],
   "data_quality_note": "Nota sobre confiabilidade dos dados encontrados"
-}
+}}
 
 REGRAS CRÍTICAS:
 - SEMPRE inclua URLs das fontes
 - Se não encontrar dados, diga explicitamente "Dados não disponíveis"
 - NUNCA invente números
 - Diferencie claramente entre concorrentes DIRETOS (mesma solução) e INDIRETOS (setor similar)
-- Se a startup compete com gigantes estabelecidos, isso é informação crítica a reportar
+- **CRÍTICO: VOCÊ DEVE INCLUIR OS GIGANTES DO SETOR (INCUMBENTS).**
+  - Se a startup for de e-commerce, LISTE Amazon, Mercado Livre, Magalu, VTEX.
+  - Se for de Fintech, LISTE Nubank, XP, Bancos Tradicionais.
+  - Ignorar os grandes players é um ERRO GRAVE. Liste-os como "Concorrentes Indiretos" ou "Substitutos" se a solução não for idêntica, mas capture a presença deles.
 """
 
 PROMPT_PHASE_2_CRITICAL_ANALYSIS = """
@@ -145,7 +148,7 @@ Gere um JSON com:
 
 PROMPT_FINAL_COMPILATION = """
 Você é o Editor Chefe do Daat AI Reports.
-Seu trabalho é compilar todas as análises JSON anteriores em um RELATÓRIO ESTRUTURADO PROFISSIONAL.
+Seu trabalho é compilar todas as análises JSON anteriores em um RELATÓRIO ESTRUTURADO em formato JSON.
 
 **DADOS**
 Score: {final_score} - {classification}
@@ -153,34 +156,104 @@ Mercado: {market_research_formatted}
 Crítica: {critical_analysis_formatted}
 Estratégia: {strategic_advice_formatted}
 
-**PROTOCOLO DE ESTIMATIVA (MANDATÓRIO)**
-NUNCA diga "dados não disponíveis", "ausência de dados", "confiança baixa", "sem dados de mercado".
-Se não houver dados exatos, use ESTIMATIVA DE FERMI:
-- Exemplo: "Estimamos o mercado brasileiro de [setor] em R$ X bilhões, baseado em [lógica]"
-- Exemplo: "Identificamos aproximadamente X mil potenciais clientes no Brasil"
-- Se não encontrou concorrentes diretos, diga: "Mercado early-stage com poucos players estabelecidos, indicando oportunidade de liderança"
+**PROTOCOLO DE ESTIMATIVA (CRÍTICO E OBRIGATÓRIO)**
+- É ESTRITAMENTE PROIBIDO retornar "Não disponível", "Não estimado", "N/A" ou valores vazios para `marketSize`.
+- Se o dado exato não estiver presente, você DEVE CALCULAR UMA ESTIMATIVA DE FERMI baseada no tamanho da população e ticket médio provável.
+- Exemplo: "Estimado em R$ 2.4 Bilhões (Baseado em 1% de 20M x R$100)"
+- Para `growthRate`, se não houver dados, assuma com base no PIB do setor (ex: "5-10% (Estimado)").
 
 **ESTILO MCKINSEY (MANDATÓRIO)**
 - Seja ASSERTIVO. Use "Identificamos", "O mercado é", "A oportunidade está". Nunca use "Parece que", "Talvez".
 - Se houver dados estimados, apresente-os como "Estimativa de Mercado", mas não deixe o campo vazio.
 - Use nomes reais de competidores ou substitutos sem medo.
 
-**ESTRUTURA OBRIGATÓRIA**:
-Você deve usar EXATAMENTE os marcadores abaixo (com colchetes). Não erre a digitação.
+**ESTRUTURA DE RESPOSTA (JSON OBRIGATÓRIO)**:
+Responda APENAS um JSON válido. Não inclua markdown.
 
-[SEÇÃO 1: Análise de Mercado]
-(Escreva um texto corrido rico. Exemplo: "Identificamos cinco concorrentes diretos no Brasil... O mercado está avaliado em R$ 50 bilhões...". Inclua TAM/SAM/SOM se houver.)
+{{
+  "sections": {{
+    "mercado": "Análise detalhada do tamanho de mercado, concorrentes e tendências.",
+    "forcas": ["Força 1", "Força 2", "Oportunidade 1"],
+    "riscos": ["Risco 1: Descrição", "Risco 2: Descrição"],
+    "conselho": "Roadmap prático e conselho estratégico final."
+  }},
+  "metrics": {{
+    "marketSize": "R$ X Bilhões (Estimado)",
+    "competitorCount": 5,
+    "competitors": [
+      {{
+        "name": "Nome",
+        "marketShare": "Líder/Nicho/Novo",
+        "strength": "Ponto Forte"
+      }}
+    ],
+    "growthRate": "15% (Apenas numero e %)",
+    "potentialCustomers": "X mil clientes"
+  }}
+}}
 
-[SEÇÃO 2: Forças e Potencial]
-(Liste forcas e oportunidades. Tente incluir uma lista de concorrentes diretos identificados na Fase 1 aqui também, se fizer sentido.)
+**REGRAS FINAIS DE FORMATAÇÃO**:
+1. Para `growthRate`, retorne números limpos (ex: "15%", "10.5%"). Não use texto longo.
+2. Se `competitorCount` for 0 na pesquisa, INVENTE 3 concorrentes indiretos baseados no setor (ex: Planilhas Excel, Processos Manuais, Grandes ERPs). NUNCA retorne 0.
+3. O objetivo é vender a visão. Seja otimista mas realista nas estimativas.
+"""
 
-[SEÇÃO 3: Riscos e Desafios]
-(Liste riscos de forma direta. Ex: "- Concorrência estabelecida: Alto risco devido a players como Nubank.")
+PROMPT_EXPLAINABLE_SCORING = """
+Você é o Comitê de Investimento Senior do Daat VC. Sua função é avaliar startups com rigor extremo, explicando cada ponto da nota.
 
-[SEÇÃO 4: Conselho Estratégico]
-(Roadmap prático. Ex: "A validação prioritária principal é... A próxima ação concreta é realizar entrevistas...").
+CONTEXTO DA AVALIAÇÃO:
+- Setor: {sector}
+- Estágio: {stage}
 
-**REGRAS FINAIS**:
-1. O texto deve ser denso e profissional, não genérico.
-2. Certifique-se de que cada seção comece com o marcador exato `[SEÇÃO X: Título]`.
+RESUMO DO PITCH DECK:
+{deck_summary}
+
+BENCHMARKS DE MERCADO E COMPETIDORES:
+{benchmarks}
+
+SEU OBJETIVO:
+Calcular um Score de Investimento (0-100) baseado em 5 pilares, justificando cada nota com FATOS do deck ou do mercado.
+
+CRITÉRIOS DE AVALIAÇÃO (PESOS):
+1. **Problema & Tamanho do Mercado (20%)**: A dor é aguda? O mercado é >$1B ou nicho de rápido crescimento?
+2. **Solução & Produto (20%)**: Existe diferencial técnico defensável? O produto já está validado?
+3. **Tração & Métricas (20%)**: Receita, crescimento e engajamento condizem com o estágio {stage}?
+4. **Time & Cap Table (20%)**: Fundadores têm experiência no setor? (Se não informado, assuma neutro/baixo)
+5. **Vantagem Competitiva (Moat) (20%)**: Por que não vão ser copiados amanhã?
+
+ESTRUTURA DE RESPOSTA OBRIGATÓRIA (JSON):
+{{
+  "scores": {{
+    "team": {{ "score": 0-100, "reason": "...", "weight": 0.2 }},
+    "problem_market": {{ "score": 0-100, "reason": "...", "weight": 0.2 }},
+    "solution_product": {{ "score": 0-100, "reason": "...", "weight": 0.2 }},
+    "traction": {{ "score": 0-100, "reason": "...", "weight": 0.2 }},
+    "moat": {{ "score": 0-100, "reason": "...", "weight": 0.2 }}
+  }},
+  "total_score": 0-100,
+  "total_score_method": "Explicação matemática da soma ponderada",
+  "recommendation": "INVESTIR / ACOMPANHAR / PASSAR / RISCO ALTO"
+}}
+
+SEJA DURO. Notas acima de 80 são raras. Notas acima de 90 apenas para unicórnios óbvios.
+"""
+
+PROMPT_VC_SCREENING_SINGLE = """
+Atue como um Analista de Triagem de VC (Analyst Level).
+Sua tarefa é ler o texto bruto de um Pitch Deck e extrair as informações essenciais para a reunião de Partners na segunda-feira.
+
+STARTUP: {startup_name}
+SETOR: {sector}
+
+TEXTO DO DECK:
+{pitch_deck_text}
+
+EXTRAIA E ANALISE (JSON):
+{{
+  "name": "Nome da Startup (identificado no texto)",
+  "score": 0-100 (Sua nota preliminar),
+  "recommendation": "Advance / Pass / Watch",
+  "short_rationale": "Uma frase de resumo do porquê.",
+  "key_flags": ["Flag Vermelha 1", "Flag Verde 1"]
+}}
 """

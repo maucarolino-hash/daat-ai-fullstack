@@ -15,7 +15,7 @@ Este guia explica como hospedar o **Daat AI** (Fullstack Django + React) na Host
 3.  **Acesso SSH:** Anote o IP do servidor e a senha de root.
 4.  Conecte-se via terminal:
     ```bash
-    ssh root@SEU_IP_AQUI
+    ssh root@92.113.39.141
     ```
 
 ---
@@ -119,8 +119,8 @@ volumes:
 
 1.  **Clone seu repositório no VPS:**
     ```bash
-    git clone https://github.com/SEU_USUARIO/SEU_REPO.git
-    cd SEU_REPO
+    git clone https://github.com/maucarolino-hash/daat-ai-fullstack.git
+    cd daat-ai-fullstack
     ```
 
 2.  **Crie o arquivo .env no servidor:**

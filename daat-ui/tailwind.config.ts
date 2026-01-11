@@ -58,6 +58,10 @@ export default {
           blue: "hsl(var(--neon-blue))",
           orange: "hsl(var(--neon-orange))",
         },
+        brand: {
+          navy: "#050552",
+          gold: "#e99c00",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

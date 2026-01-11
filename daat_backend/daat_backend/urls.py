@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +25,5 @@ urlpatterns = [
     # NOVAS ROTAS DE AUTENTICAÇÃO
     path('api/auth/', include('dj_rest_auth.urls')),                # Login, Logout, User
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')), # Cadastro
+    path('', lambda request: JsonResponse({"message": "Daat Backend is running!", "docs": "/api/health/"})),
 ]

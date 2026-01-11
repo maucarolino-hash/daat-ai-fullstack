@@ -60,3 +60,6 @@ watchfiles==1.1.1
 wcwidth==0.2.14
 websockets==15.0.1
 whitenoise==6.11.0
+weasyprint==60.1
+markdown==3.5.1
+pypdf==6.5.0

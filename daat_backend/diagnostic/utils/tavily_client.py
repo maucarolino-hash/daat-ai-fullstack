@@ -29,6 +29,11 @@ class TavilySearchClient:
         """
         for attempt in range(self.max_retries):
             try:
+                # Limit query length to 390 to be safe (API max is 400)
+                if len(query) > 390:
+                    logger.warning(f"⚠️ Query truncada: {len(query)} chars -> 390 chars")
+                    query = query[:390]
+                
                 logger.info(f"🔍 Pesquisando: '{query}' (tentativa {attempt + 1}/{self.max_retries})")
                 
                 result = self.client.search(

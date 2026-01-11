@@ -7,8 +7,8 @@ def test_login():
     
     # Try with correct payload for 'email' auth method
     payload = {
-        "email": "test@example.com",
-        "password": "password123"
+        "email": "admin@daatai.com",
+        "password": "admin123"
     }
 
     try:

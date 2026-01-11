@@ -3,11 +3,10 @@
  * Exporta dados do relatório Daat em formato Excel (.xlsx)
  */
 import * as XLSX from 'xlsx';
-import { parseFeedback } from '../utils/feedbackParser';
 
 /**
  * Gera e faz download de arquivo Excel com os dados do relatório
- * @param {Object} result - Resultado da análise (score, feedback)
+ * @param {Object} result - Resultado da análise (score, feedback, structured data)
  * @param {string} customerSegment - Segmento de cliente
  * @param {string} problem - Problema identificado
  * @param {string} valueProposition - Proposta de valor
@@ -16,8 +15,13 @@ export async function generateExcel(result, customerSegment, problem, valuePropo
     try {
         console.log('📊 Gerando arquivo Excel...');
 
-        // Parse do feedback para extrair seções
-        const sections = parseFeedback(result.feedback);
+        // Use structured data if available, otherwise fallback
+        const sections = {
+            mercado: result.marketData?.trends?.join('\n') || result.sections?.mercado || "Dados de mercado estruturados disponíveis no relatório PDF.",
+            forcas: result.riskAssessment?.strengths?.map(s => s.title) || result.sections?.forcas || [],
+            riscos: result.riskAssessment?.risks?.map(r => r.title) || result.sections?.riscos || [],
+            conselho: result.strategicAdvice?.quickWins?.join('\n') || result.sections?.conselho || "Ver plano de ação detalhado no PDF online."
+        };
 
         // Criar novo workbook
         const workbook = XLSX.utils.book_new();
@@ -26,8 +30,8 @@ export async function generateExcel(result, customerSegment, problem, valuePropo
         const summaryData = [
             ['DAAT AI - RELATÓRIO DE VIABILIDADE'],
             [],
-            ['Score de Viabilidade', result.score],
-            ['Status', result.score >= 60 ? 'ALTA VIABILIDADE' : result.score >= 40 ? 'MÉDIA VIABILIDADE' : 'BAIXA VIABILIDADE'],
+            ['Score de Viabilidade', result.score || result.scoreBreakdown?.totalScore],
+            ['Status', (result.score || result.scoreBreakdown?.totalScore) >= 60 ? 'ALTA VIABILIDADE' : (result.score || result.scoreBreakdown?.totalScore) >= 40 ? 'MÉDIA VIABILIDADE' : 'BAIXA VIABILIDADE'],
             [],
             ['INFORMAÇÕES DO NEGÓCIO'],
             ['Segmento de Cliente', customerSegment],
@@ -49,7 +53,12 @@ export async function generateExcel(result, customerSegment, problem, valuePropo
         const marketData = [
             ['ANÁLISE DE MERCADO'],
             [],
-            [sections.mercado || 'Não disponível']
+            ['TAM', result.marketData?.tam || 'N/A'],
+            ['Crescimento', result.marketData?.growthRate + '%' || 'N/A'],
+            [],
+            ['Concorrentes Identificados', (result.competitors?.length || 0) + ' Players'],
+            [],
+            [sections.mercado]
         ];
 
         const marketSheet = XLSX.utils.aoa_to_sheet(marketData);
@@ -93,7 +102,7 @@ export async function generateExcel(result, customerSegment, problem, valuePropo
         const adviceData = [
             ['CONSELHO ESTRATÉGICO (ROADMAP)'],
             [],
-            [sections.conselho || 'Não disponível']
+            [sections.conselho]
         ];
 
         const adviceSheet = XLSX.utils.aoa_to_sheet(adviceData);
@@ -101,10 +110,13 @@ export async function generateExcel(result, customerSegment, problem, valuePropo
         XLSX.utils.book_append_sheet(workbook, adviceSheet, 'Estratégia');
 
         // ABA 5: Feedback Completo (Raw)
+        // If feedback is an object (JSON), stringify it.
+        const feedbackText = typeof result.feedback === 'object' ? JSON.stringify(result.feedback, null, 2) : result.feedback;
+
         const rawData = [
             ['FEEDBACK COMPLETO DA IA'],
             [],
-            [result.feedback || 'Não disponível']
+            [feedbackText || 'Não disponível']
         ];
 
         const rawSheet = XLSX.utils.aoa_to_sheet(rawData);
@@ -112,7 +124,7 @@ export async function generateExcel(result, customerSegment, problem, valuePropo
         XLSX.utils.book_append_sheet(workbook, rawSheet, 'Feedback Completo');
 
         // Gerar e baixar arquivo
-        const filename = `Daat_Relatorio_${result.score}.xlsx`;
+        const filename = `Daat_Relatorio_${result.score || result.scoreBreakdown?.totalScore}.xlsx`;
         XLSX.writeFile(workbook, filename);
 
         console.log(`✅ Excel gerado: ${filename}`);

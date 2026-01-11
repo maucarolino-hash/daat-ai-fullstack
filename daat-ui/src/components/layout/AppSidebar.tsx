@@ -60,22 +60,25 @@ export function AppSidebar() {
         <div className="flex items-center justify-center group-data-[state=expanded]:justify-start">
           {/* Mobile: show full logo without animation */}
           <div className="flex md:hidden items-center">
-            <span className="text-xl font-bold text-neon-blue whitespace-nowrap">
-              D<span className="text-sidebar-foreground">aat</span> <span className="text-neon-blue">IA</span>
+            <span className="text-xl font-bold text-brand-navy whitespace-nowrap flex items-center gap-2">
+              <img src="/Logo_Daat.svg" alt="Daat Logo" className="h-8 w-auto" />
+              <span>
+                <span className="text-brand-navy">Daat</span><span className="text-brand-gold">.AI</span>
+              </span>
             </span>
           </div>
 
           {/* Desktop: animated logo with slide effect */}
           <div className="hidden md:flex relative items-center">
-            {/* D letter - always visible, on top */}
-            <span className="text-xl font-bold text-neon-blue z-20 relative">D</span>
-            
+            {/* Logo Icon - always visible, on top */}
+            <img src="/Logo_Daat.svg" alt="Daat Logo" className="h-8 w-auto z-20 relative" />
+
             {/* "aat IA" positioned to slide out from behind the D */}
             <div className={cn(
               "absolute left-0 flex items-center z-10",
               "transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
               "group-data-[collapsible=icon]:translate-x-0",
-              "group-data-[state=expanded]:translate-x-[0.85rem]"
+              "group-data-[state=expanded]:translate-x-[2rem]"
             )}>
               <span className={cn(
                 "text-xl font-bold whitespace-nowrap",
@@ -83,7 +86,7 @@ export function AppSidebar() {
                 "group-data-[collapsible=icon]:opacity-0",
                 "group-data-[state=expanded]:opacity-100"
               )}>
-                <span className="text-sidebar-foreground">aat</span> <span className="text-neon-blue">IA</span>
+                <span className="text-brand-navy">Daat</span><span className="text-brand-gold">.AI</span>
               </span>
             </div>
           </div>

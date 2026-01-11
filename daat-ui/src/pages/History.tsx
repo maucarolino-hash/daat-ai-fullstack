@@ -12,6 +12,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import api from "@/services/api";
 
 // Types matching Backend Data
@@ -60,6 +70,12 @@ export default function History() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [riskFilter, setRiskFilter] = useState<RiskFilter>("all");
 
+  // Rename State
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [reportToRename, setReportToRename] = useState<{ id: number, title: string } | null>(null);
+  const [newTitle, setNewTitle] = useState("");
+  const [isRenaming, setIsRenaming] = useState(false);
+
   // Fetch Data from Backend
   useEffect(() => {
     const fetchHistory = async () => {
@@ -88,6 +104,10 @@ export default function History() {
             riskLevel: risk,
           };
         });
+
+        if (response.data.debug_user) {
+          toast.info(`Debug: Conectado como ${response.data.debug_user} (ID: ${response.data.debug_id}). Itens: ${mappedReports.length}`);
+        }
 
         setReports(mappedReports);
       } catch (error) {
@@ -119,11 +139,6 @@ export default function History() {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "date-desc":
-          // Simple parsing assuming DD MMM, YYYY format or just relying on load order if date string is tricky
-          // Better: keep ISO date in object for sorting? 
-          // For now, let's rely on ID descending as proxy for date desc since it's auto-increment, or parse the date string carefully.
-          // Since we formatted it to pt-BR, parsing back is annoying. 
-          // Quick fix: Sort by ID for now as it correlates with Date.
           return b.id - a.id;
         case "date-asc":
           return a.id - b.id;
@@ -149,8 +164,53 @@ export default function History() {
   };
 
   const handleReportClick = (reportId: number) => {
-    // Navigate to report with ID query param
     navigate(`/report?id=db_task_${reportId}`);
+  };
+
+  const handleAction = async (action: string, id: number) => {
+    if (action === 'delete') {
+      if (window.confirm("Tem certeza que deseja excluir esta análise?")) {
+        try {
+          await api.delete(`/api/history/${id}/`); // Correct RESTful URL
+          setReports(prev => prev.filter(r => r.id !== id));
+        } catch (error) {
+          console.error("Erro ao deletar:", error);
+          alert("Erro ao excluir análise.");
+        }
+      }
+    } else if (action === 'rename') {
+      const report = reports.find(r => r.id === id);
+      if (report) {
+        setReportToRename({ id, title: report.title });
+        setNewTitle(report.title);
+        setIsRenameOpen(true);
+      }
+    } else {
+      // Placeholder for Move/Select/Remix
+      alert(`Funcionalidade '${action}' em breve!`);
+    }
+  };
+
+  const submitRename = async () => {
+    if (!reportToRename || !newTitle.trim()) return;
+
+    try {
+      setIsRenaming(true);
+      await api.patch(`/api/history/${reportToRename.id}/rename/`, {
+        new_title: newTitle
+      });
+
+      // Update local state
+      setReports(prev => prev.map(r =>
+        r.id === reportToRename.id ? { ...r, title: newTitle } : r
+      ));
+      setIsRenameOpen(false);
+    } catch (error) {
+      console.error("Erro ao renomear:", error);
+      alert("Erro ao renomear análise.");
+    } finally {
+      setIsRenaming(false);
+    }
   };
 
   return (
@@ -275,7 +335,10 @@ export default function History() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredAndSortedReports.map((report) => (
             <div key={report.id} onClick={() => handleReportClick(report.id)}>
-              <ReportCard {...report} />
+              <ReportCard
+                {...report}
+                onAction={handleAction}
+              />
             </div>
           ))}
         </div>
@@ -291,6 +354,38 @@ export default function History() {
           )}
         </div>
       )}
+
+      {/* Rename Dialog */}
+      <Dialog open={isRenameOpen} onOpenChange={setIsRenameOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Renomear Análise</DialogTitle>
+            <DialogDescription>
+              Digite um novo nome para identificar esta análise facilmente.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Nome
+              </Label>
+              <Input
+                id="name"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRenameOpen(false)}>Cancelar</Button>
+            <Button onClick={submitRename} disabled={isRenaming}>
+              {isRenaming ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Salvar Alterações
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

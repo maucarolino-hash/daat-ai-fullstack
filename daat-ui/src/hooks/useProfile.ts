@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import api from "@/services/api"; // Using existing axios instance
 import { useAuth } from "./useAuth";
 
 export interface Profile {
@@ -26,36 +26,49 @@ export function useProfile() {
   }, [user]);
 
   const fetchProfile = async () => {
-    if (!user) return;
-    
     setLoading(true);
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
+    try {
+      const response = await api.get('/api/auth/user/');
+      const data = response.data;
 
-    if (error) {
+      setProfile({
+        id: data.pk?.toString() || data.id?.toString(),
+        user_id: data.pk?.toString() || data.id?.toString(),
+        full_name: data.full_name || `${data.first_name} ${data.last_name}`,
+        company: data.company,
+        role: data.role,
+        avatar_url: null // Not implemented yet
+      });
+    } catch (error) {
       console.error("Error fetching profile:", error);
-    } else {
-      setProfile(data);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const updateProfile = async (updates: Partial<Pick<Profile, "full_name" | "company" | "role">>) => {
-    if (!user) return { error: new Error("User not authenticated") };
+    try {
+      const payload: any = {};
+      if (updates.full_name !== undefined) payload.full_name_update = updates.full_name;
+      if (updates.company !== undefined) payload.company = updates.company;
+      if (updates.role !== undefined) payload.role = updates.role;
 
-    const { error } = await supabase
-      .from("profiles")
-      .update(updates)
-      .eq("user_id", user.id);
+      const response = await api.patch('/api/auth/user/', payload);
+      const data = response.data;
 
-    if (!error) {
-      setProfile(prev => prev ? { ...prev, ...updates } : null);
+      // Update local state with returned data
+      setProfile(prev => prev ? {
+        ...prev,
+        full_name: data.full_name,
+        company: data.company,
+        role: data.role
+      } : null);
+
+      return { error: null };
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      return { error: error };
     }
-
-    return { error };
   };
 
   return {

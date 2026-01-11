@@ -49,11 +49,33 @@ class Phase1MarketResearch:
             logger.info("🔍 Executando pesquisas na web...")
             search_results = self._execute_searches(queries)
             
-            # Etapa 3: Processar com GPT
-            logger.info("🤖 Processando resultados com GPT...")
-            processed_data = self._process_with_gpt(mapped_data, search_results)
+            # Etapa 3: Processar com GPT (Passo 1 - Identificação)
+            logger.info("🤖 Processando resultados iniciais com GPT...")
+            initial_data = self._process_with_gpt(mapped_data, search_results)
             
-            # Etapa 4: Validar qualidade
+            # Etapa 4: Deep Dive (Se houver concorrentes)
+            competitors = initial_data.get('competitors', [])
+            if competitors:
+                logger.info(f"🕵️ Deep dive em {len(competitors)} concorrentes identificados...")
+                # Pega top 3 para não estourar tempo/custo
+                top_competitors = competitors[:3] 
+                deep_dive_results = self._execute_deep_dive(top_competitors, mapped_data['sector'])
+                
+                # Adiciona ao contexto original
+                if deep_dive_results:
+                    search_results['deep_dive'] = deep_dive_results
+                    
+                    # Reprocessa para enriquecer o relatório
+                    logger.info("🤖 Refinando análise com dados do Deep Dive...")
+                    # Pequeno hack: avisar o prompt que agora temos dados detalhados
+                    mapped_data['pitch_deck_text'] += "\n\n[SISTEMA: DADOS DETALHADOS DE DEEP DIVE INCLUÍDOS. EXTRAIA FATURAMENTO, MARKET SHARE E PONTOS FRACOS ESPECÍFICOS DOS CONCORRENTES.]"
+                    processed_data = self._process_with_gpt(mapped_data, search_results)
+                else:
+                    processed_data = initial_data
+            else:
+                processed_data = initial_data
+            
+            # Etapa 5: Validar qualidade
             quality_score = self._assess_data_quality(processed_data)
             processed_data['data_quality_score'] = quality_score
             
@@ -82,6 +104,31 @@ class Phase1MarketResearch:
                 all_results[category] = results
         
         return all_results
+
+    def _execute_deep_dive(self, competitors, sector):
+        """
+        Executa pesquisa aprofundada para os top concorrentes
+        """
+        deep_dive_results = []
+        
+        for comp in competitors:
+            name = comp.get('name')
+            if not name: continue
+            
+            logger.info(f"  Investigando a fundo: {name}")
+            # Gera queries específicas usando o método novo
+            queries = self.query_gen.generate_deep_dive_queries(name, sector)
+            
+            # Executa pesquisa (menos results por query para ser rápido)
+            results = self.tavily.search_multiple(queries, max_results=3)
+            
+            # Adiciona metadados para ajudar o GPT
+            for res in results:
+                res['context_type'] = f"deep_dive_{name}"
+                
+            deep_dive_results.extend(results)
+            
+        return deep_dive_results
     
     def _process_with_gpt(self, startup_data, search_results):
         """
@@ -98,7 +145,8 @@ class Phase1MarketResearch:
             startup_description=startup_data.get('solution_type', 'Solução Inovadora'),
             startup_sector=startup_data.get('sector', 'Tecnologia'),
             business_model=startup_data.get('business_model', 'SaaS/B2B'),
-            target_audience=startup_data.get('target_audience', 'Empresas')
+            target_audience=startup_data.get('target_audience', 'Empresas'),
+            pitch_deck_text=startup_data.get('pitch_deck_text', 'Não fornecido.')
         )
 
         user_message = f"RESULTADOS DA PESQUISA TAVILY:\n{search_context}"
@@ -117,10 +165,24 @@ class Phase1MarketResearch:
             model=model
         )
         
+        # Log (truncated) raw response for debug
+        logger.info(f"GPT Response (first 100 chars): {response_content[:100]}...")
+
+        # Sanitize Markdown if present
+        cleaned_content = response_content.strip()
+        if cleaned_content.startswith("```json"):
+            cleaned_content = cleaned_content[7:]
+        if cleaned_content.startswith("```"):
+            cleaned_content = cleaned_content[3:]
+        if cleaned_content.endswith("```"):
+            cleaned_content = cleaned_content[:-3]
+        cleaned_content = cleaned_content.strip()
+        
         try:
-            return json.loads(response_content)
+            return json.loads(cleaned_content)
         except json.JSONDecodeError as e:
             logger.error(f"Erro ao parsear JSON do GPT: {e}")
+            logger.error(f"Conteudo recebido: {response_content}")
             raise
     
     def _assess_data_quality(self, processed_data):

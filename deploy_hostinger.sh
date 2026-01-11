@@ -12,8 +12,8 @@ echo "--- Iniciando Preparação para Deploy ---"
 
 # 2. Comando para copiar os arquivos para o servidor (via SCP)
 echo "Copiando arquivos de configuração para o servidor..."
-scp daat_backend/Dockerfile $USER@$VPS_IP:~/daat_app/daat_backend/Dockerfile
-scp docker-compose.yml $USER@$VPS_IP:~/daat_app/docker-compose.yml
+scp daat_backend/Dockerfile $USER@$VPS_IP:~/daat-ai-fullstack/daat_backend/Dockerfile
+scp docker-compose.yml $USER@$VPS_IP:~/daat-ai-fullstack/docker-compose.yml
 
 # 3. Instruções para o usuário rodar NO SERVIDOR
 echo ""
@@ -22,8 +22,8 @@ echo "1. Abra seu terminal e conecte-se ao servidor:"
 echo "   ssh $USER@$VPS_IP"
 echo ""
 echo "2. No servidor, clone seu repositório (se ainda não fez):"
-echo "   git clone https://github.com/SEU_GITHUB_USER/SEU_REPO.git daat_app"
-echo "   cd daat_app"
+echo "   git clone https://github.com/maucarolino-hash/daat-ai-fullstack.git"
+echo "   cd daat-ai-fullstack"
 echo ""
 echo "3. Crie o arquivo de variáveis de ambiente (.env):"
 echo "   nano daat_backend/.env"

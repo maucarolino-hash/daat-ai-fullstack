@@ -33,14 +33,14 @@ export default function Index() {
   const competitorCount = result?.competitors.length || 4;
   const riskLevel = result?.riskAssessment.level || "medium";
 
-  const handleStartAnalysis = (segment: string) => {
-    startAnalysis(segment, []);
+  const handleStartAnalysis = (segment: string, pitchDeck?: File) => {
+    startAnalysis(segment, [], pitchDeck);
   };
 
   return (
     <div className="space-y-6">
-      {/* Chat-Style Hero Input - Shows when no analysis is active and not on /dashboard */}
-      {!hasActiveAnalysis && !isDashboardRoute && (
+      {/* Chat-Style Hero Input - Shows on Home (/) when not analyzing */}
+      {!isAnalyzing && !isDashboardRoute && (
         <div className="py-12">
           <ChatHeroInput
             onStartAnalysis={handleStartAnalysis}
@@ -49,8 +49,8 @@ export default function Index() {
         </div>
       )}
 
-      {/* Dashboard View - Shows when analysis active OR when directly accessing /dashboard */}
-      {(hasActiveAnalysis || isDashboardRoute) && (
+      {/* Dashboard View - Shows on /dashboard OR when analyzing (Terminal) */}
+      {(isAnalyzing || isDashboardRoute) && (
         <>
           {/* Header */}
           <div className="flex items-center justify-between">

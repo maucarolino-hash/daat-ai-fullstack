@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Sparkles, ArrowUp, Zap, Target, BarChart3, Shield } from "lucide-react";
+import { Sparkles, ArrowUp, Zap, Target, BarChart3, Shield, Paperclip, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface ChatHeroInputProps {
-  onStartAnalysis: (segment: string) => void;
+  onStartAnalysis: (segment: string, pitchDeck?: File) => void;
   isAnalyzing: boolean;
 }
 
@@ -16,11 +16,19 @@ const suggestionChips = [
 
 export function ChatHeroInput({ onStartAnalysis, isAnalyzing }: ChatHeroInputProps) {
   const [input, setInput] = useState("");
+  const [file, setFile] = useState<File | null>(null);
 
   const handleSubmit = () => {
     if (input.trim() && !isAnalyzing) {
-      onStartAnalysis(input.trim());
+      onStartAnalysis(input.trim(), file || undefined);
       setInput("");
+      setFile(null);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
     }
   };
 
@@ -70,6 +78,26 @@ export function ChatHeroInput({ onStartAnalysis, isAnalyzing }: ChatHeroInputPro
                 rows={2}
               />
             </div>
+
+            {/* File Upload Trigger */}
+            <div className="flex items-center pb-3">
+              <input
+                type="file"
+                id="pitch-deck-upload"
+                accept=".pdf"
+                className="hidden"
+                onChange={handleFileChange}
+                disabled={isAnalyzing}
+              />
+              <label
+                htmlFor="pitch-deck-upload"
+                className="cursor-pointer p-2 hover:bg-white/10 rounded-full transition-colors text-muted-foreground hover:text-foreground"
+                title="Anexar Pitch Deck (PDF)"
+              >
+                <Paperclip className="w-5 h-5" />
+              </label>
+            </div>
+
             <Button
               onClick={handleSubmit}
               disabled={!input.trim() || isAnalyzing}
@@ -89,6 +117,20 @@ export function ChatHeroInput({ onStartAnalysis, isAnalyzing }: ChatHeroInputPro
             </Button>
           </div>
         </div>
+
+        {/* Selected File Badge */}
+        {file && (
+          <div className="absolute -bottom-10 left-0 flex items-center gap-2 bg-secondary/80 px-3 py-1.5 rounded-md text-xs border border-white/10 animate-in fade-in slide-in-from-top-1">
+            <Paperclip className="w-3 h-3 text-accent" />
+            <span className="max-w-[150px] truncate">{file.name}</span>
+            <button
+              onClick={() => setFile(null)}
+              className="hover:bg-white/10 rounded-full p-0.5"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
 
         {/* Powered by badge */}
         <div className="flex items-center justify-center gap-2 mt-3 text-xs text-muted-foreground">
